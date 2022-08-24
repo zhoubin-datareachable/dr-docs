@@ -41,15 +41,6 @@ function fileDisplay(filePath) {
                     newHtml
                   );
                 }
-              } else if (filedir.includes(".html")) {
-                const arr = filedir.split(path.sep);
-                const newPath = arr[arr.length - 2];
-                const content = fs.readFileSync(filedir, "utf-8");
-                const newContent = content.replace(
-                  "./swagger.yaml",
-                  `./${newPath}/swagger.yaml`
-                );
-                fs.writeFileSync(filedir.replace(input, output), newContent);
               } else {
                 fs.copyFileSync(filedir, filedir.replace(input, output));
               }
