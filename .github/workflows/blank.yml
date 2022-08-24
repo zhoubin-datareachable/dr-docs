@@ -1,0 +1,39 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "30 5,12,18 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: dataReachable/dr_Doc_Main
+          ref: main
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+          path: main
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+      # 安装依赖
+      - name: Install dependencies
+        run: |
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          branch: gh-pages
+          folder: dist
+          force: true
