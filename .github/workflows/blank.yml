@@ -17,7 +17,7 @@ jobs:
         with:
           repository: dataReachable/dr_Doc_Main
           ref: main
-          path: dr-docs/dr_Doc_Main
+          path: dr_Doc_Main
           token: ${{ secrets.ACCESS_TOKEN }}
       - name: Use Node.js
         uses: actions/setup-node@v1
