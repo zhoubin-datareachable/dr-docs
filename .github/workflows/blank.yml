@@ -27,11 +27,11 @@ jobs:
       - name: Install dependencies
         run: |
           npm run build
+          ls
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
-          token: ${{ secrets.ACCESS_TOKEN }}
           branch: gh-pages
           folder: dist
           force: true
