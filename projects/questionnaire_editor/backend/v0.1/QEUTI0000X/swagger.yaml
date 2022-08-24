@@ -1,0 +1,286 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: QEditor Backend Project - QEditor utilities APIs
+  description: >-
+    QEUTI0000X, 包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://qeditor.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [QEditor API Server](https://github.com/dataReachable/dr_Back_QuestionnaireEditor)
+  contact:
+    name: Backend Team
+    email: mengming.li@datareachable.com
+
+servers:
+  - url: "https://qeditor.dev.datareachable.net/"
+    description: Sydney Development Cluster
+
+paths:
+  /api/v1/org/get_user_orgs:
+    post:
+      summary: (QEUTI00001) 获取 user 所属的所有 Organization
+      description: 获取 user 所属的所有 Organization
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QEUTI00001_200001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/org/user_tg:
+    post:
+      summary: (QEUTI00002) 获取 user 所属的所有 talent_group
+      description: 获取 user 在某个 organization 中所属的所有 talent_group
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - organization_dri
+              example:
+                {
+                    "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1"
+                }
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的 dri, 由固定的前缀和唯一的 id 组成
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QEUTI00002_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QEUTI00002_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      description: 成功响应的通用部分
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "对响应的一段简短的描述"
+
+    Res_AuthenticationFailed:
+      type: object
+      description: 用户未登录或者登录过期的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示 jwt 不存在或者已经过期"
+      example:
+        {
+            "code": 401001,
+            "message": "Cannot get JWT in request, unauthorized access."
+        }
+
+    Res_GenericInternalError:
+      type: object
+      description: 服务器内部错误的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "发生错误时的简短提示"
+        data:
+          type: object
+          description: 错误响应携带的数据
+          properties:
+            error:
+              description: 错误的详细信息
+              type: string
+      example:
+        {
+          "code": 500001,
+          "message": "[xxxx Controller]: An unknown error occurred, please check",
+          "data":
+            {
+              "error": "Details of the error goes here"
+            }
+        }
+
+    Res_MissingOrWrongParameters:
+      type: object
+      description: 参数错误或缺失时的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示参数错误或参数缺失"
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example:
+        {
+          "code": 405000,
+          "message": "You're using the completely wrong HTTP method!"
+        }
+
+    Res_UnauthorizedOperation:
+      type: object
+      description: 未授权的操作
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: 提示操作没有被授权
+      example:
+        {
+            "code": 403001,
+            "message": "Unauthorized operation"
+        }
+
+    Res_QEUTI00001_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get user's all organizations successfully",
+            "data": {
+                "organizations": [
+                    {
+                        "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1",
+                        "organization_name": "test-dr2"
+                    },
+                    {
+                        "organization_dri": "dri:acs::org/pPoSsTEoGiJySASkEq",
+                        "organization_name": "test-dr"
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                organizations:
+                  type: array
+                  description: 用户所属的所有的 organization 的列表
+                  items:
+                    type: object
+                    properties:
+                      organization_dri:
+                        type: string
+                        description: organization 的 dri, 由固定的前缀和唯一的 id 组成
+                      organization_name:
+                        type: string
+                        description: organization 的 name
+
+    Res_QEUTI00002_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get user's talent group in a organization successfully",
+            "data": {
+                "talent_groups": [
+                    {
+                        "talent_group_dri": "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-rsf4nw6O",
+                        "talent_group_name": "tg_01"
+                    },
+                    {
+                        "talent_group_dri": "dri:acs::org:tg/PmEXzkDCmoHZ1nw6-rsf4org2JO",
+                        "talent_group_name": "tg_02"
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                talent_groups:
+                  type: array
+                  description: 在该组织中, 用户所属的所有的 Talent Group 的列表
+                  items:
+                    type: object
+                    properties:
+                      talent_group_dri:
+                        type: string
+                        description: talent group 的 dri, 由固定的前缀和唯一的 id 组成
+                      talent_group_name:
+                        type: string
+                        description: talent group 的 name
+
+    Res_QEUTI00002_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"organization_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"

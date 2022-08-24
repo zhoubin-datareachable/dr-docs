@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="best-practices-on-github-actions">Best Practices on GitHub Actions</h2>
+<p>This documentation sets out the conventions for writing GitHub actions yaml files in the GitOps workflow.</p>
+<p>In the following, we denote a <em>project</em> as a physically independent <em>application</em> or <em>feature</em>. A <em>project</em> does NOT necessarily mean an infrastructure repo. It might be a <em>feature branch</em> in the repo. Refer to <a href="./GitConventions.md">git conventions</a> for details.</p>
+<h2 id="naming-conventions">Naming Conventions</h2>
+<p>The names of the files should follow this format:</p>
+<pre><code class="language-txt">&lt;projectName&gt;.&lt;functionality&gt;.&lt;environment&gt;.yaml
+</code></pre>
+<ul>
+<li><code>&lt;projectName&gt;</code> is the name of project, e.g. the application name;</li>
+<li><code>&lt;functionality&gt;</code> is the function of the github action, e.g. <code>deploy</code>, <code>plan</code> etc.;</li>
+<li><code>&lt;environment&gt;</code> is the operation environment of the real-world infrastructure, e.g. <code>dev</code>, <code>stage</code>, <code>prod</code>, etc.</li>
+</ul>
+<p>For example, <code>app1.plan.dev.yaml</code>, <code>app1.deploy.prod.yaml</code> etc.</p>
+<p>In this way, one github action for one task, instead of merging multiple tasks together for one project.</p>
+<h2 id="terraform-project-conventions">Terraform Project Conventions</h2>
+<p>For each terraform IAC project, the GitHub Actions should include <strong>TWO</strong> separate files under the <code>.github/workflows</code> folder:</p>
+<ol>
+<li>One file is for terraform file validation and planning on infrastructure change, named as <code>app1.plan.dev.yaml</code>.</li>
+<li>One file is for deploying or destroying the terraform-described stack, named as <code>app1.deploy.dev.yaml</code>.</li>
+</ol>
+<p>The real-world deployment-related github actions under each environment should all be in the corresponding <code>feature/app</code> branch to avoid conflicts. Other non-deployment actions are free to create in the development branches.</p>
+<h2 id="repo-release-github-action">Repo Release GitHub Action</h2>
+<p>At certain stage, the infrastructure code repo is ready to be released. A GitHub Action should be created to automate this release process. One repo should have ONLY one release action, named as <code>release.yaml</code>.</p>
+<p>Example:</p>
+<pre><code class="language-yaml">name: &quot;Release&quot;
+
+on:
+  push:
+    tags:
+      - &quot;v[0-9]+.[0-9]+.[0-9]+&quot;
+      - &quot;v[0-9]+.[0-9]+.[0-9]+-alpha&quot;
+      - &quot;v[0-9]+.[0-9]+.[0-9]+-beta&quot;
+      - &quot;v[0-9]+.[0-9]+.[0-9]+-prerelease&quot;
+
+jobs:
+  create-release-by-tag:
+    name: Create Tagged Release
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v2
+
+      - id: create-prerelease
+        if: endsWith(github.ref, &#39;-prerelease&#39;)
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          prerelease: true
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+
+      - id: create-release
+        if: endsWith(github.ref, &#39;-prerelease&#39;) == false
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: false
+          prerelease: false
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+</code></pre>
+<h2 id="real-github-action-project-structure-example">Real GitHub Action Project Structure Example</h2>
+<div align="center">
+    <img src="../Assets/GitHub_Actions_Convention_Example.png" />
+</div>
+
+<h2 id="customised-github-action">Customised GitHub Action</h2>
+<p>Refer to <a href="https://github.com/possie-engine/gha-terragrunt">this action</a> which contains the essential Terragrunt commands described below. It can be directly used instead of writing lengthy github actions from scratch.</p>
+<p>Code examples:</p>
+<ol>
+<li>terragrunt validation and planning</li>
+</ol>
+<pre><code class="language-yaml">name: &quot;Validate and Plan Sample APP&quot;
+
+on:
+  push:
+    tags:
+      - &quot;plan-app-*&quot;
+
+jobs:
+  planning:
+    name: Planning
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Terragrunt File Validation and Planning
+        uses: possie-engine/gha-terragrunt/validate-and-plan@latest
+        env:
+          WORKDIR: &quot;development&quot;
+          AWS_CREDENTIALS: ${{ secrets.AWS_CREDENTIALS }}
+          AWS_CONFIG: ${{ secrets.AWS_CONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          tf_version: &quot;latest&quot;
+          tg_version: &quot;latest&quot;
+          tg_args: &quot;--terragrunt-ignore-dependency-errors&quot;
+          tg_fmt: false
+</code></pre>
+<ol start="2">
+<li>terragrunt deployment and destroy</li>
+</ol>
+<pre><code class="language-yaml">name: &quot;Deployment and Destroy Sample App&quot;
+
+on:
+  pull_request:
+    branches:
+      - feature/app
+    types: [closed]
+  push:
+    tags:
+      - &quot;*-app-destroy&quot;
+
+jobs:
+  deployment:
+    if: github.event.pull_request.merged == true || (github.event_name == &#39;push&#39; &amp;&amp; endsWith(github.ref, &#39;-app-destroy&#39;))
+    name: Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v2
+
+      - id: main
+        name: Terragrunt apply and destroy
+        uses: possie-engine/gha-terragrunt/deploy-and-destroy@latest
+        env:
+          WORKDIR: &quot;development&quot;
+          AWS_CREDENTIALS: ${{ secrets.AWS_CREDENTIALS }}
+          AWS_CONFIG: ${{ secrets.AWS_CONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          tf_version: &quot;latest&quot;
+          tg_version: &quot;latest&quot;
+          tg_args: &quot;--terragrunt-ignore-dependency-errors&quot;
+          tg_fmt: false
+
+      - id: upload
+        if: github.event.pull_request.merged == true
+        name: Upload Output File
+        uses: actions/upload-artifact@v2
+        with:
+          name: Output
+          path: ${{ steps.main.outputs.artifact_output_dir }}/**/*
+</code></pre>
+<p>The following sections get into the details for building the github actions from scratch. They are no longer needed, but we still listed them here as a reference.</p>
+<h2 id="essential-building-pieces-of-github-actions">Essential Building Pieces of GitHub Actions</h2>
+<p>This section assumes 2 github actions for a Terraform project. One is for terraform file validation and planning and the other is for modifying the infrastructure, such as creating, updating and destroying the stack.</p>
+<p>Also, we assume two branches. The <code>feature/app</code> branch is the feature branch and reflects the real-world deployed infrastructure and is the only branch to trigger the deployment github actions. The <code>dev/app_john</code> branch is the working branch for developer John and can contain any github action needed, except that deployment is forbidden in these actions.</p>
+<p>We present several code snippets that are useful when writing those actions. For naming convention details, refer to <a href="./GitConventions.md">GitConventions</a>.</p>
+<h3 id="1-generic-code-pieces-in-github-action">1. Generic code pieces in github action</h3>
+<p>This section lists some code examples that are usually needed in Terraform projects. These are only suggestions.</p>
+<ul>
+<li><p><strong>Default Working Directory</strong></p>
+<p>Make sure to set up a default working directory, because the github repo may contain multiple real-world stacks and most of the time, only one is under consideration.</p>
+<pre><code class="language-yaml">defaults:
+  run:
+    shell: bash
+    working-directory: path/to/your/working/directory
+</code></pre>
+</li>
+<li><p><strong>Setup Credentials</strong></p>
+<p>Real-world deployment normally requires the caller to provide credentials to manipulate remote resources. For example, Amazon Web Services (AWS), a Kubernetes Cluster, GitHub, etc. To accomplish this, the suggestion is immitating the environment of your local computer so that no code changes are required on your runner compared with your local computer. Specifically, copy the credential files into appropriate paths on the remote runner. In the following example, we assume AWS credentials and Kubernetes cluster configuration data.</p>
+<hr>
+<p>Set up the environment variables,</p>
+<pre><code class="language-yaml">env:
+  AWS_CREDENTIALS: ${{ secrets.your_aws_credentials }}
+  AWS_CONFIG: ${{ secrets.your_aws_configration }}
+  KUBE_CONFIG_DATA: ${{ secrets.your_k8s_configuration }}
+</code></pre>
+<hr>
+<p>Copy the credentials into appropriate paths on the remote runner,</p>
+<pre><code class="language-yaml">- id: setup-secret
+  name: Copy Credential Files into Runner
+  run: |
+    mkdir -p ~/.kube
+    echo &quot;${KUBE_CONFIG_DATA}&quot; &gt; ~/.kube/config
+    mkdir -p ~/.aws
+    echo &quot;${AWS_CREDENTIALS}&quot; &gt; ~/.aws/credentials
+    echo &quot;${AWS_CONFIG}&quot; &gt; ~/.aws/config
+</code></pre>
+<p><strong>Note</strong>: For *nix and MacOS systems, the default K8S configuration file is stored in <code>$HOME/.kube/config</code> and the default AWS credentials/config are stored in <code>$HOME/.aws/credentials</code> and <code>$HOME/.aws/config</code>.</p>
+</li>
+<li><p><strong>Setup Terragrunt</strong></p>
+<p>Terragrunt should be first set up on the remote github action runner. We suggest directly downloading the latest version of Terragrunt (or a specific version if needed) from the official release page. Existing github actions to do this in the action marketplace are out of date. Using them is not recommended.</p>
+<hr>
+<p>Get the latest version number of Terragrunt, save it as a global environment variable, and define an installation path for the Terragrunt binary.</p>
+<pre><code class="language-yaml">- id: get-terragrunt-latest-version
+  name: Obtain the Latest Version of Terragrunt
+  run: |
+    VERSION=$(curl --silent https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | grep &#39;&quot;tag_name&quot;:&#39; | sed -E &#39;s/.*&quot;([^&quot;]+)&quot;.*/\1/&#39;)
+    DIR=/opt/terragrunt/$VERSION/x64
+    echo &quot;TG_VERSION=${VERSION}&quot; &gt;&gt; $GITHUB_ENV
+    echo &quot;TG_DIR=${DIR}&quot; &gt;&gt; $GITHUB_ENV
+</code></pre>
+<hr>
+<p>Cache the Terragrunt binary to avoid repetitive downloading,</p>
+<pre><code class="language-yaml">- id: cache-terragrunt-binary
+  name: Cache the Binary Program of a Specific Terragrunt Version
+  uses: actions/cache@v2
+  with:
+    path: ${{ env.TG_DIR }}
+    key: ${{ runner.os }}-Terragrunt-${{ env.TG_VERSION }}-x64
+    restore-keys: |
+      ${{ runner.os }}-Terragrunt-${{ env.TG_VERSION }}
+      Terragrunt-${{ env.TG_VERSION }}-x64
+      Terragrunt-${{ env.TG_VERSION }}
+</code></pre>
+<p>You can change the names of the cache key and restore keys to your favourite names.</p>
+<hr>
+<p>Install (Download) the latest Terragrunt,</p>
+<pre><code class="language-yaml">- id: tg-install
+  name: Install Terragrunt Binary
+  if: steps.cache-terragrunt-binary.outputs.cache-hit != &#39;true&#39;
+  run: |
+    sudo mkdir -p ${{ env.TG_DIR }}
+    sudo curl -L https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64 -o ${{ env.TG_DIR }}/terragrunt
+</code></pre>
+<p>Explicitly skip this step if there is a cache hit, because if not, the following <code>curl</code> command will still commence downloading the Terragrunt binary and overwrite the existing one.</p>
+<hr>
+<p>Configure the Terragrunt binary, i.e. allow execution permission and add the binary to the system search path.</p>
+<pre><code class="language-yaml">- id: tg-setup
+  name: Add Terragrunt Program in PATH
+  run: |
+    sudo chmod +x ${{ env.TG_DIR }}/terragrunt
+    echo ${{ env.TG_DIR }} &gt;&gt; $GITHUB_PATH
+</code></pre>
+</li>
+<li><p><strong>Setup Kubectl</strong></p>
+<p>Similar to set up Terragrunt, we suggest directly downloading the latest version (or a specific version if needed) of the <code>kubectl</code> binary program. And configure it to be executable, add it to the system search path.</p>
+<hr>
+<p>Get latest <code>kubectl</code> version,</p>
+<pre><code class="language-yaml">- id: get-latest-kubectl-version
+  name: Obtain the Latest Version of kubectl
+  run: |
+    VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+    DIR=/opt/kubectl/$VERSION/x64
+    echo &quot;KUBECTL_VERSION=${VERSION}&quot; &gt;&gt; $GITHUB_ENV
+    echo &quot;KUBECTL_DIR=${DIR}&quot; &gt;&gt; $GITHUB_ENV
+</code></pre>
+<hr>
+<p>Cache the <code>kubectl</code> binary,</p>
+<pre><code class="language-yaml">- id: cache-kubectl-binary
+  name: Cache the Binary Program of a Specific kubectl Version
+  uses: actions/cache@v2
+  with:
+    path: ${{ env.KUBECTL_DIR }}
+    key: ${{ runner.os }}-Kubectl-${{ env.KUBECTL_VERSION }}-x64
+    restore-keys: |
+      ${{ runner.os }}-Kubectl-${{ env.KUBECTL_VERSION }}
+      Kubectl-${{ env.KUBECTL_VERSION }}-x64
+      Kubectl-${{ env.KUBECTL_VERSION }}
+</code></pre>
+<hr>
+<p>Install (Download) <code>kubectl</code> binary,</p>
+<pre><code class="language-yaml">- id: kubectl-install
+  if: steps.cache-kubectl-binary.outputs.cache-hit != &#39;true&#39;
+  name: Install kubectl on the Runner
+  run: |
+    sudo mkdir -p ${{ env.KUBECTL_DIR }}
+    sudo curl -L https://storage.googleapis.com/kubernetes-release/release/${{ env.KUBECTL_VERSION }}/bin/linux/amd64/kubectl -o ${{ env.KUBECTL_DIR }}/kubectl
+</code></pre>
+<hr>
+<p>Configure the <code>kubectl</code> binary,</p>
+<pre><code class="language-yaml">- id: kubectl-setup
+  name: Add kubectl binary to PATH
+  run: |
+    sudo chmod +x ${{ env.KUBECTL_DIR }}/kubectl
+    echo ${{ env.KUBECTL_DIR }} &gt;&gt; $GITHUB_PATH
+</code></pre>
+</li>
+<li><p><strong>Terragrunt Initialization</strong></p>
+<p>Initialization Terragrunt in the working directory,</p>
+<pre><code class="language-yaml">- id: tg-init
+  name: Terragrunt Initialization
+  run: terragrunt init
+</code></pre>
+</li>
+</ul>
+<h3 id="2-the-validationplanning-github-action">2. The validation/planning github action</h3>
+<p>Validation of terraform/terragrunt files and running <code>terragrunt plan</code> are important. These two steps should be conducted only in branches other than <code>feature/app</code>. The <code>feature/app</code> branch does <strong>NOT</strong> contain these two steps, but make sure they are run before deployment without errors.</p>
+<pre><code class="language-yaml">- id: tg-validate
+  name: Terragrunt File Validation
+  run: terragrunt validate-all
+- id: tg-plan
+  if: endsWith(github.ref , &#39;-skip&#39;) == false
+  name: Terragrunt Planning (skip via tagging when needed)
+  run: terragrunt plan-all
+- id: clean-tag
+  name: Delete the tag
+  run: git push --delete origin ${{ github.ref }}
+</code></pre>
+<p><strong><em>Important:</em></strong> When there are input-output dependencies among resources and no records of these resources in terraform statefile, Terragrunt exits with failure in both <code>validate</code> and <code>plan</code> steps, making the github action fail. To deal with this, set the <code>mock_outputs</code> and <code>mock_outputs_allowed_terraform_commands</code> options in the <a href="https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#dependency">dependency block</a>. These steps <strong>MUST</strong> be passed before merging into the <code>feature/app</code> branch. If <strong>NOT</strong>, merging is forbidden. (Although with the mock outputs, the <code>terragrunt plan-all</code> gives unusable deployment plans, one can still tell the structures of the to-be-deployed resources)</p>
+<pre><code class="language-bash">dependency &quot;service_account&quot; {
+  config_path = &quot;${get_parent_terragrunt_dir()}/service_account&quot;
+  # Configure mock outputs for the `validate` and `plan` command that are returned when there are no outputs available (e.g the
+  # module hasn&#39;t been applied yet.
+  mock_outputs_allowed_terraform_commands = [&quot;validate&quot;, &quot;plan&quot;]
+  mock_outputs = {
+    resource_name = &quot;mock-sevice-account&quot;
+  }
+}
+</code></pre>
+<p>Sometimes, certain resources need <code>real-world</code> values to succeed in the <code>terrgrunt plan-all</code> command. In this case, one can either use the <code>real-world</code> values from an existing resource or skip the <code>plan</code> step by tagging it with <code>*-skip</code> to achieve a non-error result. When skipping with tag, make sure the github action is triggered by <code>push tags</code> instead of <code>push</code> only, because, the <code>push</code> only event can NOT pass tag information to the github action. To avoid too many tags, one can delete the remote tags as the last step in the github actions. (Here, we <strong>ONLY</strong> delete the remote tag. Local tag <strong>MUST</strong> also be deleted at the same time. If not, when pushing to the remote repo next time, corresponding github actions will be triggered again and cause problems.)</p>
+<pre><code class="language-yaml">on:
+  push:
+    tags:
+      - &quot;plan-app-*&quot;
+# some code
+- id: clean-tag
+  name: Delete the tag
+  run: git push --delete origin ${{ github.ref }}
+</code></pre>
+<h3 id="3-the-deployment-github-action">3. The deployment github action</h3>
+<p>Deployment should only occur on the <code>feature/app</code> branch. The deployment action includes all three lifecycles of a real-world stack, i.e. create, update, destroy. There are <strong>TWO</strong> ways to trigger these actions.</p>
+<p>The only way to trigger the create and update actions is by <strong>pull request merge</strong>. Unfortunately, there is no <code>pull request merge</code> event in github actions, use the configuration in the following code snippet instead.</p>
+<p>When the stack is useless and you want to tear it down, adding a tag suffixed with <strong><code>-app-destroy</code></strong> should trigger the stack destroying action.</p>
+<p>The two triggers are summarised in the following code snippet:</p>
+<pre><code class="language-yaml">on:
+  pull_request:
+    branches:
+      - feature/app
+    types: [closed]
+  push:
+    tags:
+      - &quot;*-app-destroy&quot;
+</code></pre>
+<p>To distinguish the destroy action from the other two actions, a condition guard should be placed before the corresponding steps:</p>
+<pre><code class="language-yaml">jobs:
+  &lt;job id&gt;:
+    if: github.event.pull_request.merged == true || (github.event_name == &#39;push&#39; &amp;&amp; endsWith(github.ref, &#39;-app-destroy&#39;))
+    steps:
+      // some configuration steps
+      - id: tg-apply
+        if: github.event.pull_request.merged == true
+        name: Terragrunt Apply
+        run: terragrunt apply-all --terragrunt-non-interactive
+
+      - id: tg-destroy
+        if: github.event_name == &#39;push&#39; &amp;&amp; endsWith(github.ref, &#39;-app-destroy&#39;)
+        name: Terragrunt Destroy
+        run: |
+          terragrunt destroy-all --terragrunt-non-interactive
+          git push --delete origin ${{ github.ref }}
+</code></pre>
+<p>The deployment action should not use <code>terragrunt validate-all</code> or <code>terragrunt plan-all</code>, because they should have already been run before merging into <code>feature/app</code> branch. Instead, only contain the <code>terragrunt apply-all</code> or <code>terragrunt destroy-all</code> command in this action.</p>
+
+	</div>
+</body>
+</script>
+</html>

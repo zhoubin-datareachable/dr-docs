@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="版本命名规范">版本命名规范</h1>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">版本命名规范</span>
+    </div>
+</div>
+
+<h1 id="描述">描述</h1>
+<p>该文档主要包含了如何对项目的版本进行命名, 以及命名的规范. 该命名规范主要使用在 git 中进行 ci/cd 的时候给 docker 打上 tag 的时候进行版本命名, 所有的版本命名应该以&quot;v 主版本号.次版本号.修正版本号-附属标记&quot;的方式进行命名, 例如: v1.0.1-dev</p>
+<h1 id="主版本号">主版本号</h1>
+<ol>
+<li>项目/产品架构发生改变，主版本号+1</li>
+<li>项目/产品主体结构件进行重大修改，主版本号+1</li>
+<li>项目/产品主体构件接口协议发生更改，主版本号+1</li>
+<li>此版本号变更由主需求方决定，所有模块统一</li>
+</ol>
+<h1 id="次版本号">次版本号</h1>
+<ol>
+<li>新项目/产品立项，次版本号为 0</li>
+<li>根据客户需求改进现有功能需求或性能，对现有功能模块做大的修改，但不增加新的功能，次版本号+1</li>
+<li>产品增加新的功能，而产品的主体构件未做重大修改，次版本号+1</li>
+<li>主版本号变更时，次版本号重置为 0</li>
+<li>此版本号变更由产品部门决定，所有模块统一</li>
+</ol>
+<h1 id="修正版本号">修正版本号</h1>
+<ol>
+<li>测试过程中，每进行一次修改，修正版本号+1</li>
+<li>次版本号变更时，修正版本号重置为 0</li>
+<li>此版本号变更由各开发部门自行决定，模块间无需统一，部门间无需统一</li>
+</ol>
+<h1 id="附属标记">附属标记</h1>
+<ol>
+<li>dev：开发环境标识 ，为内部开发版，该版本 bug 较多，通常在新版本开发时使用</li>
+<li>test：测试环境标识，为内部展示版，该版本无影响功能流程的 bug，运行相对稳定，通常供内部展示所用</li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

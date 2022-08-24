@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="应用程序开发和基础设施（iac）开发的基本工作流程">应用程序开发和基础设施（IaC）开发的基本工作流程</h2>
+<p>请遵循下表中列出的开发规范：</p>
+<table>
+  <tbody>
+    <tr>
+      <th></th>
+      <th align="center">应用程序代码</th>
+      <th align="center">基础设施代码</th>
+    </tr>
+    <tr>
+      <td>版本控制系统</td>
+      <td align="left">
+                <ul>
+                    <li><code>git clone</code></li>
+                    <li>每个应用一个GitHub仓库</li>
+                    <li>随意使用git分支（git branch）</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li><code>git clone</code></li>
+                    <li>一般每个项目使用两个GitHub仓库 <br> (<em>live</em> 和 <em>modules</em> 仓库)</li>
+                    <li>禁止使用git分支 <br> (只允许在main分支上进行线上部署)</li>
+                </ul>
+            </td>
+    </tr>
+    <tr>
+      <td>本地开发阶段</td>
+      <td align="left">
+                <ul>
+                    <li>配置本地依赖和环境</li>
+                    <li>在localhost上运行</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>AWS云沙箱环境</li>
+                    <li><code>terraform apply</code></li>
+                    <li>使用Terratest测试</li>
+                </ul>
+            </td>
+    </tr>
+    <tr>
+      <td>本地代码变更阶段</td>
+      <td align="left"><ul>
+                    <li>更新代码</li>
+                    <li>在localhost上运行</li>
+                    <li>在本地进行测试</li>
+                </ul></td>
+      <td align="left">
+                <ul>
+                    <li>更新代码</li>
+                    <li><code>terraform apply</code></li>
+                    <li>使用Terratest测试</li>
+                    <li>使用阶段性测试</li>
+                </ul>
+            </td>
+    </tr>
+    <tr>
+      <td>代码审阅阶段</td>
+      <td align="left">
+                <ul>
+                    <li>在GitHub上提交相关的Pull Request</li>
+                    <li>检查代码规范</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>在GitHub上提交相关的Pull Request</li>
+                    <li>检查代码规范</li>
+                </ul>
+            </td>
+    </tr>
+        <tr>
+      <td>自动化测试</td>
+      <td align="left">
+                <ul>
+                    <li>使用同一个CI服务器</li>
+                    <li>静态代码分析</li>
+                    <li>单元测试</li>
+                    <li>集成测试</li>
+                    <li>端到端测试</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>使用同一个CI服务器</li>
+                    <li>静态代码分析</li>
+                    <li>单元测试</li>
+                    <li>集成测试</li>
+                    <li>端到端测试</li>
+                    <li>使用<code>terraform plan</code>命令</li>
+                </ul>
+            </td>
+    </tr>
+        <tr>
+      <td>发布</td>
+      <td align="left">
+                <ul>
+                    <li>完成相关文档</li>
+                    <li>使用<code>git tag</code>打标签</li>
+                    <li>创建带有版本号的正式发布</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>完成相关文档</li>
+                    <li>使用<code>git tag</code>打标签</li>
+                    <li>创建带有版本号的正式发布</li>
+                </ul>
+            </td>
+    </tr>
+        <tr>
+      <td>部署</td>
+      <td align="left">
+                <ul>
+                    <li>创建带有版本号的，无法更改的可部署的artifact <br> (也就是Docker镜像)</li>
+                    <li>完成相关文档</li>
+                    <li>交付镜像和使用文档给DevOps团队</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>使用Terraform和Terragrunt工具链进行部署 <br> (比如，脚本程序，GitHub Actions自动化部署)</li>
+                    <li>使用有限的部署策略（策略：蓝绿部署，滚动更新部署，金丝雀部署等）</li>
+                    <li>处理部署中发生的错误</li>
+                    <li>使用同一个CD服务器进行自动化部署</li>
+                    <li>在不同的部署环境下，逐级提高不可变、版本化的artifacts <br> (比如，从开发环境到Stage环境再到生产环境)</li>
+                </ul>
+            </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>注意：</strong> 根据DevOps团队的规模和具体的项目，上表中的部分步骤可以被省略。</p>
+
+	</div>
+</body>
+</script>
+</html>

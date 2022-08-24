@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="project-structure">Project Structure</h2>
+<h2 id="repos">Repos</h2>
+<p>Each Terraform project contains at least two Github repos: the <strong><em>live</em></strong> repo and the <strong><em>modules</em></strong> repo.</p>
+<p>The <strong><em>live</em></strong> repo defines the live infrastructure you&#39;ve deployed in each environment (Dev, Stage, Prod, etc.). It should always be synced with (1:1 mapping to) the real-world infrastructure.</p>
+<p>The <strong><em>modules</em></strong> repo is where you create your reusable, versioned modules. It should be properly tagged.</p>
+<p>Naming convention example:</p>
+<pre>
+dr_sample_terraform_project_live
+dr_sample_terraform_project_modules
+</pre>
+
+<p><strong>Note:</strong> For small or ad hoc projects, having only the <strong><em>live</em></strong> repo is enough.</p>
+<h2 id="the-live-repo">The Live Repo</h2>
+<p>The <strong><em>live</em></strong> repo contains at least three environments: Development, Stage and Production.</p>
+<p><strong>Warning:</strong> Do NOT use terraform workspaces to distinguish environments. Use folder layout is better practice.</p>
+<p>Each environment is appropriately modularized instead of using a single unstructured terraform file that mixes everything together. For example:</p>
+<pre>
+development/ .....................Development Environment
+├─ terragrunt.hcl ................Root Terragrunt Config
+├─ vpc/ ..........................AWS VPC (Network Infra)
+├─ services/ .....................Web Services (Service Infra)
+│  ├─ frontend-app/ ..............Frontend Application
+│  │  └─terragrunt.hcl ...........Application Terragrunt Config
+│  └─ backend-app/ ...............Backend Application
+│     ├─ terragrunt.hcl ..........Application Terragrunt Config
+│     ├─ variables.tf ............Input Variable Definitions
+│     ├─ dev.tfvars ..............Development Environment Variable Definitions
+│     ├─ main.tf .................Main Terraform Deployment Infrastructure Code
+│     └─ outputs.tf ..............Output Variable Definitions
+└─ data_storage/ .................Data Storage (Database Infra)
+   ├─ mysql/ .....................MySQL Database
+   └─ redis/ .....................Redis Database
+stage/ ...........................Stage Environment
+├─ vpc/ ..........................AWS VPC (Network Infra)
+├─ services/ .....................Web Services (Service Infra)
+│  ├─ frontend-app/ ..............Frontend Application
+│  └─ backend-app/ ...............Backend Application
+└─ data_storage/ .................Data Storage (Database Infra)
+   ├─ mysql/ .....................MySQL Database
+   └─ redis/ .....................Redis Database
+prod/ ............................Production Environment
+├─ vpc/ ..........................AWS VPC (Network Infra)
+├─ services/ .....................Web Services (Service Infra)
+│  ├─ frontend-app/ ..............Frontend Application
+│  └─ backend-app/ ...............Backend Application
+└─ data_storage/ .................Data Storage (Database Infra)
+   ├─ mysql/ .....................MySQL Database
+   └─ redis/ .....................Redis Database
+mgmt/ ............................Management Infrastructure
+├─ vpc/ ..........................AWS VPC (Network Infra)
+└─ services/ .....................Web Services (Service Infra)
+   └─ jenkins/ ...................Jenkins Server Infra
+global/ ..........................Global Infrastructure
+├─ iam/ ..........................AWS IAM (User Account Infra)
+└─ s3/ ...........................AWS S3 (Global Storage Infra)
+</pre>
+
+<p><strong>Note:</strong></p>
+<ul>
+<li>The above example is a general Terraform project layout. For a specific project, such as a Kubernetes application, not all folders are neccessary, but proper modularization should be enforced.</li>
+<li>Glue scripts should be avoided as much as possible, use Terragrunt instead.</li>
+</ul>
+<h2 id="the-module-repo">The Module Repo</h2>
+<p>The <strong><em>modules</em></strong> repo is optional according to the project size. When used, it must be a separate repo, because this repo should contain reusable, versioned terraform modules that might be referred to by multiple <strong><em>live</em></strong> repos.</p>
+<pre>
+modules/ .........................The Modules Folder
+└─ services/ .....................Web Service Modules
+   ├─ frontend-app/ ..............Frontend Module
+   │  ├─ README.md ...............Module Usage Examples
+   │  ├─ variables.tf ............Input Variable Definitions
+   │  ├─ main.tf .................Main Terraform Deployment Infrastructure Code
+   │  └─ outputs.tf ..............Output Variable Definitions
+   └─ backend-app/ ...............Backend Module
+      ├─ README.md ...............Module Usage Examples
+      ├─ variables.tf ............Input Variable Definitions
+      ├─ main.tf .................Main Terraform Deployment Infrastructure Code
+      └─ outputs.tf ..............Output Variable Definitions
+examples/ ........................Module Usage Examples
+└─ services/
+   ├─ frontend-app/ ..............Frontend Examples
+   └─ backend-app/ ...............Backend Examples
+test/ ............................Module Testing
+└─ services/
+   ├─ frontend-app/ ..............Frontend Module Testing
+   └─ backend-app/ ...............Backend Module Testing
+</pre>
+
+<ul>
+<li>Modules should be kept small, composable, testable, and releasable.</li>
+<li>Module examples folder should contain minimum viable examples to show how to use a corresponding module.</li>
+<li>Module testing folder should contain testing code written in any programming language that deploys an example and tests it, e.g. using <code>terratest</code> package in GoLang.</li>
+<li>Using <code>git tag</code> to release the module.</li>
+<li>Modules should NOT include default variable values. They should be inserted by the <strong><em>live</em></strong> repo (or from the <code>example</code> and <code>test</code> folder), similar to the idea of environment variables.</li>
+</ul>
+<p><strong>Note:</strong> For small projects, some parts of the above layout can be omitted.</p>
+<h2 id="file-splitting">File Splitting</h2>
+<p>Within each bottom folder, the Terraform-defined infrastructure should NOT be in one single file. It should be split into input variables, output variables, and main infrastructure as such:</p>
+<pre>
+├─ variables.tf ............Input Variable Definitions
+├─ main.tf .................Main Terraform Deployment Infrastructure Code
+└─ outputs.tf ..............Output Variable Definitions
+</pre>
+
+<p><code>*.tfvars</code> files are only used in the <strong><em>live</em></strong> repo to pass the values of variables.</p>
+<h2 id="notes">Notes</h2>
+<ol>
+<li>Not all situations are suitable to extract a <strong><em>modules</em></strong> repo, because a terraform module might <strong>NOT</strong> add any abstraction over the underneath resource. It might just act as a parameter passing role and adds complexity to the whole project.</li>
+<li>When using <strong><em>modules</em></strong> in the <strong><em>live</em></strong> repo, it is not restricted to only create <code>terragrunt.hcl</code> files. <code>*.tf</code> files might be needed. In other words, the <strong><em>live</em></strong> repo can have a mixture of modules and pure terraform files.</li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

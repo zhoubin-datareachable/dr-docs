@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="前端-ajax-请求规范文档">前端 Ajax 请求规范文档</h2>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">前端Ajax请求规范文档</span>
+    </div>
+</div>
+
+<h2 id="描述">描述</h2>
+<p>该文件是描述在前端项目中进行 Ajax 请求的规范，主要包括在做 Ajax 请求的过程中，如何进行请求，请求后 reducer 中的数据如何存放等一系列规范。</p>
+<h3 id="如何进行-ajax-请求">如何进行 Ajax 请求</h3>
+<p>在前端的项目中 Ajax 请求是必不可少的，公司使用第三方工具包 axios 来做为 Ajax 请求的工具，这样可以加速前端开发，统一请求的开发流程。</p>
+<h3 id="新建-domain-文件">新建 domain 文件</h3>
+<p>在项目中，我们需要把 Ajax 请求的 domain 封装到一个文件中，方便区分在不同环境下引入不同的 api 域名，该文件需要封装到<code>/src/Api/mainDomain.ts</code> 文件下。</p>
+<p>例如：</p>
+<pre><code class="language-javascript">let mainDomain = &quot;&quot;;
+if (process.env.NODE_ENV == &quot;production&quot;) {
+  mainDomain = &quot;https://productionMainDomain.net/api/v1&quot;;
+} else {
+  mainDomain = &quot;https://developmentMainDomain.net/api/v1&quot;;
+}
+
+export default mainDomain;
+</code></pre>
+<h3 id="新建-redirectdomain-文件">新建 redirectDomain 文件</h3>
+<p>在项目中，我们往往需要进行一些跳转的操作，而跳转的页面在开发环境和生产环境下是不同的，所以我们需要将所有跳转的域名封装到一个文件下，以便于后期维护和管理，该文件需要封装到<code>/src/Api/redirectDomain.ts</code> 文件下。</p>
+<p>例如：</p>
+<pre><code class="language-javascript">let redirectToSomePlace = &quot;&quot;; // redirect to company website
+if (process.env.NODE_ENV == &quot;production&quot;) {
+  redirectToSomePlace = &quot;http://productionDomain.com&quot;;
+} else {
+  redirectToSomePlace = &quot;http://developmentDomain.com&quot;;
+}
+
+export { redirectToSomePlace };
+</code></pre>
+<h3 id="新建-interceptors-文件">新建 interceptors 文件</h3>
+<p>在项目中往往需要用到拦截器来统一处理请求中的一系列问题，所以我们需要在新建一个<code>/src/Api/interceptors.ts</code> 文件来将所有的拦截逻辑写在里面。
+例如：</p>
+<pre><code class="language-javascript">import axios, { AxiosResponse, AxiosRequestConfig, AxiosError } from &quot;axios&quot;;
+import mainDomain from &quot;./mainDomain&quot;;
+
+// 创建axios实例
+const service = axios.create({
+  baseURL: mainDomain, // api base url
+  timeout: 10000, // request timeout
+});
+
+// request拦截器
+service.interceptors.request.use(
+  (config: AxiosRequestConfig) =&gt; {
+    //发送请求之前需要做些什么
+    return config;
+  },
+  (error: AxiosError) =&gt; {
+    //发送请求的一些错误处理
+    return error;
+  }
+);
+
+// response 拦截器
+service.interceptors.response.use(
+  (response: AxiosResponse) =&gt; {
+    //接收响应之前需要做些什么
+    return response;
+  },
+  (error: AxiosError) =&gt; {
+    //响应错误的一些处理
+    if (error.response) {
+      return error.response;
+    }
+  }
+);
+</code></pre>
+<h3 id="封装请求">封装请求</h3>
+<p>在完成上述步骤后，我们需要建立所有请求的详细文件，该文件的命名需要与<code>/src/store/moduleA </code>中的 <code>moduleA</code> 有相同的命名，即新建一个<code>/src/Api/moduleA.ts</code> 文件。
+例子：我需要对用户的用户名进行 check，则需要将所有的请求按照下列方式进行封装，同时由于后端返回的数据格式固定，我们也需要将 APIResponse 的 interface 进行封装并且导出</p>
+<pre><code class="language-javascript">import axios from &quot;./request&quot;;
+import { AxiosResponse } from &quot;axios&quot;;
+
+/**
+ * api response
+ */
+export interface APIResponse {
+  data: {
+    code: number,
+    message: string,
+    data?: { [key: string]: unknown },
+  };
+}
+
+/**
+ * check username
+ */
+export const checkUsername = (data: {
+  username: string,
+}): Promise&lt;AxiosResponse&gt; =&gt; {
+  return axios.request({
+    method: &quot;post&quot;,
+    url: `/register/check_availability`,
+    data,
+  });
+};
+</code></pre>
+<h2 id="使用规范">使用规范</h2>
+<p>在项目中，所有的 Ajax 异步请求都必须通过 redux-saga 这一中间件进行统一处理，即：所有的异步操作请求必须走<code>dispatch action</code> --&gt; <code>saga</code> --&gt; <code>reducer</code>这条路线，例如现在项目中需要验证用户名是否存在，我们需要在 reducer 的 initialState 中设置下列参数</p>
+<pre><code class="language-javascript">const initialState: types.InitialState = {
+  initState: {
+    //这部分的结构在开始相关任务前就会 outlook 里找到，不要进行其他的修改操作，所有的参数命名和类型都要与文档保持一致，数据的更新都在这里。
+  },
+  userNameCheckRequest: {
+    data: {}, //请添加注释描述定义,如果未被使用用 Null 来表示未被使用
+    message: &quot;&quot;, //请添加注释描述定义,如果未被使用用 Null 来表示未被使用
+    isLoading: false, //请添加注释描述定义,如果未被使用用 Null 来表示未被使用
+    status: false, //请添加注释描述定义,如果未被使用用 Null 来表示未被使用
+  },
+};
+</code></pre>
+<p>在上面的<code>userNameCheckRequest</code>中</p>
+<ul>
+<li><code>data</code>用来保存额外的数据，请不要将此部分当做 initState 来使用，只有在文档有额外说明时才需要使用。</li>
+<li><code>message</code>对本次请求的错误信息处理</li>
+<li><code>isLoading</code>代表着本次请求等待过程的变化，例如请求开始设为<code>true</code>，则 ui 展示等待的动画，请求结束后设置为 <code>false</code>，则等待动画消失</li>
+<li><code>status</code>代表着本次请求结束后，对于 ui 中一些状态的变化，例如在验证用户是否存在的时候，如果存在则设置<code>status</code>为 true,反之为 false，这样可以统一控制页面中一些 ui 变化</li>
+</ul>
+<p>以上的四个参数是必不可少的，但是在某些请求的过程中并不需要用到例如<code>status</code>或者<code>data</code>等数据，请将该参数进行保留，也就是说这些参数必须在这里，但是不一定会被使用到。</p>
+
+	</div>
+</body>
+</script>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="前端测试规范">前端测试规范</h1>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">前端测试规范</span>
+    </div>
+</div>
+
+<h1 id="描述">描述</h1>
+<p>该文档主要包含了如何在前端项目中书写测试代码，包括在哪里新建测试代码，测试代码的命名和测试代码规范。
+例如：
+如果想给<code>Header.tsx</code>写测试，则需要在<code>_test_/component</code> 下面新建一个<code>Header.test.tsx</code>测试文件。</p>
+<pre><code>ProjectSample/ .................... 项目
+├─ src/ ........................... 项目根目录
+│  └─ _test_ ...................... 项目测试目录
+│  │   ├─ Components/ ............. 项目公有组建测试目录
+└─ └─  └─ Header.test.tsx ......... Header组建测试文件
+</code></pre>
+<h1 id="测试文件命名">测试文件命名</h1>
+<ul>
+<li><p>测试 tsx 文件
+tsx 的测试文件的命名应该与所测试文件名相同，随后用 test 连接 tsx 后缀，例如，<code>Header.tsx</code>的测试文件应该命名为<code>Header.test.tsx</code>。</p>
+</li>
+<li><p>测试 ts 文件
+ts 的测试文件的命名应该与所测试文件名相同，随后用 test 连接 ts 后缀，例如，<code>configData.ts</code>的测试文件应该命名为<code>configData.test.ts</code>。</p>
+</li>
+</ul>
+<h1 id="测试工具">测试工具</h1>
+<p>项目中会使用<a href="https://jestjs.io/docs/en/getting-started">Jest</a>作为基本测试工具，但是在前端项目中，我们需要对 DOM 进行测试，对 DOM 测试则采用基于 Jest 的<a href="https://enzymejs.github.io/enzyme/docs/api/shallow.html">Enzyme</a>作为测试工具。</p>
+<h1 id="如何使用">如何使用</h1>
+<p>如果你从在 react 中写过测试，请点击下面的连接，阅读相关文档来学习如何写测试。</p>
+<ul>
+<li><a href="https://jestjs.io/docs/en/getting-started">Jest</a></li>
+<li><a href="https://enzymejs.github.io/enzyme/docs/api/shallow.html">Enzyme</a></li>
+</ul>
+<h1 id="什么文件需要写测试？">什么文件需要写测试？</h1>
+<p>由于开发进度的限制，<a href="https://en.wikipedia.org/wiki/Behavior-driven_development">BDD</a>测试会是目前测试方案的最佳选择。所有的前端开发人员需要在下列情况下书写 BDD 测试或者单元测试。</p>
+<ol>
+<li>如果用例进行开发，则必须写测试。</li>
+<li>如果开发的组建包含了业务逻辑，则需要写测试。</li>
+<li>如果开发的组建包含了用户交互，则需要写测试。</li>
+<li>如果开发的函数包含了 state 的变化，则需要写测试。</li>
+<li>如果写了 class， 则需要写测试。</li>
+</ol>
+<h1 id="什么样的测试为合格的测试">什么样的测试为合格的测试</h1>
+<p>每一个测试都有自己的测试 coverage。每次完成一个测试代码，可以通过运行<code>npm run coverage</code>来查看测试的 coverage 报告。代码测试的覆盖率将以 100%为目标，但在实际的 BDD 测试中却很难达到这一目标。所以我们降低来这一标准，代码测试的覆盖率至少达到 80%。</p>
+
+	</div>
+</body>
+</script>
+</html>

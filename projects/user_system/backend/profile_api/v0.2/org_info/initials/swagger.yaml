@@ -1,0 +1,1529 @@
+﻿openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: Profile Backend Project - Operations Of Organization
+  description: >-
+    这个文档主要展示了与组织相关操作的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://profile.dev.datareachable.net/api/v1/org/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [User Profile API Server](https://github.com/dataReachable/dr_Back_UserSystemProfile)
+  contact:
+    name: Backend Team
+    email: jiasehng.jing@datareachable.com
+
+servers:
+  - url: "https://profile.dev.datareachable.net/api/v1/org/"
+    description: Sydney Development Cluster
+
+paths:
+  /group/create:
+    post:
+      tags:
+        - 在组织中新建团队
+      summary: "创建新的talent groups"
+      description: "只有拥有owner or admin权限的用户才能创建新的talent groups, talent groups名应该在该organization中unique！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: "用户登陆包含四个参数，组织名，用户名，团队状态和团队名称"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_addOrganizationalTalentGroupBody"
+
+      responses:
+        "200":
+          description: "创建成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_addOrganizationalTalentGroupSuccess"
+        "400":
+          description: "由于各种原因导致的创建失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_ResourceAlreadyExist"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /group/existence:
+    post:
+      tags:
+        - 检查新建的团队名称是否已经存在
+      summary: "检测talent groups名字是否在organization中重复"
+      description: "检测团队名称是否在组织的团队内中已存在！"
+
+      requestBody:
+        required: true
+        description: "包含团队名和组织名"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_checkOrganizationalTalentGroupIsExistBody"
+
+      responses:
+        "200":
+          description: "检测成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_checkOrganizationalTalentGroupIsExistSuccess"
+        "400":
+          description: "由于各种原因导致的检测失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+                  - $ref: "#/components/schemas/Res_ResourceAlreadyExist"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /group/update/name:
+    put:
+      tags:
+        - 更新组织中的团队名称
+      summary: "用户更新团队名称"
+      description: "用户修改当前organization-group-name，只有有owner权限才能修改group！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        description: "包含组织名，旧的团队与最新团队名！"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_updategroup_nameBody"
+
+      responses:
+        "200":
+          description: "更新成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_updategroup_nameSuccess"
+        "400":
+          description: "由于各种原因导致的更新组织名称失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+                  - $ref: "#/components/schemas/Res_ResourceAlreadyExist"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /group/update/status:
+    put:
+      tags:
+        - "更新组织中团队的状态"
+      summary: "用户更新团队的状态"
+      description: "用户修改当前organization-group-status，只有有owner权限才能修改group！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        description: "包含组织名，和最新的团队状态！"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_updategroup_statusBody"
+
+      responses:
+        "200":
+          description: "更新成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_updategroup_statusSuccess"
+        "400":
+          description: "由于各种原因导致的更新组织状态失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+                  - $ref: "#/components/schemas/Res_ResourceAlreadyExist"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /group/member/delete:
+    delete:
+      tags:
+        - 删除团队中的成员
+      summary: "将group成员从group中移除"
+      description: "只有有owner or admin权限才能移除成员！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: "包含用户名，组织名，团队名，以及被删成员邮箱！"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_deleteOrganizationTalentGroupMemberBody"
+
+      responses:
+        "200":
+          description: "移除成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_deleteOrganizationTalentGroupMemberSuccess"
+        "400":
+          description: "由于各种原因导致的移除团队成员失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /member/delete:
+    delete:
+      tags:
+        - 删除组织中的成员
+      summary: "将组织成员从组织中移除"
+      description: "只有有owner or admin权限才能删除组员！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: "包含用户名，组织名和组织成员邮箱！"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_deleteOrganizationMemberBody"
+
+      responses:
+        "200":
+          description: "移除成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_deleteOrganizationMemberSuccess"
+        "400":
+          description: "由于各种原因导致的移除组织成员失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "403":
+          description: "用户没有权限执行该操作"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_DeniedPermission"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /info:
+    post:
+      tags:
+        - 获取组织的信息
+      summary: "获取组织的信息，当用户点击不同组织以后，可以展示组织中的对应信息"
+      description: "根据组织名获取自定义的组织信息！"
+
+      requestBody:
+        required: true
+        description: "包含用户名和组织名！"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_getOrganizationBody"
+
+      responses:
+        "200":
+          description: "获取成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_getOrganizationSuccess"
+        "400":
+          description: "由于各种原因导致的获取组织信息失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /member/update/role:
+    put:
+      tags:
+        - 更新组织成员的角色
+      summary: "修改组织成员的role，用户可以点击组织成员的roles下拉菜单来修改组织成员的role"
+      description: "roles: owner/admin/reviewer 只有有owner or admin权限才能修改成员role，同时admin无法修改拥有owner权限成员的权限！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: "包含用户名，组织名，组织成员邮箱地址以及最新的权限名"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_updateMembersRolesBody"
+
+      responses:
+        "200":
+          description: "修改成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_updateMembersRolesSuccess"
+        "400":
+          description: "由于各种原因导致的修改成员权限失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "403":
+          description: "用户没有权限执行该操作"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_DeniedPermission"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /update/status:
+    put:
+      tags:
+        - 更新组织的状态 [ private ↔ public ]
+      summary: "修改组织状态，组织状态有public和private两种！"
+      description: "只有有owner权限才能修改status状态！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: "包含用户名，组织名和修改的组织状态名！"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_updateOrganizationalStatusBody"
+
+      responses:
+        "200":
+          description: "修改成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_updateOrganizationalStatusSuccess"
+        "400":
+          description: "由于各种原因导致的修改组织状态失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /create:
+    post:
+      tags:
+        - 新建组织信息
+      summary: "用户新建组织信息"
+      description: "用户使用组织名称和状态两个参数创建组织，组织其他项均为默认值！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: "用户登陆包含三个参数，组织状态，名称和用户名"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_userAddOrganizationBody"
+
+      responses:
+        "200":
+          description: "创建成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_userAddOrganizationSuccess"
+        "400":
+          description: "由于各种原因导致的创建失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_ResourceAlreadyExist"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+
+  /member/leave:
+    delete:
+      tags:
+        - 用户退出组织
+      summary: "用户退出组织"
+      description: "用户根据组织名称和用户名执行退出组织操作！"
+
+      requestBody:
+        required: true
+        description: "包含用户名和组织名"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_userLeavingOrganizationBody"
+
+      responses:
+        "200":
+          description: "退出成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_userDeleteOrganizationSuccess"
+        "400":
+          description: "由于各种原因导致的退出组织失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+        "403":
+          description: "用户没有权限执行该操作"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_DeniedPermission"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /existence:
+    post:
+      tags:
+        - 检查组织是否存在
+      summary: "检测organization name是否存在"
+      description: "用户在创建organization的时候，需要确保organization的名称是否存在！"
+
+      requestBody:
+        required: true
+        description: "包含用户名和组织名"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_checkOrganizationExistenceBody"
+
+      responses:
+        "200":
+          description: "查重成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_checkOrganizationExistenceSuccess"
+        "400":
+          description: "由于各种原因导致的查重失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_ResourceAlreadyExist"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  #  /update/name:
+  #    put:
+  #      tags:
+  #        - 更新组织名称
+  #      summary: "用户更新组织名称"
+  #      description: "用户修改当前organization，只有有owner权限才能修改organization！"
+  #      parameters:
+  #        - name: DR-AUTH
+  #          in: header
+  #          required: true
+  #          description: The Json web token (JWT) issued by the backend in the entry page.
+  #          schema:
+  #            type: string
+  #
+  #      requestBody:
+  #        required: true
+  #        description: "包含组织名与最新组织名！"
+  #        content:
+  #          application/json:
+  #            schema:
+  #              $ref: "#/components/schemas/Req_updateorg_nameBody"
+  #
+  #      responses:
+  #        "200":
+  #          description: "更新成功"
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: "#/components/schemas/Res_updateorg_nameSuccess"
+  #        "400":
+  #          description: "由于各种原因导致的更新组织名称失败"
+  #          content:
+  #            application/json:
+  #              schema:
+  #                oneOf:
+  #                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+  #                  - $ref: "#/components/schemas/Res_ResourceAlreadyExist"
+  #                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+  #        "401":
+  #          description: Unauthorized.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                oneOf:
+  #                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+  #                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+
+  #        "500":
+  #          description: "服务器发生错误时的响应"
+  #          content:
+  #            application/json:
+  #              schema:
+  #                oneOf:
+  #                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /update/description:
+    put:
+      tags:
+        - 更新组织简介
+      summary: "修改organization description"
+      description: "用户在创建organization的时候，默认organization description为空，只有owner权限才能修改organization description！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        description: "包含组织最新简介和组织名"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_updateorg_descBody"
+
+      responses:
+        "200":
+          description: "更新成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_updateorg_descSuccess"
+        "400":
+          description: "由于各种原因导致的更新组织简介失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindOrganizationInfo"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_FailedWithServerError"
+
+  /update/logo:
+    post:
+      tags:
+        - 更新组织Logo
+      summary: 更新已存在的组织Logo
+      description: >-
+        只有有owner权限才能修改logo
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+        - name: org_name
+          in: query
+          required: true
+          description: 需要更改Logo的组织名称
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Req_updateorg_logoBody"
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_updateorg_logoSuccess"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_updateorg_logo_NoFileUploaded"
+                  - $ref: "#/components/schemas/Res_updateorg_logo_FileNotFound"
+                  - $ref: "#/components/schemas/Res_updateorg_logo_MultipleFiles"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_UserNotOwner"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AccessDenied_SessionTimeOut"
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+components:
+  schemas:
+    #参数部分----------------------------------------------------------------
+    # -------------------用户相关
+    user_name:
+      type: string
+      description: "用户名，名称唯一"
+
+    user_email:
+      type: string
+      description: "用户邮箱，唯一"
+
+    user_phone:
+      type: string
+      description: "用户电话号码"
+
+    userGender:
+      type: string
+      description: "用户性别"
+
+    userDOB:
+      type: string
+      description: "用户生日"
+
+    user_password:
+      type: number
+      description: "用户登录密码"
+
+    userAvatar:
+      type: string
+      description: "用户头像地址"
+
+    userProfileImage:
+      type: string
+      description: "用户头像图片"
+
+    # -------------------组织相关
+    org_status:
+      type: string
+      description: "组织状态：public/private"
+
+    org_dri:
+      type: string
+      description: "组织全局资源定位符"
+
+    org_name:
+      type: string
+      description: "组织名称"
+
+    org_desc:
+      type: number
+      description: "组织描述说明"
+
+    org_logo:
+      type: number
+      description: "组织的Logo"
+
+    # -------------------组织Contact相关
+    contactEmail:
+      type: number
+      description: "组织联系电邮"
+
+    contactPhone:
+      type: number
+      description: "组织联系电话"
+
+    # -------------------组织成员相关
+    memeber_name:
+      type: string
+      description: "组织成员姓名"
+
+    member_email:
+      type: string
+      description: "组织成员邮箱"
+
+    member_role:
+      type: string
+      description: "组织成员角色"
+
+    # -------------------组织团队相关
+    group_name:
+      type: number
+      description: "团队名称"
+
+    group_dri:
+      type: number
+      description: "团队的全局资源定位符"
+
+    group_status:
+      type: number
+      description: "团队状态"
+
+    # -------------------团队成员相关
+    member_name:
+      type: string
+      description: "团队成员姓名"
+
+    member_dri:
+      type: string
+      description: "成员的全局资源定位符"
+
+    member_avatar:
+      type: string
+      description: "团队成员头像地址"
+
+    # -------------------响应体相关
+    code:
+      type: number
+      description: "自定义响应码"
+
+    message:
+      type: number
+      description: "响应简要信息"
+
+    error:
+      type: string
+      description: "请求发生错误时的详细信息！"
+
+    orgData:
+      type: object
+      description: "响应体中的数据域"
+      properties:
+        org_status:
+          type: string
+          description: "组织状态，一般取值：public，private"
+        organizationMember:
+          type: array
+          description: "组织成员数组"
+          items:
+            properties:
+              name:
+                type: string
+                description: "组织成员姓名"
+                example: "张三"
+              email:
+                type: string
+                description: "组织成员邮箱"
+                example: "j_jiasheng@qq.com"
+              role:
+                type: string
+                description: "组织成员角色,一般可选的有三个：owner，admin，reviewer"
+                example: "owner"
+              avatar:
+                type: string
+                description: "组织成员头像地址"
+                example: "http://xxxxx.cn/photo.png"
+        org_logo:
+          type: string
+          description: "组织logo的图片地址"
+          example: "http://xxxxx.cn/logo.png"
+        talentGroups:
+          type: array
+          description: "组织团队数组"
+          items:
+            properties:
+              name:
+                type: string
+                description: "团队名称"
+                example: "xxx团队"
+              status:
+                type: string
+                description: "团队的状态，一般可选的值有：public和private"
+                example: "public"
+              members:
+                type: array
+                description: "团队成员数组"
+                items:
+                  properties:
+                    name:
+                      type: string
+                      description: "团队成员姓名"
+                      example: "李四"
+                    email:
+                      type: string
+                      description: "团队成员邮箱"
+                      example: "j_jiasheng@qq.com"
+                    avatar:
+                      type: string
+                      description: "团队成员头像地址"
+                      example: "http://xxxx.cn/photo.png"
+
+    #---------------------文件上传部分
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200000
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "Success!"
+
+    Req_updateorg_logoBody:
+      properties:
+        file:
+          type: object
+          required:
+            - "name"
+            - "files"
+          description: >-
+            Frontend must upload `one and only one` file as the user avatar. Multiple file uploads are rejected by the backend.
+            <br/>
+            The input field needs to have a `name` tag.
+            <br/>
+            The size of the avatar is limited to `10MB` by the backend.
+          properties:
+            name:
+              type: string
+            files:
+              type: array
+              minimum: 1
+              maximum: 1
+              items:
+                type: string
+                format: binary
+
+    Res_updateorg_logoSuccess:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200003, message: "Logo has been uploaded.", data: { url: "https://xxxx.aws.com" } }
+
+    Res_updateorg_logo_NoFileUploaded:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: No files were uploaded" }
+
+    Res_updateorg_logo_FileNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: Target input file name XXX NOT found" }
+
+    Res_updateorg_logo_MultipleFiles:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: Multiple files are uploaded under input file name XXX" }
+
+    Res_AccessDenied_UserNotOwner:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401002, message: "Unauthorized: User is not the organization owner!" }
+
+    Res_AccessDenied_JWTNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT not found in the header, access denied!" }
+
+    Res_AccessDenied_JWTValidationFailure:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT validation failed, access denied!" }
+
+    Res_AccessDenied_SessionTimeOut:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 403001, message: "Session time out, access denied!" }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: { code: 500000, message: "General error message", data: { error: "Details of the error goes here" } }
+
+    #定制化部分----------------------------------------------------------------
+
+    # -------------------请求体相关
+    # 创建新的talent groups请求体
+    Req_addOrganizationalTalentGroupBody:
+      required:
+        - "org_dri"
+        - "group_name"
+        - "group_status"
+      description: "用户新建组织时的请求体！"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_dri"
+        group_name:
+          $ref: "#/components/schemas/group_name"
+        group_status:
+          $ref: "#/components/schemas/group_status"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN", group_name: "特殊组织001", group_status: "private" }
+
+    # 检测talent groups名字是否在organization中重复请求体
+    Req_checkOrganizationalTalentGroupIsExistBody:
+      required:
+        - "org_dri"
+        - "group_name"
+      description: "用户删除组织请求体"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_dri"
+        group_name:
+          $ref: "#/components/schemas/group_name"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN", group_name: "travis" }
+
+    # 将组织成员从组织中移除请求体
+    Req_deleteOrganizationMemberBody:
+      required:
+        - "org_dri"
+        - "member_dri"
+      description: "用户删除组织请求体"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_dri"
+        member_dri:
+          $ref: "#/components/schemas/member_dri"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN", member_dri: "dri:acs::user/I3Q7cNxz5WS2l6xEp6_6E" }
+
+    # 将group成员从group中移除请求体
+    Req_deleteOrganizationTalentGroupMemberBody:
+      required:
+        - "group_dri"
+        - "member_dri"
+      description: "删除团队成员请求体"
+      type: object
+      properties:
+        group_dri:
+          $ref: "#/components/schemas/group_dri"
+        member_dri:
+          $ref: "#/components/schemas/member_dri"
+      example: { group_dri: "dri:acs::org:tg/yYL8JZYUkvdgonkzoo-XiIMmsu8", member_dri: "dri:acs::user/h0qT6xRU0LmjxeP6qdC_8" }
+
+    # 获取组织的信息请求体
+    Req_getOrganizationBody:
+      required:
+        - "org_dri"
+      description: "用户获取组织信息请求体"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_dri"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN" }
+
+    # 修改组织成员的role请求体
+    Req_updateMembersRolesBody:
+      required:
+        - "org_dri"
+        - "member_dri"
+        - "member_role"
+      description: "更新组织成员权限请求体"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_dri"
+        member_dri:
+          $ref: "#/components/schemas/member_dri"
+        member_role:
+          $ref: "#/components/schemas/member_role"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN", member_dri: "dri:acs::user/h0qT6xRU0LmjxeP6qdC_8", member_role: "owner" }
+
+    # 修改组织状态请求体
+    Req_updateOrganizationalStatusBody:
+      required:
+        - "org_dri"
+        - "org_status"
+      description: "更新组织状态请求体"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_name"
+        org_status:
+          $ref: "#/components/schemas/org_status"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN", org_status: "private" }
+
+    # 用户新建组织请求体
+    Req_userAddOrganizationBody:
+      required:
+        - "org_name"
+        - "org_status"
+      description: "用户新建组织时的请求体！"
+      type: object
+      properties:
+        org_name:
+          $ref: "#/components/schemas/org_name"
+        org_status:
+          $ref: "#/components/schemas/org_status"
+      example: { org_name: "数支团队", org_status: "public" }
+
+    # 用户退出组织请求体
+    Req_userLeavingOrganizationBody:
+      required:
+        - "org_dri"
+      description: "用户退出组织请求体"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_dri"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN" }
+
+    # 用户检测organization name是否存在请求体
+    Req_checkOrganizationExistenceBody:
+      required:
+        - "org_name"
+      description: "用户检测organization name是否存在请求体"
+      type: object
+      properties:
+        org_name:
+          $ref: "#/components/schemas/org_name"
+      example: { org_name: "阿里巴巴" }
+
+    # 用户修改organization group name请求体
+    Req_updategroup_nameBody:
+      required:
+        - "group_dri"
+        - "group_name"
+      description: "用户修改organization group name请求体"
+      type: object
+      properties:
+        group_dri:
+          type: string
+          description: "团队的全局资源定位符"
+          example: "dri:acs::org:tg/yYL8JZYUkvdgonkzoo-XiIMmsu8"
+        group_name:
+          type: string
+          description: "新的团队名称"
+          example: "new-group-name"
+
+    # 用户修改organization status请求体
+    Req_updategroup_statusBody:
+      required:
+        - "group_dri"
+        - "group_status"
+      description: "用户修改organization status请求体"
+      type: object
+      properties:
+        group_dri:
+          type: string
+          description: "团队的全局资源定位符"
+          example: "dri:acs::org:tg/yYL8JZYUkvdgonkzoo-XiIMmsu8"
+        group_status:
+          type: string
+          description: "新的团队状态"
+          example: "public"
+
+    # 用户修改organization description请求体
+    Req_updateorg_descBody:
+      required:
+        - "org_dri"
+        - "org_desc"
+      description: "用户修改organization description请求体"
+      type: object
+      properties:
+        org_dri:
+          $ref: "#/components/schemas/org_dri"
+        org_desc:
+          $ref: "#/components/schemas/org_desc"
+      example: { org_dri: "dri:acs::org/Sqb61rFpyfDRC-gWtN", org_desc: "这是一个更新的组织简介！" }
+
+    # -------------------成功响应相关
+    # 创建新的talent groups成功响应
+    Res_addOrganizationalTalentGroupSuccess:
+      description: "创建成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200108", message: "创建新的talent groups创建成功！" }
+
+    # 检测talent groups名字是否在organization中重复成功响应
+    Res_checkOrganizationalTalentGroupIsExistSuccess:
+      description: "用户检测团队名可用性成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200109", message: "不重复，可以使用！" }
+
+    # 将组织成员从组织中移除成功响应
+    Res_deleteOrganizationMemberSuccess:
+      description: "移除组织成员成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "组织成员移除成功！" }
+
+    # 将group成员从group中移除成功响应
+    Res_deleteOrganizationTalentGroupMemberSuccess:
+      description: "移除团队成员成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "移除团队成员成功！" }
+
+    # 获取组织的信息成功响应
+    Res_getOrganizationSuccess:
+      description: "获取组织信息成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          $ref: "#/components/schemas/orgData"
+      example:
+        {
+          code: "200110",
+          message: "组织信息如下成功！",
+          data:
+            {
+              "org_status": "private",
+              "organizationMember":
+                [
+                  {
+                    "name": "Jingjia.123",
+                    "email": "j_jiasheng@qq.com",
+                    "role": "owner",
+                    "avatar": "https://th.bing.com/th/id/OIP.v-elSvEOY5H2uAJXbFHSXwHaHY?w=177&h=180&c=7&o=5&pid=1.7",
+                  },
+                  {
+                    "name": "email-user",
+                    "email": "jiasheng.jing@datareachable.com",
+                    "role": "admin",
+                    "avatar": "https://th.bing.com/th/id/OIP.v-elSvEOY5H2uAJXbFHSXwHaHY?w=177&h=180&c=7&o=5&pid=1.7",
+                  },
+                  {
+                    "name": "dr-travis",
+                    "email": "j_jiasheng@163.com",
+                    "role": "admin",
+                    "avatar": "https://th.bing.com/th/id/OIP.v-elSvEOY5H2uAJXbFHSXwHaHY?w=177&h=180&c=7&o=5&pid=1.7",
+                  },
+                ],
+              "org_logo": "https://th.bing.com/th/id/OIP.v-elSvEOY5H2uAJXbFHSXwHaHY?w=177&h=180&c=7&o=5&pid=1.7",
+              "talentGroups":
+                [
+                  {
+                    "name": "井家胜的团队1",
+                    "status": "public",
+                    "members":
+                      [
+                        {
+                          "name": "email-user",
+                          "email": "jiasheng.jing@datareachable.com",
+                          "avatar": "https://th.bing.com/th/id/OIP.v-elSvEOY5H2uAJXbFHSXwHaHY?w=177&h=180&c=7&o=5&pid=1.7",
+                        },
+                      ],
+                  },
+                ],
+            },
+        }
+
+    # 修改组织成员的role成功响应
+    Res_updateMembersRolesSuccess:
+      description: "修改组织成员权限成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "权限修改成功成功！" }
+
+    # 修改组织状态成功响应
+    Res_updateOrganizationalStatusSuccess:
+      description: "修改组织状态成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "组织状态修改成功！" }
+
+    # 用户创建组织成功响应
+    Res_userAddOrganizationSuccess:
+      description: "创建成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200108", message: "组织：数支团队创建成功！" }
+
+    # 用户删除组织成功响应
+    Res_userDeleteOrganizationSuccess:
+      description: "用户删除组织成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200109", message: "组织：阿里巴巴删除成功！" }
+
+    # 用户删除组织成功响应
+    Res_userLeavingOrganizationSuccess:
+      description: "用户退出组织成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "退出组织：阿里巴巴成功！" }
+
+    # 用户检测organization name是否存在成功响应
+    Res_checkOrganizationExistenceSuccess:
+      description: "用户检测organization name是否存在成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "该组织名称阿里妈妈尚未被使用！可用于创建组织名！" }
+
+    # 用户修改organization name成功响应
+    Res_updateorg_nameSuccess:
+      description: "用户修改organization name成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "更新组织：阿里巴巴名称成功！" }
+
+    # 用户修改organization name成功响应
+    Res_updategroup_nameSuccess:
+      description: "用户修改group name成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "更新组织：阿里巴巴的团队：后端开发001名称成功！" }
+
+    # 用户修改organization status成功响应
+    Res_updategroup_statusSuccess:
+      description: "用户修改group status成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "更新组织：阿里巴巴的团队：后端开发001权限成功！" }
+
+    # 用户修改organization description成功响应
+    Res_updateorg_descSuccess:
+      description: "用户修改organization description成功响应体！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "200110", message: "更新组织简介成功！" }
+
+    # ----------------------------------------------服务器拒绝响应
+    # 权限不足
+    Res_DeniedPermission:
+      description: "用户权限不足，无法执行操作！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "403101", message: "请检查是否有权限执行此操作！" }
+
+
+    # ----------------------------------------------服务器异常相关
+
+    # 创建新的talent groups时服务器异常响应
+    Res_FailedWithServerError:
+      description: "服务器异常！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            error:
+              $ref: "#/components/schemas/error"
+      example: { code: "500108", message: "服务器发生未知错误！", data: { error: "错误详情：xxx" } }
+
+    # ------------------------------------------------失败响应相关
+    # 缺少必要参数
+    Res_MissingRequireParameters:
+      description: "缺少必要参数！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "400100", message: "请检查必要参数是否传入！" }
+
+
+    # 未获取到相关组织信息导致操作失败
+    Res_CannotFindOrganizationInfo:
+      description: "相关组织信息获取不存在，导致请求失败！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "400103", message: "未获取到组织相关信息，请检查传入组织名是否正确！" }
+
+    # 资源重复导致新建失败
+    Res_ResourceAlreadyExist:
+      description: "资源已存在重复！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "400104", message: "新创建资源已存在！" }

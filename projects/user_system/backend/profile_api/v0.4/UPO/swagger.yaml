@@ -1,0 +1,2983 @@
+﻿openapi: 3.0.3
+
+info:
+  version: v2.0
+  title: 本文档展示最新版本profile- organization API请求规范文档
+  description: >-
+    <br><HR>
+    **项目服务器访问域名&根目录:** https://profile.dev.datareachable.net
+    <br><HR>
+    **Github项目地址:** [User Profile API Server](https://github.com/dataReachable/dr_Back_UserSystemProfile)
+    <br><HR>
+  contact:
+    name: Backend Team
+    email: jiasehng.jing@datareachable.com
+
+servers:
+  - url: "https://profile.dev.datareachable.net/"
+    description: 公网调用地址
+  - url: "http://192.168.2.48:3001/"
+    description: 内网调用地址
+
+tags:
+  - name: Complete
+    description: Already complate api document
+  - name: Developing
+    description: Wiriting api document on process
+
+paths:
+
+  /api/v2/organization/create:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00001) —— [新建 organization]"
+      description:  正常登录用户执行 organization 创建！
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - 当一个 organization 被创建的时候，创建者会被赋予 新建 organization 的 'owner' role。且成为第一个 member。
+          <br>
+          - 当一个 organization 被创建的时候，一个名为 'default-group' 的 talent_group 必须被创建出来。
+          <br>
+          - 'default-group' talent_group 必须将创建者本人加为第一个 talent_group 的 成员。
+          <br>
+          - 当一个 organization 被创建的时候，必须确认没有重名的 organization 已经被创建出来了。
+          <br>
+          - 当一个 organization 被创建的时候，必须确保提交的 organization 的名字没有 前缀 和 后缀 的 空格 space 以及 没有两个或以上的 空格是连在一起的。
+          <br>
+          - 当一个 organization 被创建的时候，创建者的email 和 mobile 会被复制到 新建 organization，作为 新建 organization 的 email 和 phone。"
+          <HR style="color:red">
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_name"
+                - "organization_status"
+              type: object
+              properties:
+                organization_name:
+                  $ref: "#/components/schemas/organization_name"
+                organization_status:
+                  $ref: "#/components/schemas/organization_status"
+              example: { organization_name: "Kuangtu.zhangsan", organization_status: "private" }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 创建 organization 成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      organization_dri:
+                        $ref: "#/components/schemas/organization_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Create organization successfully",
+                  "data": {
+                    "succeeded": true,
+                    "organization_dri": "dri:acs::org/67Tu7vkB0721eoE0o3"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/get_one:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00002) —— [获取 organization 的详细信息]"
+      description: 对于请求该 API 的人必须是 oranization 的一个成员
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+          返回的members 必须是payload.organization_dri 的 organization 的 成员。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+              example: {
+                "organization_dri":"dri:acs::org/67Tu7vkB0721eoE0o3"
+              }
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization 信息成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      organization:
+                        type: object
+                        properties:
+                          organization_id:
+                            $ref: "#/components/schemas/organization_id"
+                          organization_dri:
+                            $ref: "#/components/schemas/organization_dri"
+                          organization_name:
+                            $ref: "#/components/schemas/organization_name"
+                          organization_status:
+                            $ref: "#/components/schemas/organization_status"
+                          organization_logo_url:
+                            $ref: "#/components/schemas/organization_logo"
+                          organization_email:
+                            $ref: "#/components/schemas/organization_email"
+                          organization_phone:
+                            $ref: "#/components/schemas/organization_phone"
+                          organization_description:
+                            $ref: "#/components/schemas/organization_description"
+                          organization_created_at:
+                            type: string
+                            description: organization 的创建时间
+                          organization_updated_at:
+                            type: string
+                            description: organization 的信息更新时间
+                          organization_members:
+                            type: array
+                            items:
+                              properties:
+                                dri:
+                                  $ref: "#/components/schemas/user_dri"
+                                name:
+                                  $ref: "#/components/schemas/user_name"
+                                email:
+                                  $ref: "#/components/schemas/user_email"
+                                mobile:
+                                  $ref: "#/components/schemas/user_mobile"
+                                avatar_image_url:
+                                  $ref: "#/components/schemas/user_avatar"
+                                role_in_the_organization:
+                                  $ref: "#/components/schemas/role"
+                          organization_talent_groups:
+                            type: array
+                            description: organization 的 talent 列表
+                            items:
+                              properties:
+                                dri:
+                                  $ref: "#/components/schemas/talent_group_dri"
+                                name:
+                                  $ref: "#/components/schemas/talent_group_name"
+                                status:
+                                  $ref: "#/components/schemas/talent_group_status"
+                                members:
+                                  type: array
+                                  description: talent group 的成员列表
+                                  items:
+                                    properties:
+                                      user_dri:
+                                        $ref: "#/components/schemas/user_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Get organization details successfully",
+                  "data": {
+                    "organization": {
+                      "organization_id": "67Tu7vkB0721eoE0o3",
+                      "organization_dri": "dri:acs::org/67Tu7vkB0721eoE0o3",
+                      "organization_name": "rinigege",
+                      "organization_status": "public",
+                      "organization_logo_url": null,
+                      "organization_email": null,
+                      "organization_phone": {
+                        "number": "422360725",
+                        "country": "61"
+                      },
+                      "organization_description": "",
+                      "organization_created_at": "2021-09-28T09:16:59.174Z",
+                      "organization_updated_at": "2021-09-28T09:16:59.174Z",
+                      "organization_members": [
+                        {
+                          "dri": "dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h",
+                          "name": "JiashengJing.123",
+                          "email": null,
+                          "mobile": {
+                            "number": "422360725",
+                            "country": "61"
+                          },
+                          "avatar_image_url": null,
+                          "role_in_the_organization": "owner"
+                        }
+                      ],
+                      "organization_talent_groups": [
+                        {
+                          "dri": "dri:acs::org:tg/67Tu7vkB0721eoE0o3-spGaoSsV",
+                          "name": "default-group",
+                          "status": "public",
+                          "members": [
+                            {
+                              "user_dri": "dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/status/update:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00003) —— [改变 organization 的 status]"
+      description: 对于请求该 API 的人必须是 oranization 的 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+            - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner。
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "organization_status"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                organization_status:
+                  $ref: "#/components/schemas/organization_status"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "organization_status": "private"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 更新 organization status 成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      organization_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/organization_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Update organization status successfully",
+                  "data": {
+                    "succeeded": true,
+                    "organization_to_be_refreshed_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/members/role/update:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00004) —— [更新 organization 的一个 member 的角色(role)信息]"
+      description: 对于请求该 API 的人必须是 oranization 的一个 admin 或者 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner 或 admin。
+          <br>
+          * reviewer 无法 使用此 API。
+          <br>
+          * admin 不得 对 owner 的 role 进行修改。返回信息' You do not have authority to change this user's role. '。
+          <br>
+          * owner 不能改变他自己的default organization 的 自己的 owner role。举例：user 'Mic123' 不能把自己在 'Mic123' organization 下的 role 改变。
+          <br>
+          * owner 不能改变其他 owner 的 role。
+          <br>
+          * 当 owner 要将自己 从 owner 变为 admin 或 reviewer 的时候, 后端需要检查 organization 目前是否只有一个 owner。 如果是的话，操作不可进行。并返回信息' An organization must have at least 1 owner.'。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "member_dri"
+                - "change_to"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                member_dri:
+                  $ref: "#/components/schemas/user_dri"
+                change_to:
+                  $ref: "#/components/schemas/role"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "member_dri": "dri:acs::user/uAjzeEGwW_ugo7do8r8VV",
+                "change_to": "admin"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 更新 organization member 的 role 成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      user_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/user_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Update organization member's role successfully",
+                  "data": {
+                    "succeeded": true,
+                    "user_to_be_refreshed_dri": "dri:acs::user/uAjzeEGwW_ugo7do8r8VV"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403200"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/members/remove:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00005) —— [移除 organization 的一个 member]"
+      description: 对于请求该 API 的人必须是 oranization 的一个 owner 或者 admin
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner 或 admin。
+          <br>
+          * reviewer 无法 使用此 API。
+          <br>
+          * owner 不能移除 其他 owner。
+          <br>
+          * admin 不能移除 owner。返回信息' You do not have authority to remove this user. '。
+          <br>
+          * owner 和 admin 无法 将自己 从 organization 移除。返回信息' You can not remove yourself.'。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "member_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                member_dri:
+                  $ref: "#/components/schemas/user_dri"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "member_dri":"dri:acs::user/uAjzeEGwW_ugo7do8r8VV"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization 信息成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      user_dri:
+                        $ref: "#/components/schemas/user_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Removed organization member successfully!",
+                  "data": {
+                    "succeeded": true,
+                    "user_dri": "dri:acs::user/uAjzeEGwW_ugo7do8r8VV"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitation/create/user_name:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00006) —— [邀请 organization 新 member - 发送邀请]"
+      description: 对于请求该 API 的人必须是 oranization 的一个 owner 或者 admin
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner 或 admin。
+          <br>
+          *  payload. user_name，如果在系统中没有找到 此 user, 操作失败，返回error+信息' There is no such user in the system. '。
+          <br>
+          *  payload. member_role: 如果没有提供，默认设为 'reviewer'。
+          <br>
+          *  payload. talent_group_dri: 如果没有提供，默认加入 'default-group'。
+          <br>
+          *  当 获邀者同意加入后，在任何情况下都需要被加入organization 的 'default-group'。
+          <br>
+          *  admin 只能邀请user 以 'reviewer'(3) 的 Role 加入。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "user_name"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                user_name:
+                  $ref: "#/components/schemas/user_name"
+                member_role:
+                  $ref: "#/components/schemas/role"
+                talent_group_dri:
+                  $ref: "#/components/schemas/talent_group_dri"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "user_name": "limengming.swife",
+                "member_role": "admin"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization 信息成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      member_to_be:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            description: inviatation status
+                            example: pending
+                          record_dri:
+                            type: string
+                            description: invitation 的全局资源定位符
+                            example: dri:acs::invt/Sqb61rFpyfDRC-gWtN
+                          user_dri:
+                            type: string
+                            description: 被邀请用户的 全局资源定位符
+                            example: dri:acs::user/uAjzeEGwW_ugo7do8r8VV
+                          organization_dri:
+                            $ref: "#/components/schemas/organization_dri"
+                          talent_group_dri:
+                            $ref: "#/components/schemas/talent_group_dri"
+                          member_role:
+                            $ref: "#/components/schemas/role"
+                example: {
+                  "code":200100,
+                  "message":"Invite message delivered successfully!",
+                  "data":{
+                    "member_to_be":{
+                      "status":"pending",
+                      "record_dri":"dri:acs:invt/DyjOtRnTYhm-j",
+                      "user_dri":"dri:acs::user/pBmq1kKqD72Grk-EXT1JV",
+                      "organization_dri":"dri:acs::org/6oogno85c8lBTYwFLP",
+                      "talent_group_dri":"dri:acs::org:tg/6oogno85c8lBTYwFLP-k7WPhBcC",
+                      "member_role":"reviewer"
+                    }
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitation/create/user_email:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00007) —— [邀请 organization 新 member - 发送邀请]"
+      description: 对于请求该 API 的人必须是 oranization 的一个 owner 或者 admin
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner 或 admin。
+          <br>
+          *  payload. email_send_to，发送链接到此邮箱。
+          <br>
+          *  payload. member_role: 如果没有提供，默认设为 'reviewer'。
+          <br>
+          *  payload. talent_group_dri: 如果没有提供，默认加入 'default-group'。
+          <br>
+          *  当 获邀者同意加入后，在任何情况下都需要被加入organization 的 'default-group'。
+          <br>
+          *  admin 只能发送 以 'reviewer'(3) 的 Role 加入 organization。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "email_send_to"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                email_send_to:
+                  $ref: "#/components/schemas/user_email"
+                member_role:
+                  $ref: "#/components/schemas/role"
+                talent_group_dri:
+                  $ref: "#/components/schemas/talent_group_dri"
+              example: {
+                "organization_dri": "dri:acs::org/EwzkdpI2kPfxiinox8",
+                "member_role": "reviewer",
+                "email_send_to": "j_jiasheng@162.com"
+              }
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization 信息成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      member_to_be:
+                        type: object
+                        properties:
+                          status:
+                            $ref: "#/components/schemas/invt_status"
+                          record_dri:
+                            $ref: "#/components/schemas/invt_dri"
+                          email_send_to:
+                            $ref: "#/components/schemas/user_email"
+                          organization_dri:
+                            $ref: "#/components/schemas/organization_dri"
+                          talent_group_dri:
+                            $ref: "#/components/schemas/talent_group_dri"
+                          member_role:
+                            $ref: "#/components/schemas/role"
+                example: {
+                  "code":200100,
+                  "message":"Invite message delivered successfully!",
+                  "data":{
+                    "member_to_be":{
+                      "status":"pending",
+                      "record_dri":"dri:acs:invt/zAvP-eEJwzeS7",
+                      "email_send_to":"j_jiasheng@162.com",
+                      "organization_dri":"dri:acs::org/EwzkdpI2kPfxiinox8",
+                      "talent_group_dri":"dri:acs::org:tg/EwzkdpI2kPfxiinox8-_CWAqAcz",
+                      "member_role":"reviewer"
+                    }
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/members/get_one:
+    post:
+      tags:
+        - Complete
+      summary: "(UPTG00008) —— [获取 organization 下的一个 member 的具体信息]"
+      description: 返回的members 必须是payload.organization_dri 的 organization 的 成员。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+          返回的members 必须是payload.organization_dri 的 organization 的 成员。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "user_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                user_dri:
+                  $ref: "#/components/schemas/user_dri"
+              example: {
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "user_dri": "dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization member 成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      user_dri:
+                        $ref: "#/components/schemas/user_dri"
+                      user_name:
+                        $ref: "#/components/schemas/user_name"
+                      email:
+                        $ref: "#/components/schemas/user_email"
+                      mobile:
+                        $ref: "#/components/schemas/user_mobile"
+                      role_in_the_organization:
+                        $ref: "#/components/schemas/role"
+                      user_avatar_image_url:
+                        $ref: "#/components/schemas/user_avatar"
+                example: {
+                  "code": 200100,
+                  "message": "get organization member successfully",
+                  "data": {
+                    "user_dri": "dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h",
+                    "user_name": "JiashengJing.123",
+                    "email": null,
+                    "mobile": {
+                      "number": "422360725",
+                      "country": "61"
+                    },
+                    "user_avatar_image_url": "https://xxxxx.xxxx/xxx.jpeg",
+                    "role_in_the_organization": "owner"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/members/get_group:
+    post:
+      tags:
+        - Complete
+      summary: "(UPTG00009) —— [获取 organization 下的一组 member 的详细信息]"
+      description: 返回的members 必须是payload.organization_dri 的 organization 的 成员。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+          返回的members 必须是payload.organization_dri 的 organization 的 成员。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "user_dris"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                user_dris:
+                  type: array
+                  description: organization 的 member 的全局资源定位符数组
+                  items:
+                    $ref: "#/components/schemas/user_dri"
+              example: {
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "user_dris": ["dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h"]
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization member 组成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          properties:
+                            user_dri:
+                              $ref: "#/components/schemas/user_dri"
+                            user_name:
+                              $ref: "#/components/schemas/user_name"
+                            email:
+                              $ref: "#/components/schemas/user_email"
+                            mobile:
+                              $ref: "#/components/schemas/user_mobile"
+                            user_avatar_image_url:
+                              $ref: "#/components/schemas/user_avatar"
+                            role_in_the_organization:
+                              $ref: "#/components/schemas/role"
+                example: {
+                  "code": 200100,
+                  "message": "get organization members successfully",
+                  "data": {
+                    "users": [
+                      {
+                        "user_dri": "dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h",
+                        "user_name": "JiashengJing.123",
+                        "email": null,
+                        "mobile": {
+                          "number": "422360725",
+                          "country": "61"
+                        },
+                        "user_avatar_image_url": null,
+                        "role_in_the_organization": "owner"
+                      }
+                    ]
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/name/existence/check:
+    post:
+      tags:
+        - Complete
+      summary: "(UPTG00010) —— [检查 organization name 是否存在系统之中]"
+      description: 根据 organization name 检查 organoization 是否存在系统之中。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 系统中的一个有效user。
+          <br>
+          * payload. organization_name 为需要检查的 name。
+          <br>
+          * payload. organization_name 不能为空。
+          <br>
+          * 因为当创建一个user的时候，会同时产生一个同名的organization, 所以。此API也需要检查是否存在一个 与 payload. organization_name 重名的 user, 如果有的话，也必须返回 existed = true。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_name"
+              type: object
+              properties:
+                organization_name:
+                  $ref: "#/components/schemas/organization_name"
+              example: {organization_name: "aaa"}
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 检查 organization name 是否存在成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      existed:
+                        type: boolean
+                        description: 被检查的组织存在标识
+                example: {
+                  "code":200100,
+                  "message":"check organization name existence successfully!",
+                  "data":{
+                    "existed":false
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/description/update:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00011) —— [更新 organization 的 description ]"
+      description: 对于请求该 API 的人必须是 oranization 的 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner。
+          <br>
+          * payload. description_change_to 可为 ''(empty string), 但不可为Null 或 undefined。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "description_change_to"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                description_change_to:
+                  $ref: "#/components/schemas/organization_description"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "description_change_to": "This is test desc"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 更新 organization description 成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      organization_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/organization_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Update organization description successfully",
+                  "data": {
+                    "succeeded": true,
+                    "organization_to_be_refreshed_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/contact/update/send/verification_code:
+    post:
+      deprecated: true
+      tags:
+        - Complete
+      summary: "(UPO00012) —— [更新 organization 的 contact —— 发送验证码 ]"
+      description: 对于请求该 API 的人必须是 oranization 的 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner。
+          <br>
+          *  payload. type: 可以为 'email' 或 'mobile', 必填项 。
+          <br>
+          * payload. email: 如果 payload. type 为 'email', 此项必填。
+          <br>
+          * payload. mobile .country: 如果 payload. type 为 'mobile', 此项必填。
+          <br>
+          * payload. mobile .number: 如果 payload. type 为 'mobile', 此项必填。
+          <br>
+          * 注: 请求发送后, 后端会向email 或 mobile 发送 verification code。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "type"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                type:
+                  type: string
+                  description: organization 需要更新的域可选：mobile/email
+                email:
+                  $ref: "#/components/schemas/organization_email"
+                mobile:
+                  $ref: "#/components/schemas/organization_phone"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "type": "email",
+                "email": "jiasheng.jing@datareachable.com"
+              }
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization contact update 验证码成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      expiry_time:
+                        type: number
+                        description: 验证码的剩余的过期时间[单位：秒]
+                    example: {
+                      "expiry_time": 599
+                    }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/contact/update/verify/verification_code:
+    post:
+      deprecated: true
+      tags:
+        - Complete
+      summary: "(UPO00013) —— [更新 organization 的 contact —— 验证验证码并执行更新 ]"
+      description: 对于请求该 API 的人必须是 oranization 的 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner。
+          <br>
+          *  payload. type: 可以为 'email' 或 'mobile', 必填项 。
+          <br>
+          * payload. email: 如果 payload. type 为 'email', 此项必填。
+          <br>
+          * payload. mobile .country: 如果 payload. type 为 'mobile', 此项必填。
+          <br>
+          * payload. mobile .number: 如果 payload. type 为 'mobile', 此项必填。
+          <br>
+          * payload. code: 此项必填。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "type"
+                - "code"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                type:
+                  type: string
+                  description: organization 需要更新的域可选：mobile/email
+                  example: email
+                email:
+                  $ref: "#/components/schemas/organization_email"
+                mobile:
+                  $ref: "#/components/schemas/organization_phone"
+                code:
+                  type: string
+                  description: 验证码
+              example: {
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "type":"email",
+                "email":"jiasheng.jing@datareachable.com",
+                "code":313267
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 更新 organization contact 成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      organization_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/organization_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Update organization Contact successfully",
+                  "data": {
+                    "succeeded": true,
+                    "organization_to_be_refreshed_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitations/of/invitee/get_50_counts:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00014) —— [用户获取被发送的前 50 条邀请]"
+      description: 用户处于登录的 profile 应用中
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取邀请记录成功相应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      invitation_records:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            status:
+                              $ref: "#/components/schemas/invt_status"
+                            record_dri:
+                              $ref: "#/components/schemas/invt_dri"
+                            organization_dri:
+                              $ref: "#/components/schemas/organization_dri"
+                            organization_name:
+                              $ref: "#/components/schemas/organization_name"
+                            invitation_time:
+                              type: string
+                              description: 邀请创建的时间
+                example: {
+                  "code": 200100,
+                  "message": "get invitee 50 invitations successfully!",
+                  "data": {
+                    "invitation_records": [
+                      {
+                        "status": "accepted",
+                        "record_dri": "dri:acs:invt/xtCiWfWf4WIDS",
+                        "organization_dri": "dri:acs::org/PuqnMsT2e6seUPrECl",
+                        "organization_name": "AAA.bbb",
+                        "invitation_time": "2021-09-02T04:40:37.802Z"
+                      }
+                    ]
+                  }
+                }
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitations/of/organization/get_200_counts:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00015) —— [获取 organization 的前200条邀请记录 ]"
+      description: 对于请求该 API 的人必须是 oranization 的 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner。
+          <br>
+          * 一次性返回200条 record， 如果有200 条 以上记录，200条以上的不予返回， 如果数据不到200条，就返回全部。
+          <br>
+          * 返回的200条从最新的开始，以时间降序来排列。
+          <br>
+          * 基于以上要求，后端查找时，保证最新的record（基于update_time）永远会被返回。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+              example: {
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization 发出的邀请记录成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      invitation_records:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            status:
+                              $ref: "#/components/schemas/invt_status"
+                            record_dri:
+                              $ref: "#/components/schemas/invt_dri"
+                            invitee_dri:
+                              $ref: "#/components/schemas/user_dri"
+                            invitee_name:
+                              $ref: "#/components/schemas/user_name"
+                            invitee_email:
+                              $ref: "#/components/schemas/user_email"
+                            invitee_mobile:
+                              $ref: "#/components/schemas/user_mobile"
+                            invitation_time:
+                              type: string
+                              description: 邀请创建的时间
+                            how_many_invitation_sent:
+                              $ref: "#/components/schemas/invt_time"
+                            join_talent_group_dri:
+                              $ref: "#/components/schemas/talent_group_dri"
+                            join_role:
+                              $ref: "#/components/schemas/role"
+                example: {
+                  "code": 200100,
+                  "message": "get organization 200 invitations successfully!",
+                  "data": {
+                    "invitation_records": [
+                      {
+                        "status": "pending",
+                        "record_dri": "dri:acs:invt/_djBzooDHqSVw",
+                        "invitee_dri": null,
+                        "invitee_name": null,
+                        "invitee_email": "j_jiasheng@162.com",
+                        "invitee_mobile": null,
+                        "invitation_time": "2021-09-28T09:31:05.242Z",
+                        "updated_time": "2021-09-28T09:31:05.242Z",
+                        "join_talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg--n6GWRan",
+                        "join_role": "admin"
+                      },
+                      {
+                        "status": "pending",
+                        "record_dri": "dri:acs:invt/N5ikfSUMustA5",
+                        "invitee_dri": "dri:acs::user/eUyZiTLD72meXPVC76Alp",
+                        "invitee_name": "limengming.swife",
+                        "invitee_email": "j_jiasheng@123.com",
+                        "invitee_mobile": null,
+                        "invitation_time": "2021-09-28T09:24:38.687Z",
+                        "updated_time": "2021-09-28T09:24:38.687Z",
+                        "join_talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg--n6GWRan",
+                        "join_role": "admin"
+                      },
+                      {
+                        "status": "pending",
+                        "record_dri": "dri:acs:invt/nFhCxSqAZPmGj",
+                        "invitee_dri": "dri:acs::user/aquyAydK7MrvyPoRBEbFX",
+                        "invitee_name": "Changyuswife",
+                        "invitee_email": "monica.li@datareachable.com",
+                        "invitee_mobile": null,
+                        "invitation_time": "2021-09-28T09:24:16.027Z",
+                        "updated_time": "2021-09-28T09:24:16.027Z",
+                        "join_talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg--n6GWRan",
+                        "join_role": "admin"
+                      }
+                    ]
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitations/organization/re_invite/invitee:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00016) —— [organization 重新对一个用户执行邀请]"
+      description: 对于请求该 API 的人必须是 oranization 的 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner。
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "record_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                record_dri:
+                  $ref: "#/components/schemas/invt_dri"
+              example: {
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "record_dri":"dri:acs:invt/Ayk7GlTGADJZ6"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 重新邀请用户成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      record_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/invt_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Invite message delivered again successfully!",
+                  "data": {
+                    "succeeded": true,
+                    "record_to_be_refreshed_dri": "dri:acs:invt/Ayk7GlTGADJZ6"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitations/organization/cancel_invite/invitee:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00017) —— [organization 取消对一个用户的邀请]"
+      description: 对于请求该 API 的人必须是 oranization 的 owner
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          *  发请求的 user ( 通过DR-AUTH 获得 user 信息 ) 必须是 record 中 的 发送邀请 organization 的 owner。
+          <br>
+          * 只能对处于 pending 状态的 record 进行 cancel 操作。
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "record_dri"
+              type: object
+              properties:
+                record_dri:
+                  $ref: "#/components/schemas/invt_dri"
+              example: {record_dri: "dri:acs:invt/6IlV4P_PnSaTg"}
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 取消邀请用户成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      record_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/invt_dri"
+                example: {
+                  "code":200100,
+                  "message":"Cancel a invite successfully!",
+                  "data":{
+                    "succeeded":true,
+                    "record_to_be_refreshed_dri":"dri:acs:invt/6IlV4P_PnSaTg"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitations/invitee/refuse_invite/organization:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00018) —— [用户拒绝一个 organization 的邀请]"
+      description: 对于请求该 API 的人必须是处于登录状态
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 invitation record (  payload. record_dri ) 中 的 被邀请者。
+          <br>
+          * 只能对于'pending'状态的 record 进行 refuse操作。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "record_dri"
+              type: object
+              properties:
+                record_dri:
+                  $ref: "#/components/schemas/invt_dri"
+              example: {
+                "record_dri": "dri:acs:invt/7nFEUOAcS76k9"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户拒绝邀请成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      record_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/invt_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Refuse a invite successfully!",
+                  "data": {
+                    "succeeded": true,
+                    "record_to_be_refreshed_dri": "dri:acs:invt/xtCiWfWf4WIDS"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/invitations/invitee/accept_invite/organization:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00019) —— [用户接受一个 organization 的邀请]"
+      description: 对于请求该 API 的人必须是处于登录状态
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 invitation record (  payload. record_dri ) 中 的 被邀请者。
+          <br>
+          * 只能对于'pending'状态的 record 进行 accept 操作。
+          <br>
+          * 后端需要先检查 user 是否已经加入了 organization, 如果已经加入了 organization， 本次操作不可执行，且返回 error message ‘you already joined the organization’ 且返回的 code 要 特别设置，以便前端识别。
+          <br>
+          * 如果已经加入了 organization，对于这条邀请 需要将 invitation 标记为 'canceled'。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "record_dri"
+              type: object
+              properties:
+                record_dri:
+                  $ref: "#/components/schemas/invt_dri"
+              example: {
+                 "record_dri": "dri:acs:invt/7nFEUOAcS76k9"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户接受邀请成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                      record_to_be_refreshed_dri:
+                        $ref: "#/components/schemas/invt_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Accept a invite successfully!",
+                  "data": {
+                    "succeeded": true,
+                    "record_to_be_refreshed_dri": "dri:acs:invt/xtCiWfWf4WIDS"
+                  }
+                }
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/default_organization/get:
+    get:
+      tags:
+        - Complete
+      summary: "(UPO00020) —— [用户获取 default organization]"
+      description:  用户获取 default organization ， 如果用户之前设置过 default organization 则直接查询获取， 如果用户之前并未设置 default organization ,则使用用户下的与用户的同名 organization 作为用户的 default organization.
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: 获取用户的 default organization dri 成功
+          content:
+            application/json:
+              schema:
+                description: 用户接受邀请成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      organization_dri:
+                        $ref: "#/components/schemas/organization_dri"
+                example: {
+                  "code": 200100,
+                  "message": "Get User Default Organization Successfully!",
+                  "data": {
+                    "organization_dri": "dri:acs::org/6gCReA_9CPHalWzBqW"
+                  }
+                }
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/default_organization/set:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00021) —— [用户设置一个 default organization ]"
+      description: >-
+        用户执行一个设置自己 default organization 的操作，需要验证用户是否是目标组织的成员，
+        并且设置时未设置重复检查, 用户可重复设置相同的 organization
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 前端需要提供用户要设置的目标 organization 的 dri
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+              example: {
+                "organization_dri" : "dri:acs::org/6gCReA_9CPHalWzBqW"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户成功设置 default organization
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                example: {
+                  "code": 200100,
+                  "message": "Set User Default Organization Successfully!"
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/leave:
+    delete:
+      tags:
+        - Complete
+      summary: "[用户退出 organization ](UPO00022)"
+      description: >-
+        用户退出一个所在的 organization ，要求用户不能是 organization 的 owner，
+        需要在用户退出后清除用户在这个 organization 中的所有的信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 用户想要退出的目标 organization
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+              example: {
+                "organization_dri" : "dri:acs::org/6gCReA_9CPHalWzBqW"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户成功设置 default organization
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    properties:
+                      succeeded:
+                        type: boolean
+                        description: If the user actually has withdrawn from organization
+                example: {
+                  "code": 200100,
+                  "message": "Quit Organization successfully!",
+                  "data":{
+                    "succeeded": true
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403300"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/logo/update:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00023) —— [用户更新一个 organization 的 LOGO ]"
+      description: >-
+        用户执行更新自己管理的 organization logo 的操作，用户需要位于当前 organization 的 owner 用户组的一个成员
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要更新的最新的 organization 的 logo 图片文件
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - "organization_dri"
+                - "logo"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                logo:
+                  type: string
+                  format: binary
+                  description: this is file binary code
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户成功更新 organization 的 LOGO
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  date:
+                    type: object
+                    properties:
+                      url:
+                        $ref: "#/components/schemas/organization_logo"
+                example: {
+                  "code": 200100,
+                  "message": "Organization logo has been uploaded",
+                  "data": {
+                    "url": "https://org-avatar-bucket.s3-ap-southeast-2.amazonaws.com/organization_logo/wgy9w1Qhj26B3ZFzzg"
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/contact/update/send/auth_code:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00024) —— [更新 organization 的联系方式 —— 验证身份 —— 发送授权码]"
+      description: >-
+        用户在执行更新 organization 的联系方式之前需要先向旧的 email[因为用户必定会存在email，所以organization一定也会存在可用的email] 发送验证邮件来验证用户的身份
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要知道用户修改的目标 organization 以及 用户操作的设备指纹识别码（session_code）
+        content:
+          application/json:
+            schema:
+              required:
+                - "session_code"
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                session_code:
+                  $ref: "#/components/schemas/session_code"
+              example: {
+                "session_code":"3641e223-efe7-4d42-b67a-3cfb2f0a8b77",
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户成功更新 organization 的 LOGO
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  date:
+                    type: object
+                    properties:
+                      expiry_time:
+                        type: number
+                        description: Captcha remaining expiration time
+                example: {
+                  "code": 200100,
+                  "message": "Send authorization code successfully!",
+                  "data": {
+                    "expiry": 599
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/contact/update/verify/auth_code:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00025) —— [更新 organization 的联系方式 —— 验证身份 —— 验证授权码]"
+      description: >-
+        用户在正式更新自己的信息之前还需要验证一下用户的授权码是否正确
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要传入获取授权码的时候的所有信息，另加上用户邮箱收到的授权码
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "session_code"
+                - "authorization_code"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                session_code:
+                  $ref: "#/components/schemas/session_code"
+                authorization_code:
+                  $ref: "#/components/schemas/code"
+              example: {
+                "session_code":"3641e223-efe7-4d42-b67a-3cfb2f0a8b77",
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "authorization_code":"488268"
+              }
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户身份验证成功
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  date:
+                    type: object
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                example: {
+                  "code": 200100,
+                  "message": "Verify authorization code successfully !",
+                  "data": {
+                    "succeeded": true
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/email/update/send/verification_code:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00026) —— [更新 organization 的邮箱 —— 检查新邮箱可用性 —— 发送验证码]"
+      description: >-
+        用户在执行完身份验证之后可以对 organization 的新邮箱执行有效性验证，本API将对新邮箱执行发送验证码的操作
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要 organization 的 dri 在后台判断新旧邮箱是否冲突，并对新邮箱发送验证码
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "session_code"
+                - "email"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                session_code:
+                  $ref: "#/components/schemas/session_code"
+                email:
+                  $ref: "#/components/schemas/organization_email"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "email": "jiasheng.jin@datareachable.com",
+                "session_code":"3641e223-efe7-4d42-b67a-3cfb2f0a8b77"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 成功向新邮箱发送验证码
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  date:
+                    type: object
+                    properties:
+                      expiry_time:
+                        type: number
+                        description: "当前验证码的剩余有效时间"
+                example: {
+                  "code": 200100,
+                  "message": "Send verification code successfully!",
+                  "data": {
+                    "expiry": 60
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/mobile/update/send/verification_code:
+    post:
+      tags:
+        - Complete
+      summary: "(UPO00027) —— [更新 organization 的电话 —— 检查新电话可用性 —— 发送验证码]"
+      description: >-
+        用户在验证完自己的身份之后，就可以对 organization 的电话进行修改， 为确保新电话的可用性，由本api 向新电话发送一条短信来验证电话的可用性
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要更新的最新的 organization 的 logo 图片文件
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "logo"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                session_code:
+                  $ref: "#/components/schemas/session_code"
+                mobile:
+                  $ref: "#/components/schemas/organization_phone"
+              example: {
+                "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "session_code": "3641e223-efe7-4d42-b67a-3cfb2f0a8b77",
+                "mobile":{
+                  "country":"61",
+                  "number":"422360726"
+                }
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 后台成功向 organization 的新电话发送验证码
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  date:
+                    type: object
+                    properties:
+                      expiry_time:
+                        type: number
+                        description: "验证码的剩余过期时间"
+                example: {
+                  "code": 200100,
+                  "message": "Send verification code successfully!",
+                  "data": {
+                    "expiry": 60
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/email/verity_update:
+    put:
+      tags:
+        - Complete
+      summary: "(UPO00028) —— [更新 organization 的邮箱 —— 检查新邮箱可用性 —— 验证验证码并执行邮箱更新]"
+      description: >-
+        用户在获取到授权码以及新邮箱的验证码之后就可以在执行新邮箱验证码验证程序的过程中顺便对 organization 的邮箱执行更新
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要用户之前获取到的授权码，新邮箱的验证码，设备的识别码， organization 的 dri
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "session_code"
+                - "email"
+                - "authorization_code"
+                - "code"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                session_code:
+                  $ref: "#/components/schemas/session_code"
+                email:
+                  $ref: "#/components/schemas/organization_email"
+                authorization_code:
+                  $ref: "#/components/schemas/verification_code"
+                code:
+                  $ref: "#/components/schemas/verification_code"
+              example: {
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "session_code":"3641e223-efe7-4d42-b67a-3cfb2f0a8b77",
+                "email":"jiasheng.jin@datareachable.com",
+                "authorization_code":"488268",
+                "code":"502221"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 用户成功验证新邮箱并更新 organization 的 email
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  date:
+                    type: object
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                example: {
+                  "code": 200100,
+                  "message": "Update organization email successfully!",
+                  "data": {
+                    "succeeded": true
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/organization/mobile/verity_update:
+    put:
+      tags:
+        - Complete
+      summary: "(UPO00029) —— [更新 organization 的电话 —— 检查新电话可用性 —— 验证验证码并执行电话更新]"
+      description: >-
+        用户在获取到授权码以及新电话的验证码之后就可以在执行新电话验证码验证程序的过程中顺便对 organization 的电话执行更新
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要用户之前获取到的授权码，新电话的验证码，设备的识别码， organization 的 dri
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "session_code"
+                - "authorization_code"
+                - "mobile"
+                - "code"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+                session_code:
+                  $ref: "#/components/schemas/session_code"
+                authorization_code:
+                  $ref: "#/components/schemas/verification_code"
+                mobile:
+                  $ref: "#/components/schemas/organization_phone"
+                code:
+                  $ref: "#/components/schemas/verification_code"
+              example: {
+                "organization_dri":"dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                "session_code":"3641e223-efe7-4d42-b67a-3cfb2f0a8b77",
+                "authorization_code":"531189",
+                "mobile":{
+                  "country":"61",
+                  "number":"422360726"
+                },
+                "code":"010190"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 成功验证新电话的有效性并执行 organization 的电话更新
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  date:
+                    type: object
+                    properties:
+                      succeeded:
+                        $ref: "#/components/schemas/succeeded"
+                example: {
+                  "code": 200100,
+                  "message": "Update organization mobile successfully!",
+                  "data": {
+                    "succeeded": true
+                  }
+                }
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_403100"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+
+components:
+  schemas:
+    code:
+      type: string
+      description: 平台自定义的请求响应码 6 位 number 组成
+    verification_code:
+      type: string
+      description: 后台随机生成的6位验证码/授权码
+    session_code:
+      type: string
+      description: 前端用户操作的时候传入的设备识别码，用于防止多设备验证
+    succeeded:
+      type: boolean
+      description: 前端请求涉及到 update data 的时候需要返回的响应字段， 代表着 update 的结果， false 代表更新失败， true 代表更新成功.
+    message:
+      type: string
+      description: 后端对请求响应结果的简要信息.
+    organization_id:
+      type: string
+      description: organization 的 18 位 uuid
+    organization_dri:
+      type: string
+      description: organization 的全局资源定位符
+    organization_name:
+      type: string
+      description: organization 的名称，全局唯一且不能包含特殊字符(.?!除外)
+    organization_email:
+      type: string
+      description: organization 的联系方式u之一——邮箱，初始邮箱一般都是该 organization 的创建者的邮箱，后期支持更改！
+    organization_phone:
+      type: object
+      description: organization 的联系方式之一——电话
+      properties:
+        country:
+          type: number
+          description: 电话号码前的国家代码 例如中国[86]
+        number:
+          type: string
+          description: 电话号码后的号码段
+    organization_description:
+      type: string
+      description: organization 的简介，用于对 organization 进行简要的说明与介绍的文字性内容
+    organization_status:
+      type: string
+      description: organization 的状态值，可选的有 private 和 public， 当为 private 的时候，该 organization 对外显示信息不可见， public 则对外可见，可被搜索到.
+    organization_logo:
+      type: string
+      description: 一个可以被直接加载出来的 organization 的 LOGO AWS网络图片的地址
+    talent_group_name:
+      type: string
+      description: talent_group 的名称， 不能包含特殊字符(.?!除外)，并且需要在同一个 organization 内部不重复
+    talent_group_dri:
+      type: string
+      description: talent_group 的全局资源定位符， uuid 部分包含和其所在的 organization 的 uuid 并追加 6 位私有的 uuid
+    talent_group_status:
+      type: string
+      description: talent_group 的状态描述， 可选值为 private 和 public ，同样，这个状态也标志着本 talent_group 在某些情景下的对外可见情况
+    user_dri:
+      type: string
+      description: system user 的全局资源定位符
+    user_name:
+      type: string
+      description: system user 的名称,在系统中需要全局唯一，并且不能包含特殊字符(.?!除外)，是登录系统凭据的一部分
+    user_password:
+      type: string
+      description: system user 的登录密码， 目前仅仅用作与 user_name 搭配登录系统使用，且需要包含部分特殊字符等强校验规则，用于确保密码强度，在数据库中对密码进行加密(存储密文)保护用户信息
+    user_gender:
+      type: string
+      description: system user 的性别，目前未作设定，尚待确认
+    user_birthday:
+      type: string
+      description: system user 的生日，为日期格式字符串，目前尚未作出相关规范
+    user_email:
+      type: string
+      description: system user 的邮箱地址，默认为用户在系统中首次注册的时候使用的邮箱，此项在后续的系统中一定会存在，并且支持用户后期更改
+    user_mobile:
+      type: string
+      description: system user 的联系方式之一——电话，该项在用户注册的时候不属于强制补全项， 属于用户的后期补充项，可以为 null.
+    user_avatar:
+      type: string
+      description: system user 的头像， 当用户上传头像到aws之后，用户的头像可加载的网络图片地址，在用户没有上传头像之前默认为 null ，由前端根据 organization name 使用组建生成字母头像.
+    invt_dri:
+      type: string
+      description: 邀请记录的全局资源定位符
+    role:
+      type: string
+      description: system user 相对于 organization 来说，用户所处的用户组(旧时称角色)
+    invt_time:
+      type: string
+      description: 一条邀请记录被重复触发邀请的次数(可以理解为用户被重复邀请的次数)
+    invt_status:
+      type: string
+      description: 一条邀请记录的状态，针对于邀请方和被邀请方两个角度可选值：canceled/accepted/pending/refused
+    #=======================
+    res_400100:
+      description: "获取 organization descriptions 参数错误响应"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example:
+        {
+          code: 400100,
+          message: "xxx 是必填字段，不可为空！"
+        }
+
+    res_403100:
+      description: 当前 API 仅支持 organization 的 owner 操作
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 403100,
+        message: "The current operation only supports owner"
+      }
+
+    res_403200:
+      description: 当前 API 仅支持 organization 的 owner 操作
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 403200,
+        message: "The current operation only supports owner or admin"
+      }
+
+    res_403300:
+      description: 当前 API 仅支持 organization 的 member 操作
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 403300,
+        message: "The Current User Does Not Belong To The Organization!"
+      }
+
+  responses:
+    res_500:
+      description: 服务器发生错误时的响应
+      content:
+        application/json:
+          schema:
+            type: object
+            description: 错误响应体
+            properties:
+              code:
+                $ref: "#/components/schemas/code"
+              message:
+                $ref: "#/components/schemas/message"
+            example: {
+              code: 500100,
+              message: "Something Was Wrong On Server!"
+            }
+
+    res_401:
+      description: 无法验证用户导致的错误响应
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                example: {
+                  code: 401100,
+                  message: "JWT not found in the header, access denied!"
+                }
+              - type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                example: {
+                  code: 401100,
+                  message: "JWT validation failed, access denied!"
+                }

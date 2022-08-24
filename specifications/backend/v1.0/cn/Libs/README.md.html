@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="规定使用的库（在需要时）">规定使用的库（在需要时）</h2>
+<p>本文档列出了要求使用的库列表来完成某个功能。并不需要在每一个项目中使用这里所有的库，但是，当需要完成相关的功能时，这些推荐库是必须被使用的。</p>
+<p>**注意:**我们欢迎任何对于此列表的建议。如果你发现此列表中的库存在bug或其他问题，或者你有更好的替代库推荐，请第一时间提出。</p>
+<h2 id="⚠️-重要通告">⚠️ 重要通告</h2>
+<p>下面列表中的版本号在实际的项目中会更新。本文档中的版本号可能无法实时更新到相关依赖的最新版本。</p>
+<h2 id="列表">列表</h2>
+<h3 id="1-运行时">1. 运行时</h3>
+<table>
+<thead>
+<tr>
+<th align="left">库名称</th>
+<th align="center">版本号</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://nodejs.org/en/">NodeJS</a></td>
+<td align="center">v14</td>
+<td align="center">请检查<a href="https://node.green/">Javascript支持的功能</a></td>
+</tr>
+</tbody></table>
+<h3 id="2-依赖">2. 依赖</h3>
+<table>
+<thead>
+<tr>
+<th align="left">库名称</th>
+<th align="center">版本号</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://expressjs.com">express</a></td>
+<td align="center">v4</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/luin/ioredis">ioredis</a></td>
+<td align="center">v4</td>
+<td align="center">Redis分片集群<strong>只能</strong>使用ioredis库作为驱动来链接</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/mongodb/node-mongodb-native">mongodb</a></td>
+<td align="center">v3</td>
+<td align="center">MongoDB NodeJS 原生驱动是最高效的驱动</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/helmetjs/helmet">helmet</a></td>
+<td align="center">v4</td>
+<td align="center">通过设置HTTP头来保护ExpressJS应用</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/expressjs/cors">cors</a></td>
+<td align="center">v2</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/expressjs/body-parser">body-parser</a></td>
+<td align="center">v1</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/expressjs/morgan">morgan</a></td>
+<td align="center">v1</td>
+<td align="center">HTTP请求日志记录中间件</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/motdotla/dotenv">dotenv</a></td>
+<td align="center">v8</td>
+<td align="center">载入环境变量</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/motdotla/dotenv-expand">dotenv-expand</a></td>
+<td align="center">v5</td>
+<td align="center"><code>dotenv</code>的包装库，来提供更好的环境变量载入功能</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/kelektiv/node.bcrypt.js">bcrypt</a></td>
+<td align="center">v5</td>
+<td align="center">密码哈希</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/ai/nanoid">nanoid</a></td>
+<td align="center">v3</td>
+<td align="center">JavaScript的唯一ID生成器，比uuid更小更快</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/jshttp/http-errors">http-errors</a></td>
+<td align="center">v1</td>
+<td align="center">为ExpressJS应用构造HTTP错误</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/sideway/joi">joi</a></td>
+<td align="center">v17</td>
+<td align="center">基于JavaScript的数据模式描述以及数据校验库</td>
+</tr>
+</tbody></table>
+<h3 id="3-开发环境的依赖库">3. 开发环境的依赖库</h3>
+<p>一般的：进程管理器，单元测试，和语言风格检查等。</p>
+<table>
+<thead>
+<tr>
+<th align="left">库名称</th>
+<th align="center">版本号</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://github.com/Unitech/pm2">pm2</a></td>
+<td align="center">v4</td>
+<td align="center">内置负载均衡器的NodeJS应用的进程管理器</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/facebook/jest">jest</a></td>
+<td align="center">v26</td>
+<td align="center">NodeJS单元测试框架</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/eslint/eslint">eslint</a></td>
+<td align="center">v7</td>
+<td align="center">代码语言检查</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/ratherblue/eslint-html-reporter">eslint-html-reporter</a></td>
+<td align="center">v0</td>
+<td align="center">ESLint生成HTML报告的样式包</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/entropitor/dotenv-cli">dotenv-cli</a></td>
+<td align="center">v4</td>
+<td align="center">Dotenv的配套命令行工具 (用于载入环境变量)</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/elijahmanor/cross-var">cross-var</a></td>
+<td align="center">v1</td>
+<td align="center">跨平台环境变量表达式</td>
+</tr>
+</tbody></table>
+<hr>
+<p>TypeScript相关：</p>
+<p>安装<code>@types/&lt;package name&gt;</code>来获取已有的JavaScript写的NPM包的类型信息。</p>
+<ul>
+<li>@types/node</li>
+<li>@types/express</li>
+<li>@types/mongodb</li>
+<li>@types/morgan</li>
+<li>@types/cors</li>
+<li>@types/jest</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">库名称</th>
+<th align="center">版本号</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://github.com/Microsoft/TypeScript">typescript</a></td>
+<td align="center">v4</td>
+<td align="center">TypeScript 编译器</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/TypeStrong/typedoc">typedoc</a></td>
+<td align="center">v0</td>
+<td align="center">从TS-Doc格式的注释中生成文档的工具TypeDoc</td>
+</tr>
+</tbody></table>
+<hr>
+<p>Babel 相关：</p>
+<p>这里，使用Babel的主要用途是：使用ESLint检查JavaScript最新实验性的语法，以及在生产环境中压缩代码。（注意：Babel不止这些功能，此处仅仅代表我们用到的功能）</p>
+<table>
+<thead>
+<tr>
+<th align="left">库名称</th>
+<th align="center">版本号</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/core</a></td>
+<td align="center">&gt;=v7.2.0</td>
+<td align="center"><code>@babel/eslint-parser</code>库依赖（Babel核心）</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/cli</a></td>
+<td align="center">v7</td>
+<td align="center">Babel命令行工具</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel/tree/main/eslint/babel-eslint-parser">@babel/eslint-parser</a></td>
+<td align="center">v7</td>
+<td align="center">Babel ESLint解释器来支持JS最新的实验性语法</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/eslint-plugin</a></td>
+<td align="center">v7</td>
+<td align="center"><code>@babel/eslint-parser</code> 伴随的ESLint规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/preset-env</a></td>
+<td align="center">v7</td>
+<td align="center">Babel的通用预设的转换插件集</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/preset-typescript</a></td>
+<td align="center">v7</td>
+<td align="center">Babel的TypeScript预设的转化插件集</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/minify/tree/master/packages/babel-preset-minify">babel-preset-minify</a></td>
+<td align="center">v0</td>
+<td align="center">最小化代码</td>
+</tr>
+</tbody></table>
+<p>ESLint 相关：</p>
+<table>
+<thead>
+<tr>
+<th align="left">库名称</th>
+<th align="center">版本号</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://github.com/typescript-eslint/typescript-eslint">@typescript-eslint/parser</a></td>
+<td align="center">v4</td>
+<td align="center">TypeScript ESLint 解释器</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin">@typescript-eslint/eslint-plugin</a></td>
+<td align="center"></td>
+<td align="center">TypeScript 的ESLint通用规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/ratherblue/eslint-html-reporter">eslint-html-reporter</a></td>
+<td align="center"></td>
+<td align="center">生成ESLint的HTML报告</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/mysticatea/eslint-plugin-eslint-comments">eslint-plugin-eslint-comments</a></td>
+<td align="center"></td>
+<td align="center">ESLint注释的规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/benmosher/eslint-plugin-import">eslint-plugin-import</a></td>
+<td align="center">v2</td>
+<td align="center">ESLint的ES6+ import/export 语法相关规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/xjamundx/eslint-plugin-promise">eslint-plugin-promise</a></td>
+<td align="center"></td>
+<td align="center">ESLint的Promise规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/sindresorhus/eslint-plugin-unicorn">eslint-plugin-unicorn</a></td>
+<td align="center"></td>
+<td align="center">ESLint附加规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/jest-community/eslint-plugin-jest">eslint-plugin-jest</a></td>
+<td align="center">v24</td>
+<td align="center">ESLint Jest规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/dangreenisrael/eslint-plugin-jest-formatting">eslint-plugin-jest-formatting</a></td>
+<td align="center"></td>
+<td align="center">ESLint Jest代码风格规则</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/microsoft/tsdoc/tree/master/eslint-plugin">eslint-plugin-tsdoc</a></td>
+<td align="center"></td>
+<td align="center">ESLint TS-Doc规则</td>
+</tr>
+</tbody></table>
+
+	</div>
+</body>
+</script>
+</html>

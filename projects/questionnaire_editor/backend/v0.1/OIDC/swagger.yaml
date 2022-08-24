@@ -1,0 +1,510 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: QEditor Backend Project - OIDC APIs
+  description: >-
+    OIDC APIs, 包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://qeditor.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [QEditor API Server](https://github.com/dataReachable/dr_Back_QuestionnaireEditor)
+  contact:
+    name: Backend Team
+    email: mengming.li@datareachable.com
+
+servers:
+  - url: "https://qeditor.dev.datareachable.net/"
+    description: Sydney Development Cluster
+
+paths:
+  /entry:
+    get:
+      summary: (QEditor Main) 重定向到首屏
+      description: 主应用的重定向到首屏 API, 会将浏览器重定向到 OP 的登录页面, 登录后则再重定向到首屏
+      responses:
+        "302":
+          description: 将用户重定向到 OP 的登录页面
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /db_entry:
+    get:
+      summary: (QEditor Dashboard) 重定向到首屏
+      description: dashboard 的重定向到首屏 API, 会将浏览器重定向到 OP 的登录页面, 登录后则再重定向到首屏
+      responses:
+        "302":
+          description: 将用户重定向到 OP 的登录页面
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/entry/info:
+    post:
+      summary: (QEditor Main) 首屏获取 JWT 和用户信息
+      description: 主应用的首屏加载 API, OP 将浏览器重定向到首页后会附带 code 和 session_state, 使用这两个参数从这个 API 获取 jwt 和 user information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - session_state
+              example:
+                {
+                    "code": "DLdAx3BXqKIWS36GWmCWGad3Al2HyI_AeL8YuMVKvzJ",
+                    "session_state": "zk9sZus-8b1FP3nv5REHpR3QE4r8d5Lf6bxVNQfWzLs"
+                }
+              properties:
+                code:
+                  type: string
+                  description: OP 重定向到首屏时携带的参数, 在地址栏中
+                session_state:
+                  type: string
+                  description: OP 重定向到首屏时携带的参数, 在地址栏中
+      responses:
+        "200":
+          description: 获取 JWT 和用户信息成功
+          headers:
+            DR-AUTH:
+              description: 后端返回的 Json Web Token (JWT), 后续需要验证登录状态的 API 请求都要携带此 Token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_EntryInfo_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_EntryInfo_400001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/entry/db_info:
+    post:
+      summary: (QEditor Dashboard) 首屏获取 JWT 和用户信息
+      description: dashboard 的首屏加载 API, OP 将浏览器重定向到首页后会附带 code 和 session_state, 使用这两个参数从这个 API 获取 jwt 和 user information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - session_state
+              example:
+                {
+                    "code": "DLdAx3BXqKIWS36GWmCWGad3Al2HyI_AeL8YuMVKvzJ",
+                    "session_state": "zk9sZus-8b1FP3nv5REHpR3QE4r8d5Lf6bxVNQfWzLs"
+                }
+              properties:
+                code:
+                  type: string
+                  description: OP 重定向到首屏时携带的参数, 在地址栏中
+                session_state:
+                  type: string
+                  description: OP 重定向到首屏时携带的参数, 在地址栏中
+      responses:
+        "200":
+          description: 获取 JWT 和用户信息成功
+          headers:
+            DR-AUTH:
+              description: 后端返回的 Json Web Token (JWT), 后续需要验证登录状态的 API 请求都要携带此 Token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_EntryInfo_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_EntryInfo_400001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/session/logout:
+    get:
+      summary: (QEditor Main) 用户主动登出
+      description: 主应用中, 当用户在前端点击登出时, 应该将用户重定向到这个 URL, 登出成功后会再次将用户重定向到另一个预先设置好的页面
+      responses:
+        "302":
+          description: 登出成功时, 重定向到在 OP 注册客户端时设置好的 URL
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/session/db_logout:
+    get:
+      summary: (QEditor Dashboard) 用户主动登出
+      description: dashboard 中, 当用户在前端点击登出时, 应该将用户重定向到这个 URL, 登出成功后会再次将用户重定向到另一个预先设置好的页面
+      responses:
+        "302":
+          description: 登出成功时, 重定向到在 OP 注册客户端时设置好的 URL
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/info:
+    get:
+      summary: 获取用户信息
+      description: 用户登录后获取用户信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 成功获取用户信息
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GetUserInfo_200001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/session/status:
+    post:
+      summary: 检查用户登录会话是否过期
+      description: 检查用户登录会话是否过期, 没有过期时会返回 200
+      responses:
+        "200":
+          description: User session not expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_SessionCheck_200002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  schemas:
+    Res_Email:
+      type: string
+      description: User provided email address. If not provided, the field is `null`.
+      example: "xxxx@datareachable.com"
+
+    Res_Mobile:
+      type: object
+      description: User provided mobile number. If not provided, the field is `null`.
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        number:
+          type: string
+          description: The actual mobile number of the user.
+      example: { "country": "61", "number": "1234567890" }
+
+    Res_Generic:
+      type: object
+      description: 成功响应的通用部分
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "对响应的一段简短的描述"
+
+    Res_AuthenticationFailed:
+      type: object
+      description: 用户未登录或者登录过期的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示 jwt 不存在或者已经过期"
+      example:
+        {
+            "code": 401001,
+            "message": "Cannot get JWT in request, unauthorized access."
+        }
+
+    Res_GenericInternalError:
+      type: object
+      description: 服务器内部错误的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "发生错误时的简短提示"
+        data:
+          type: object
+          description: 错误响应携带的数据
+          properties:
+            error:
+              description: 错误的详细信息
+              type: string
+      example:
+        {
+          "code": 500001,
+          "message": "[xxxx Controller]: An unknown error occurred, please check",
+          "data":
+            {
+              "error": "Details of the error goes here"
+            }
+        }
+
+    Res_MissingOrWrongParameters:
+      type: object
+      description: 参数错误或缺失时的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示参数错误或参数缺失"
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example:
+        {
+          "code": 405000,
+          "message": "You're using the completely wrong HTTP method!"
+        }
+
+    Res_UnauthorizedOperation:
+      type: object
+      description: 未授权的操作
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: 提示操作没有被授权
+      example:
+        {
+            "code": 403001,
+            "message": "Unauthorized operation"
+        }
+
+    Res_EntryInfo_200001:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                userinfo:
+                  required:
+                    - "sub"
+                    - "name"
+                  type: object
+                  properties:
+                    sub:
+                      type: string
+                      description: >-
+                        User universally unique id.
+                        <br/>
+                        **Must** be returned and contain value.
+                      example: "xxxxxxxxx-yyyyy_zzzzz"
+                    name:
+                      type: string
+                      description: >-
+                        User name.
+                        <br/>
+                        **Must** be returned and contain value.
+                      example: "John Doe"
+                    email:
+                      $ref: "#/components/schemas/Res_Email"
+                    mobile:
+                      $ref: "#/components/schemas/Res_Mobile"
+                    birthday:
+                      type: string
+                      format: date
+                      description: User birthday
+                      example: "1970-01-01"
+                    gender:
+                      type: string
+                      description: User gender
+                      example: "male"
+                    avatar:
+                      type: string
+                      description: User avatar public-readable URL
+                      example: "https://xxxxxx.aws.com"
+                project_list:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                        description: project 的统一定位符
+                        example: ""
+                      name:
+                        type: string
+                        description: 项目名称
+                        example: "John Doe"
+                      status:
+                        type: string
+                        description: 项目状态
+                        example: "private"
+                      created_at:
+                        type: string
+                        format: date
+                        description: 项目创建时间
+                        example: "2021-05-31T16:00:21:Z"
+                      creator:
+                        type: object
+                        properties:
+                          dri:
+                            type: string
+                            description: user 的统一定位符
+                            example: ""
+                          name:
+                            type: string
+                            description: 用户名
+                            example: "John Doe"
+                      org_name:
+                        type: string
+                        description: 组织名称
+                        example: "male"
+                      org_dri:
+                        type: string
+                        description: organization 的统一定位符
+                        example: ""
+                      is_starred:
+                        type: boolean
+                        description: 是否标星
+                        example: true
+                      is_archived:
+                        type: boolean
+                        description: 是否归档
+                        example: false
+                      deliv_links:
+                        type: array
+                        items: {
+                          type: string
+                        }
+                        description: 项目关联的deliv_links数组
+                        example: []
+
+    Res_EntryInfo_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"session_state\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_GetUserInfo_200001:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                userinfo:
+                  required:
+                    - "sub"
+                    - "name"
+                  type: object
+                  properties:
+                    sub:
+                      type: string
+                      description: >-
+                        User universally unique id.
+                        <br/>
+                        **Must** be returned and contain value.
+                      example: "xxxxxxxxx-yyyyy_zzzzz"
+                    name:
+                      type: string
+                      description: >-
+                        User name.
+                        <br/>
+                        **Must** be returned and contain value.
+                      example: "John Doe"
+                    email:
+                      $ref: "#/components/schemas/Res_Email"
+                    mobile:
+                      $ref: "#/components/schemas/Res_Mobile"
+                    birthday:
+                      type: string
+                      format: date
+                      description: User birthday
+                      example: "1970-01-01"
+                    gender:
+                      type: string
+                      description: User gender
+                      example: "male"
+                    avatar:
+                      type: string
+                      description: User avatar public-readable URL
+                      example: "https://xxxxxx.aws.com"
+
+    Res_SessionCheck_200002:
+      type: object
+      example:
+        {
+            "code": 200002,
+            "message": "User session has not expired"
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="ingress-and-aws-load-balancer-current-configurations-and-usage">Ingress and AWS Load Balancer Current Configurations and Usage</h2>
+<p>The <code>dr-eks-dev</code> cluster currently uses two Kubernetes Ingress controllers (2021-01). One is the <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/">AWS Load Balancer Controller</a> that provides Ingress using the AWS Application Load Balancer (ALB). One is the <a href="https://kubernetes.github.io/ingress-nginx/">Nginx Ingress Controller</a> that provides Ingress using the AWS Network Load Balancer (NLB) (specifically, uses the &#39;nlb-ip&#39; mode instead of the instance mode).</p>
+<p>TLS traffic is terminated at the load balancers instead of the Nginx pod. This offloads the TLS certificate management from the k8s cluster, e.g. using cert-manager to request certificates from a third-party issuer. Both ALB and NLB terminate TLS traffic using the AWS ACM-issued certificates.</p>
+<p>For using ALB ingress, to avoid provisioning a <strong>NEW</strong> application load balancer for each ingress, <strong>a root ingress has been created, attached to an Ingress Group.</strong> The name of the group is the same as the name of the ingress resource. Future ingresses, even in different namespaces, should attach to this root ingress to reuse the AWS ALB for services across namespaces.</p>
+<p>For the Nginx ingress, it attaches to the NLB load balancer using the <code>nlb-ip</code> mode. Unlike the conventional <code>nlb</code> mode (or instance mode), this ip mode avoids the additional hops between ec2 instances and keeps the source ip. NLB is suitable for non-application layer services, e.g. UDP/TCP apps. No special configurations are required when provisioning an ingress resource for a service. It will automatically attach to the NLB.</p>
+<p><strong>Useful Info:</strong></p>
+<ul>
+<li>One AWS ACM certificate covers domain <code>*.dev.datareachable.net</code> in the ap-southeast-2 region. Both load balancers share this certificate and terminate TLS traffic.</li>
+<li>Root ALB Ingress Group name: <code>dev-datareachable-net</code>, Ingress Group order: 1 (the highest). Corresponding annotations MUST be properly set to share the same ALB load balancer. For details, refer to <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/ingress/annotations/#ingressgroup">IngressGroup</a>.</li>
+<li>An ALB ingress resource is associated with a distinctive domain name. In contrast, multiple Nginx ingress resources can share the same domain name and are distinguished by path names.</li>
+<li>For both ingress types, there&#39;s NO need to set up HTTP -&gt; HTTPS auto-redirection. This is already handled elsewhere.</li>
+</ul>
+<p><strong>Code Examples:</strong></p>
+<p>Definition of an ALB ingress in Terraform:</p>
+<pre><code class="language-bash">resource &quot;kubernetes_ingress&quot; &quot;example_ingress&quot; {
+  metadata {
+    name      = &quot;example-ingress&quot;
+    namespace = &quot;example&quot;
+
+    annotations = {
+      &quot;kubernetes.io/ingress.class&quot; = &quot;alb&quot;
+      # Must listen to https
+      &quot;alb.ingress.kubernetes.io/listen-ports&quot; = &quot;[{\&quot;HTTPS\&quot;:443}]&quot;
+      &quot;alb.ingress.kubernetes.io/scheme&quot; = &quot;internet-facing&quot;
+      &quot;alb.ingress.kubernetes.io/target-type&quot; = &quot;ip&quot;
+
+      # Allow ingress grouping across multiple namespaces (share the root alb ingress)
+      &quot;alb.ingress.kubernetes.io/group.name&quot;  = &quot;dev-datareachable-net&quot;
+      &quot;alb.ingress.kubernetes.io/group.order&quot; = &quot;5&quot; # Give a priority number to this ingress (1-1000)
+
+      # Backend service is the ALB Ingress
+      &quot;alb.ingress.kubernetes.io/backend-protocol&quot; = &quot;HTTP&quot; # or HTTPS depending on your backend service
+    }
+  }
+
+  spec {
+    rule {
+      host = &quot;example.dev.datareachable.net&quot;
+      http {
+        path {
+          path = &quot;/*&quot;
+          backend {
+            service_name = &quot;example-service&quot;
+            service_port = 80
+          }
+        }
+      }
+    }
+  }
+
+  wait_for_load_balancer = true
+}
+</code></pre>
+<p>Definition of an Nginx ingress in Terraform:</p>
+<pre><code class="language-bash">resource &quot;kubernetes_ingress&quot; &quot;example_ingress&quot; {
+  metadata {
+    name      = &quot;example-ingress&quot;
+    namespace = &quot;example&quot;
+
+    annotations = {
+      &quot;kubernetes.io/ingress.class&quot;                       = &quot;nginx&quot;
+      &quot;nginx.ingress.kubernetes.io/use-regex&quot;             = &quot;true&quot;
+      # Rewrite URL to match backend service requirement
+      &quot;nginx.ingress.kubernetes.io/rewrite-target&quot;        = &quot;/$2&quot;
+      &quot;nginx.ingress.kubernetes.io/configuration-snippet&quot; = &quot;rewrite ^(/example)$ $1/ redirect;&quot;
+
+      &quot;nginx.ingress.kubernetes.io/backend-protocol&quot; = &quot;HTTPS&quot;
+    }
+  }
+
+  spec {
+    rule {
+      host = &quot;example.dev.datareachable.net&quot;
+      http {
+        path {
+          path = &quot;/example(/|$)(.*)&quot;
+          backend {
+            service_name = &quot;example-service&quot;
+            service_port = 443
+          }
+        }
+      }
+    }
+  }
+
+  wait_for_load_balancer = true
+}
+</code></pre>
+
+	</div>
+</body>
+</script>
+</html>

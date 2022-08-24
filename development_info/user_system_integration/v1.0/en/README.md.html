@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="backend-application-development---user-system-integration">Backend Application Development - User System Integration</h2>
+<p>Currently, all applications rely on the OpenID Connect SSO system. For those applications which require user to be logged in, the backend has to communicate with the OpenID Connect provider (OP for short) server. We call these applications the <font color="red"><strong>protected</strong></font> applications, or in OpenID Connect terms, relying partiers (or RP for short).</p>
+<p>This document outlines the rules to follow when developing the backend of a new protected application, so that it can work together with the OpenID Connect provider server and other deployed protected applications.</p>
+<h2 id="protected-app-entry-and-logout-sequence-diagrams">Protected App Entry and Logout Sequence Diagrams</h2>
+<p>The protected application entrance sequence:</p>
+<div align="center">
+  <img src="./assets/App_Entry_Sequence_En.png" />
+  <div>Entry Sequence for Every Protected Application</div>
+</div>
+
+<hr>
+<p>The RP-initiated logout sequence:</p>
+<div align="center">
+  <img src="./assets/RP_Logout_Sequence_En.png" />
+  <div>RP-initiated Logout Sequence for Every Protected Application</div>
+</div>
+
+<hr>
+<p>The OP-initiated logout sequence:</p>
+<div align="center">
+  <img src="./assets/OP_Logout_Sequence_En.png" />
+  <div>OP-initiated Logout Sequence for Every Protected Application</div>
+</div>
+
+<hr>
+<h2 id="registration-of-the-protected-application">Registration of the Protected Application</h2>
+<p>To communicate with the OP, the RP needs to register itself first. The RP needs to provide a set of paramters for the OP to recognize itself. OP rejects RP if the RP&#39;s requests are out of the preset scope. These paramters are important and should <strong>NOT</strong> be changed once set up.</p>
+<p>Admin should register the RP in advance via HTTP POST request. Here is a template for the request (notes are provided as comments):</p>
+<pre><code class="language-jsonc">// This is the fixed OpenID provider URL, can only be accessed via company VPN
+POST &quot;http://openid-connect-provider-service.user-system.svc.cluster.local/reg&quot;
+Content-Type: application/json
+
+{
+  &quot;client_id&quot;: &quot;app-profile-client-id&quot;,
+  &quot;client_name&quot;: &quot;app-profile&quot;,
+  &quot;client_secret&quot;: &quot;app-profile-client-secret&quot;,
+  &quot;registration_access_token&quot;: &quot;&quot;,
+  &quot;client_secret_expires_at&quot;: &quot;&quot;,
+  &quot;application_type&quot;: &quot;web&quot;,
+  &quot;id_token_signed_response_alg&quot;: &quot;HS256&quot;,
+  &quot;token_endpoint_auth_method&quot;: &quot;client_secret_basic&quot;,
+  &quot;require_auth_time&quot;: false,
+  &quot;grant_types&quot;: [&quot;authorization_code&quot;, &quot;refresh_token&quot;],
+  &quot;response_types&quot;: [&quot;code&quot;],
+  // Use internal OpenID provider URLs instead of the public domain
+  &quot;registration_client_url&quot;: &quot;http://openid-connect-provider-service.user-system.svc.cluster.local/reg?client_name=app-profile&quot;,
+  &quot;redirect_uris&quot;: [&quot;https://profile.dev.datareachable.net/login_redirect&quot;, &quot;https://profile.dev.datareachable.net/_reserved/cb&quot;],
+  &quot;post_logout_redirect_uris&quot;: [&quot;https://profile.dev.datareachable.net&quot;],
+  &quot;backchannel_logout_session_required&quot;: true,
+  // Backchannel logout URL should also be the internal URL of the protected application
+  &quot;backchannel_logout_uri&quot;: &quot;http://profile-backend-service.user-system.svc.cluster.local/api/v1/session/back_channel_logout&quot;
+}
+</code></pre>
+<p>Success response template:</p>
+<pre><code class="language-jsonc">HTTP/1.1 201 Created
+Content-Security-Policy: default-src &#39;self&#39; :0 :0;script-src &#39;self&#39; ajax.googleapis.com code.jquery.com &#39;unsafe-inline&#39; cdn.bootcdn.net cdnjs.cloudflare.com polyfill.io;style-src &#39;self&#39; cdn.jsdelivr.net &#39;unsafe-inline&#39; fonts.googleapis.com;font-src &#39;self&#39; cdn.jsdelivr.net fonts.gstatic.com;frame-src &#39;self&#39; :0 :0;object-src &#39;none&#39;
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+X-Permitted-Cross-Domain-Policies: none
+Referrer-Policy: no-referrer
+X-XSS-Protection: 0
+Pragma: no-cache
+Cache-Control: no-cache, no-store
+Content-Type: application/json; charset=utf-8
+Content-Length: 1218
+Date: Tue, 06 Apr 2021 03:43:48 GMT
+Connection: close
+
+{
+  &quot;application_type&quot;: &quot;web&quot;,
+  &quot;grant_types&quot;: [
+    &quot;authorization_code&quot;,
+    &quot;refresh_token&quot;
+  ],
+  &quot;id_token_signed_response_alg&quot;: &quot;HS256&quot;,
+  &quot;post_logout_redirect_uris&quot;: [
+    &quot;https://profile.dev.datareachable.net&quot;
+  ],
+  &quot;require_auth_time&quot;: false,
+  &quot;response_types&quot;: [
+    &quot;code&quot;
+  ],
+  &quot;subject_type&quot;: &quot;public&quot;,
+  &quot;token_endpoint_auth_method&quot;: &quot;client_secret_basic&quot;,
+  &quot;introspection_endpoint_auth_method&quot;: &quot;client_secret_basic&quot;,
+  &quot;revocation_endpoint_auth_method&quot;: &quot;client_secret_basic&quot;,
+  &quot;backchannel_logout_session_required&quot;: true,
+  &quot;require_signed_request_object&quot;: false,
+  &quot;request_uris&quot;: [],
+  &quot;web_message_uris&quot;: [],
+  &quot;client_id_issued_at&quot;: 1617680628,
+  // The client id should be recorded
+  &quot;client_id&quot;: &quot;&lt;client-id&gt;&quot;,
+  &quot;client_name&quot;: &quot;app-profile&quot;,
+  &quot;client_secret_expires_at&quot;: 0,
+  // The client secret should be recorded
+  &quot;client_secret&quot;: &quot;&lt;client-secret&gt;&quot;,
+  &quot;redirect_uris&quot;: [
+    &quot;https://profile.dev.datareachable.net/login_redirect&quot;,
+    &quot;https://profile.dev.datareachable.net/_reserved/cb&quot;
+  ],
+  &quot;backchannel_logout_uri&quot;: &quot;http://profile-backend-service.user-system.svc.cluster.local/api/v1/session/back_channel_logout&quot;,
+  &quot;registration_client_uri&quot;: &quot;http://openid-connect-provider-service.user-system.svc.cluster.local/reg/&lt;client-id&gt;&quot;,
+  &quot;registration_access_token&quot;: &quot;&lt;client-info-access-token&gt;&quot;
+}
+</code></pre>
+<p>The following fields should be recorded for future use:</p>
+<ul>
+<li><code>&lt;client-id&gt;</code></li>
+<li><code>&lt;client-secret&gt;</code></li>
+<li><code>&lt;client-info-access-token&gt;</code></li>
+</ul>
+<p>After you register the protected application onto the OP, you can retrieve the above information any time you like via the following HTTP GET request:</p>
+<pre><code class="language-jsonc">GET &quot;http://openid-connect-provider-service.user-system.svc.cluster.local/reg/&lt;client-id&gt;&quot;
+Authorization: Bearer &lt;client-info-access-token&gt;
+</code></pre>
+<p>The <code>&lt;client-id&gt;</code> and <code>&lt;client-info-access-token&gt;</code> are the same as the ones you receive on registration.</p>
+<p>For details on all the allowed parameters and their descriptions, refer to <a href="https://openid.net/specs/openid-connect-registration-1_0.html">OpenID Connect Dynamic Client Registration</a>.</p>
+<h2 id="routes">Routes</h2>
+<h3 id="public-and-private-routes-on-oidc-provider-op"><strong>Public and private routes on OIDC provider (OP)</strong></h3>
+<p><strong>Not</strong> all routes on the OP are exposed to public. Public routes are prefixed with <code>/pub</code>. The following routes are public on current OP:</p>
+<ul>
+<li>Login page: <code>/pub</code></li>
+<li>Login API: <code>/pub/login</code></li>
+<li>Logout API: <code>/pub/logout</code></li>
+<li>Check session state OP iframe: <code>/pub/checksession</code></li>
+</ul>
+<p>The private route is <code>http://openid-connect-provider-service.user-system.svc.cluster.local</code>. The private route should be used to discover the OIDC provider, register a new RP, etc.</p>
+<p>Public routes should be used under limited circumstances where public access has to be provided to the end user. In such cases, manually replace the internal domain with the public domain. For example, when redirect the user entrypoint to the OIDC provider, RP is responsible to redirect the user browser to the OP:</p>
+<pre><code class="language-javascript">  oidc_client.authorizationUrl({scope: &quot;openid&quot;, redirect_uri: process.env.FRONTEND_PROTECTED_PAGE_URL ?? &quot;&quot;})
+    /** The OIDC_PROVIDER_PUB_URL must have the tailing &quot;/&quot; */
+    .replace(/^http:\/\/(.*)\//g, process.env.OIDC_PROVIDER_PUB_URL ?? &quot;https://login.dev.datareachable.net/pub/&quot;);
+</code></pre>
+<p>Similar replacement should be applied onto the logout API.</p>
+<hr>
+<h3 id="routes-for-entrypoint-oidc-callback-point-post-logout-redirect-point"><strong>Routes for entrypoint, OIDC callback point, post logout redirect point</strong></h3>
+<p>The above three urls are <font color="red"><strong>fixed</strong></font> for each protected application.</p>
+<ol>
+<li><p>Entry URL for the protected application</p>
+<p> <em>corresponding to <code>www.example.com</code> in the above sequence diagram</em></p>
+<p> <code>&lt;app-root-domain&gt;/entry</code> (e.g. <code>https://app.example.com/entry/</code>)</p>
+</li>
+<li><p>Callback point for the protected application (The frontend URL for the protected application)</p>
+<p> <em>corresponding to <code>www.example.com/app</code> in the above sequence diagram</em></p>
+<p> <code>&lt;app-root-domain&gt;/login_redirect</code> (e.g. <code>https://app.example.com/login_redirect/</code>)</p>
+</li>
+<li><p>Post logout redirect URL (The URL to be redirected to after user successfully logged out)</p>
+<p> <code>&lt;app-root-domain&gt;</code> (e.g. <code>https://app.example.com/</code>)</p>
+</li>
+</ol>
+<h2 id="rp-side-local-user-session-storage">RP-side Local User Session Storage</h2>
+<p>To avoid session synchronization from frontend channel, all protected applications should share <strong>the same session storage database</strong>. A logged-in user is identified by its <code>uuid</code> and <code>issuer</code> (the url of the OP). This limits the scalability of the SSO system and generates a hotspot, the session database. However, this is a trade-off to synchronize a user&#39;s session without using frontend iframes or causing too much network traffic to the OP. Therefore, all protected applications should share the same session key.</p>
+<pre><code class="language-bash">{app:op-session-sync}:&lt;issuer&gt;:&lt;sub&gt;
+</code></pre>
+<p><code>&lt;issuer&gt;</code> is the OP&#39;s url and <code>&lt;sub&gt;</code> is the uuid of the user.</p>
+<p>For all the protected applications and a logged-in user, the session key should remain the same and has the value as above.</p>
+
+	</div>
+</body>
+</script>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="前端常见-qa">前端常见 Q&amp;A</h2>
+<p>该文档整理了在前端开发过程中常见的问题，以及问题的解答</p>
+<hr>
+<h4 id="q-每次拿到新的任务开发完成后，代码-push-到了-github，这时候再-checkout-一个新的分支完成另外一个任务，随后再发-pull-request-就会出现-conflict">Q: 每次拿到新的任务开发完成后，代码 push 到了 github，这时候再 checkout 一个新的分支完成另外一个任务，随后再发 pull request 就会出现 conflict</h4>
+<h4 id="a-每次拿到开发任务以后需要重新从-development-checkout-新的分支出来，随后在这个新的分支上进行任务开发，这时候如果你的任务完成以后，如果直接在当前分支又-checkout-一个分支出来继续开发，这时候你的-pull-request-一定会有-conflict，重点在于每次拿到任务一定要从-development-上面-checkout-新的分支，一定要从-development-上面-checkout-新的分支，一定要从-development-上面-checkout-新的分支，重要的事情说三遍。">A: 每次拿到开发任务以后需要重新从 development checkout 新的分支出来，随后在这个新的分支上进行任务开发，这时候如果你的任务完成以后，如果直接在当前分支又 checkout 一个分支出来继续开发，这时候你的 pull request 一定会有 conflict，重点在于每次拿到任务一定要从 development 上面 checkout 新的分支，一定要从 development 上面 checkout 新的分支，一定要从 development 上面 checkout 新的分支，重要的事情说三遍。</h4>
+<hr>
+<h4 id="q-在不同设计尺寸下版面的控制是写死尺寸，还是用百分比来表示尺寸？">Q: 在不同设计尺寸下版面的控制是写死尺寸，还是用百分比来表示尺寸？</h4>
+<h4 id="a-目前设计的尺寸分为四个断点，375px-768px-1024px-和-1920px">A: 目前设计的尺寸分为四个断点，375px, 768px, 1024px 和 1920px</h4>
+<ol>
+<li>375px：当屏幕宽度小于 768px 的时候，按照 375px 的设计，并且框架的宽度以 100%计算。</li>
+<li>768px：当屏幕宽度在 768px 和 1024px 之间的时候，屏幕设计按照 768px 的设计，并且框架的宽度以 100%计算。</li>
+<li>1024px：当屏幕的宽度在 1024px 和 1600px 之间的时候，屏幕设计按照 1024px 的设计，并且框架的宽度以设计图宽度为准，不以百分比进行计算。</li>
+<li>1920px：当屏幕的宽度大于 1600px 的时候，屏幕设计按照 1920px 设计进行，并且在屏幕宽度超过 1920px 的时候对屏幕进行等比缩放。</li>
+</ol>
+<p>注：如果设计中没有 1920px 的设计样式，则在屏幕尺寸大于 1024px 以后就对样式进行等比缩放，在屏幕尺寸大于 1024px 以后全部以设计图的尺寸为准，宽度不以百分比书写。如果设计中不存在 ipad 于手机端设计，则只考虑屏幕尺寸大于等于 1024px 的情况，其余情况当前开发阶段不予以考虑。</p>
+<hr>
+<h4 id="q-关于-css-全局样式的配置是什么？">Q: 关于 css 全局样式的配置是什么？</h4>
+<h4 id="a-目前项目中基本所有的样式文件都会设置这样一个样式-_-margin0-padding0-为了保证代码的整洁性和可维护性，目前所有的项目都会在-src-目录下添加-globalscss-的全局样式，并且把_margin0padding0的样式配置到-globalscss-文件中。其余的一些通用样式请大家通过-classid-以及其他-css-选择器的方式对不同样式进行单独调整。">A: 目前项目中基本所有的样式文件都会设置这样一个样式 _ {margin:0; padding:0} 为了保证代码的整洁性和可维护性，目前所有的项目都会在 src 目录下添加 global.scss 的全局样式，并且把_{margin:0;padding:0}的样式配置到 global.scss 文件中。其余的一些通用样式请大家通过 class,id 以及其他 css 选择器的方式对不同样式进行单独调整。</h4>
+<hr>
+<h4 id="q-在从-github-拉取代码以后，想要重命名之前的文件夹首字母为大写，但是-github-却提示没有任何修改，也无法将新命名的大写文件-commit-到远程分支，这时候怎么办？">Q: 在从 github 拉取代码以后，想要重命名之前的文件夹首字母为大写，但是 github 却提示没有任何修改，也无法将新命名的大写文件 commit 到远程分支，这时候怎么办？</h4>
+<h4 id="a-首先你需要在-terminal-中运行-git-config---get-coreignorecase-这段指令，看看是否输出为-true，如果为-true-则运行这段指令来修改-github-大小写敏感-git-config-coreignorecase-false-这时候再次运行-git-config---get-coreignorecase，如果返回为-false-则代表修改成功，github-就可以进行大小写敏感的处理了。不过需要注意的是，这时候-push-到远程服务器可能会出现两个相同的文件夹，即大写命名文件夹一个和小写命名文件夹一个，请联系部门主管来修改远程服务器中的文件夹结构。">A: 首先你需要在 terminal 中运行 git config --get core.ignorecase 这段指令，看看是否输出为 true，如果为 true 则运行这段指令来修改 github 大小写敏感 git config core.ignorecase false, 这时候再次运行 git config --get core.ignorecase，如果返回为 false 则代表修改成功，github 就可以进行大小写敏感的处理了。不过需要注意的是，这时候 push 到远程服务器可能会出现两个相同的文件夹，即大写命名文件夹一个和小写命名文件夹一个，请联系部门主管来修改远程服务器中的文件夹结构。</h4>
+
+	</div>
+</body>
+</script>
+</html>

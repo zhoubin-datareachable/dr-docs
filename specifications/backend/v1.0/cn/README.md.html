@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="数支公司后端开发规范">数支公司后端开发规范</h2>
+<p>本文档规定了在数支公司进行后端开发时应该遵循的规范。本文档的目的是为了防止开发人员随意采用项目文件布局、命名格式和配置等。此文档是一份全面的后端开发规范，包括目前在数支公司使用的所有技术栈。</p>
+<hr>
+<h2 id="开发环境要求">开发环境要求</h2>
+<p><font color=red>重要：</font> 对于后端开发，我们<font color=red><strong>强制</strong></font>开发中使用的操作系统为<strong>Ubuntu LTS 版本</strong> (目前最新为20.04)，或者<strong>MacOS</strong>。禁止使用Windows。</p>
+<p>对于开发中使用的IDE，你可以从VSCode（严格来讲不是IDE）和JetBrain（比如，WebStorm，IntelliJ等）中选择。我们推荐使用VSCode，以保持跟组内其他成员一致。不过，使用JetBrains也可以，只要你最终符合开发规范中的规定即可。</p>
+<hr>
+<h2 id="当前使用的技术栈">当前使用的技术栈</h2>
+<p>在当前第一阶段的开发中，主要使用的开发技术栈是：<a href="https://nodejs.org/en/">NodeJS</a>以及其上的<a href="https://expressjs.com/">ExpressJs</a>框架。所使用的开发语言为<a href="https://github.com/Microsoft/TypeScript">TypeScript</a>。未来，此技术栈可能会发生更改，也可能引入其他新的后端开发技术栈。</p>
+<ul>
+<li><a href="https://nodejs.org/en/">NodeJS</a>： 使用当前最新的LTS版本（v14.x）以保证稳定性和最新的NodeJS特性</li>
+<li><a href="https://expressjs.com/">ExpressJs</a>： 使用当前的稳定版本（v4.x）</li>
+<li><a href="https://github.com/Microsoft/TypeScript">TypeScript</a>：使用当前稳定的版本（v4.x）</li>
+<li><a href="https://redis.io/">Redis</a>：使用版本 v6.0.10</li>
+<li><a href="https://www.mongodb.com/">MongoDB</a>：使用版本 v4.4.x</li>
+</ul>
+<hr>
+<h2 id="目录">目录</h2>
+<ol>
+<li><a href="./NodeJS/README.md"><strong>NodeJS使用TypeScript开发的项目规范</strong></a></li>
+<li><a href="./Naming/README.md"><strong>命名规范</strong></a></li>
+<li><a href="./Comments/README.md"><strong>代码注释规范</strong></a></li>
+<li><a href="./Git/README.md"><strong>Git使用规范</strong></a></li>
+<li><a href="./Submission/README.md"><strong>交付规范</strong></a></li>
+<li><a href="./CodeReview/README.md"><strong>代码审查流程</strong></a></li>
+<li><a href="./Redis/README.md"><strong>Redis规范</strong></a></li>
+<li><a href="./MongoDB/README.md"><strong>MongoDB规范</strong></a></li>
+<li><a href="./Libs/README.md"><strong>推荐使用的库</strong></a></li>
+<li><a href="./Testing/README.md"><strong>测试规范</strong></a></li>
+<li><a href="./Lint/README.md"><strong>代码最佳实践规范</strong></a></li>
+</ol>
+<hr>
+<h2 id="样例项目模板">样例项目模板</h2>
+<p>我们提供了一个使用TypeScript编写的一个基于NodeJS和ExpressJS的项目模板，请参考<a href="https://github.com/dataReachable/dr_nodejs_project_template">这里</a>。</p>
+<p>🔔 该项目模板会随时更新以反映最新的变化，包括：依赖包版本升级，配置文件更新等。新项目<strong>尽可能</strong>都从该模板项目中起步。</p>
+
+	</div>
+</body>
+</script>
+</html>

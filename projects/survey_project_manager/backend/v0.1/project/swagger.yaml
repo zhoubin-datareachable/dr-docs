@@ -1,0 +1,579 @@
+openapi: 3.0.3
+
+info:
+  version: 0.1.1
+  title: dr_Back_SurveyProjectManager
+  description: >-
+    这个文档主要展示了与相关相关操作的的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://spm.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [SurveyProjectManager API Server](https://github.com/dataReachable/dr_Back_SurveyProjectManager)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://spm.dev.datareachable.net/"
+
+
+paths:
+  /api/v1/project/archive/update:
+    put:
+      summary: 归档与恢复项目
+      description: 归档与恢复项目
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Archive'
+      responses:
+        "200":
+          description: 更新归档状态成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/project/star/update:
+    put:
+      summary: star与取消star
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Star'
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/organization/list:
+    get:
+      summary: 获取用户加入的所有组织
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取用户加入的所有组织成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_OrgListInfo_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/organization/tgs:
+    get:
+      summary: 获取用户所在组织的talent_group列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Org_Tgs_Info_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/project/org_projs:
+    get:
+      summary: CR-00015 获取指定组织拥有的项目列表(名称和dri)
+      description: 只返回用户为admin的项目列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: is_admin
+          in: query
+          required: false
+          description: 可选字段。用户是否为项目的admin，有效值：true，false。默认值：true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Org_Projs_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/organization/brief:
+    get:
+      summary: CR-00017 获取指定组织的简要信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_OrgBrief_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/project/roles:
+    get:
+      summary: QE00015 获取用户在项目中的角色
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织dri
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目dri
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          description: talent group dri
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取用户加入的所有组织成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          roles:
+                            type: array
+                            items:
+                              type: string
+                              example: "admin"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200001
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "successfully"
+
+    Res_AuthenticationFailed:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT验证失败，未授权的访问！" }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: {
+        code: 500001,
+        message: "[Get User Information Controller]: Unexpected error",
+        data: { error: "Details of the error goes here"}
+      }
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 405000, message: "You're using the completely wrong HTTP method!" }
+    
+    Res_Phone:
+      type: object
+      description: User provided mobile number. If not provided, the field is `null`.
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        area:
+          type: string
+          description: The area code of the number we're sending to.
+        number:
+          type: string
+          description: The actual mobile number of the user.
+      example: { "country": "61", "area": "", "number": "1234567890" }
+    
+    Res_TalengGroup:
+      type: object
+      properties:
+          dri:
+            type: string
+            description: talent_group的统一定位符
+            example: ""
+          name:
+            type: string
+            description: taleng_group名称
+            example: "John Doe"
+          status:
+            type: string
+            description: taleng_group状态
+            example: "public"
+          members:
+            type: array
+            items:
+              $ref: "#/components/schemas/Res_Member"
+    Res_Member:
+      type: object
+      properties:
+          dri:
+            type: string
+            description: 用户的统一定位符
+            example: ""
+          name:
+            type: string
+            description: 用户名
+            example: "John Doe"
+    Req_Body_Archive:
+        type: object
+        required:
+          - project_dri
+          - is_archived
+        properties:
+          project_dri:
+            type: string
+            description: '项目dri'
+          is_archived:
+            type: boolean
+            description: '是否归档'
+            enum:
+              - true
+              - false
+        example:
+          project_dri: "dri:spm::proj/hpdpbdSsTEoGiJySASkEq"
+          is_archived: true      
+    Req_Body_Star:
+        type: object
+        required:
+          - project_dri
+          - star
+        properties:
+          project_dri:
+            type: string
+            description: '项目dri'
+          star:
+            type: boolean
+            description: '是否星标'
+            enum:
+              - true
+              - false
+        example:
+          project_dri: "dri:spm::proj/hpdpbdSsTEoGiJySASkEq"
+          star: true      
+    Res_OrgListInfo_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items: 
+                type: object
+                properties:
+                  dri:
+                    type: string
+                    description: 组织的统一定位符
+                    example: ""
+                  name:
+                    type: string
+                    description: 组织名称
+                    example: "John Doe"
+                  status:
+                    type: string
+                    description: 组织状态
+                    example: "private"
+                  logo:
+                    type: string
+                    description: 组织头像链接
+                    example: "male"
+                  email:
+                    type: string
+                    description: 邮箱地址
+                    example: ""
+                  phone:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Res_Phone"
+    Res_OrgBrief_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 组织名称
+                  example: "John Doe"
+                description:
+                  type: string
+                  description: 组织描述
+                  example: "test"
+                logo:
+                  type: string
+                  description: 组织头像链接
+                  example: "male"
+                email:
+                  type: string
+                  description: 组织邮箱地址
+                  example: ""
+                phone:
+                  type: array
+                  description: 组织电话
+                  items:
+                    $ref: "#/components/schemas/Res_Phone"
+    Res_Org_Projs_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 项目名称
+                  example: "John Doe"
+                dri:
+                  type: string
+                  description: 项目dri
+                  example: "dri:spm::proj/hpdpbdSsTEoGiJySASkEq"
+    Res_Org_Tgs_Info_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items: 
+                type: object
+                properties:
+                  dri: 
+                    type: string
+                    description: "talent_group dri"
+                    example: ""
+                  name: 
+                    type: string
+                    description: "talent_group 名称"
+                    example: ""
+                  status: 
+                    type: string
+                    description: "talent_group 状态"
+                    example: ""
+                  members:
+                    type: array
+                    description: "talent_group 成员数组"
+                    items:
+                      type: object
+                      properties:
+                        dri:
+                          type: string
+                          description: "成员dri"
+                          example: ""
+                        name:
+                          type: string
+                          description: "成员名称"
+                          example: ""
+                        avatar:
+                          type: string
+                          description: "成员头像链接"
+                          example: ""
+                        email:
+                          type: string
+                          description: "成员邮箱"
+                          example: ""
+                        mobile:
+                          type: string
+                          description: "成员手机号码"
+                          example: ""

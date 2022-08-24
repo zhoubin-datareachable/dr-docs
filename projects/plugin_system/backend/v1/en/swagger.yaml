@@ -1,0 +1,1979 @@
+openapi: 3.0.3
+info:
+  title: Plugin System PublicAPI
+  description: Plugin System PublicAPI. Used by independent authors for building and managing plugins on their own behalf.
+  version: "0.5.0"
+  contact:
+    name: R&D / Backend Team
+    email: matthew.chong@datareachable.com
+servers:
+  - url: 'https://plugin-system.dev.datareachable.net'
+paths:
+  /api/v1/:
+    get:
+      tags: [ "Liveness probe" ]
+      description: "Liveness probe endpoint"
+      responses:
+        200:
+          description: Ok
+
+  /api/v1/entry/info:
+    post:
+      tags: [ "OIDC integration" ]
+      description: "OIDC endpoints for FE"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - session_state
+              example:
+                {
+                  "code": "DLdAx3BXqKIWS36GWmCWGad3Al2HyI_AeL8YuMVKvzJ",
+                  "session_state": "zk9sZus-8b1FP3nv5REHpR3QE4r8d5Lf6bxVNQfWzLs"
+                }
+              properties:
+                code:
+                  type: string
+                  description: Query string that's in OP's redirect URL after user logging in
+                session_state:
+                  type: string
+                  description: Query string that's in OP's redirect URL after user logging in
+      #$ref: "#/components/schemas/EntryInfoPayload"
+      responses:
+        200:
+          description: Successfully get user info and JWT from OIDC Provider
+          headers:
+            DR-AUTH:
+              description: Json Web Token (JWT) returned by BE, all subsequent APIs that require login state validation must bring this request header with it.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_EntryInfo_200001"
+        "400":
+          description: Wrong request parameters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+              example:
+                {
+                  "code": 400001,
+                  "message": "\"session_state\" is required"
+                }
+
+        "500":
+          description: Server internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+
+  /api/v1/org/<org_name>/search:
+    get:
+      tags: [ Utility ]
+      description: Find organizations containing the substring in the parameter
+      parameters:
+        - $ref: "#/components/parameters/orgName"
+      responses:
+        200:
+          description: Matching organizations returned
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PseudoUser"
+  /api/v1/org/<dri>/info:
+    get:
+      tags: [ Utility ]
+      description: Show the org's basic info
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      responses:
+        200:
+          description: Matching organizations returned
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PseudoUser"
+  /api/v1/user/<dri>/info:
+    get:
+      tags: [ Utility ]
+      description: Show the user's basic info
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      responses:
+        200:
+          description: Matching user returned
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PseudoUser"
+  /api/v1/plugin/{name}/save_and_build:
+    post:
+      tags: [ Build ]
+      description: Request the server to build a plugin, generate the config tree, and other things
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileBundle"
+      responses:
+        202:
+          description: Server accepted the request for processing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaveAndBuildSuccess"
+        500:
+          description: Server didn't queue the request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InternalServerError"
+                  - $ref: "#/components/schemas/SaveAndBuildRejected"
+        504:
+          description: Server tried to queue the request, but the build server failed to respond in time.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaveAndBuildDispatched"
+  /api/v1/plugin/{dri}/inspect:
+    get:
+      description: Get the status and metadata of a build
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ Build ]
+      responses:
+        200:
+          description: Server has logs to show the client.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BuildSuccessInspect"
+                  - $ref: "#/components/schemas/BuildFailedInspect"
+        202:
+          description: Server is still waiting for the build to complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+              example: { code: 202000, message: "The build request is still being processed" }
+        404:
+          description: Server can't find the logs.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+              example: { code: 404000, message: "The requested resource is not available." }
+        503:
+          description: Server didn't queue the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+              example: { code: 503000, message: "Failed to queue the build, please retry at a later time." }
+  /api/v1/plugin/{name}/claim:
+    put:
+      description: Attempt to take ownership of the plugin name
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ "Pushing" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: "Optional parameter to populate the private description of the plugin."
+                org_dri:
+                  type: string
+                  format: uri
+                  description: "The DRI of the organization that owns this plugin. If unspecified it'll be created under the user's default organization."
+      responses:
+        200:
+          description: Claim successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        properties:
+                          plugin_dri:
+                            type: string
+                            format: uri
+                            description: The plugin's DRI, with internal uri escape characters but not uri-safe.
+        401:
+          description: The `name` has already been claimed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+  /api/v1/plugin/{name}/like:
+    post:
+      description: Toggle "liking" a plugin within the IDE interface set
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ "IDE Integration" ]
+      responses:
+        200:
+          description: Like successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+  /api/v1/plugin/{dri}/tag:
+    put:
+      description: Add names and versions to the plugin
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ "Pushing" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagPayload"
+      responses:
+        200:
+          description: Tag successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagSuccess"
+        400:
+          description: Bad request-class errors
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/TagRejected"
+                  - $ref: "#/components/schemas/TagDuplicatedVersion"
+        401:
+          description: User doesn't own the `name` tag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+        404:
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+              example: { code: 404000, message: "The object has expired or never existed." }
+  /api/v1/plugin/{dri}/yank:
+    delete:
+      description: Remove a plugin from our systems.
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ "Pushing" ]
+      responses:
+        200:
+          description: Plugin removed from production
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin yanked" }
+        401:
+          description: User doesn't own the plugin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+        404:
+          description: Plugin "doesn't exist" - it either really doesn't exist or it has been yanked.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+
+  /api/v1/plugin/{dri}/code:
+    get:
+      description: Get the state of a version of a plugin
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ "IDE Integration" ]
+      responses:
+        200:
+          description: Plugin source code included
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginObjectTaggedResponse"
+        401:
+          description: User doesn't own the plugin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+        404:
+          description: No plugin source code found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+
+  /api/v1/plugins/list_editable:
+    post:
+      description: Gets plugins viewable by the user
+      parameters:
+        - $ref: "#/components/parameters/skip"
+        - $ref: "#/components/parameters/take"
+      tags: [ "IDE Integration" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                org_dri:
+                  type: string
+                  description: "The organization DRI to select from, if unspecified / empty, the user's default organization will be used."
+      responses:
+        200:
+          description: Plugins included
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetailedPluginCatalogueResponse"
+        401:
+          description: User isn't in one or more of the orgs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+
+  /api/v1/plugins/count_editable:
+    post:
+      description: Categorizes and counts plugins viewable by the user
+      tags: [ "IDE Integration" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                org_dri:
+                  type: string
+                  description: "The organization DRI to select from, if unspecified / empty, the user's default organization will be used."
+      responses:
+        200:
+          description: Plugins included
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserOrgPluginClaimsStandingCount"
+        401:
+          description: User isn't in one or more of the orgs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+  /api/v1/plugins/list_previewable:
+    get:
+      description: >-
+        List the plugins NOT owned by the current user, but (explicitly) CAN be previewed by the current user.
+      tags: [ "Preview" ]
+      responses:
+        200:
+          description: Plugin list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PreviewListing"
+
+  /api/v1/plugin/{name}/preview_key:
+    get:
+      description: Get a list of current preview keys (available only to the root org)
+      tags: [ "Preview" ]
+      responses:
+        200:
+          description: List of preview keys
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        $ref: "#/components/schemas/PreviewKeyEnumeration"
+    post:
+      description: Create a preview key arrangement
+      tags: [ "Preview" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreviewKeySubmissionAttributes"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        properties:
+                          preview_key:
+                            type: string
+                            description: "The preview key generated by the server."
+        400:
+          description: Duplicate key detected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /api/v1/plugin/{name}/preview_key/{previewKey}:
+    put:
+      description: Update a preview key's constraints
+      tags: [ "Preview" ]
+      parameters:
+        - $ref: "#/components/parameters/previewKey"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreviewKeySubmissionAttributes"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+        400:
+          description: Duplicate key detected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+        404:
+          description: Key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+    delete:
+      description: Revoke a preview key
+      tags: [ "Preview" ]
+      parameters:
+        - $ref: "#/components/parameters/previewKey"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+        404:
+          description: Key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /api/v1/plugin/{name}/info:
+    get:
+      description: Get the plugin's public metadata
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ "Marketplace Integration" ]
+      responses:
+        200:
+          description: Plugin metadata provided
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginInfoResponse"
+        404:
+          description: The plugin name is not registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+    put:
+      description: Upsert the plugin's public metadata.
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ "Marketplace Integration" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ModifiablePluginClaimComponents"
+                - required: [ "description" ]
+              example: { description: "# New Description" }
+      responses:
+        200:
+          description: Plugin metadata upserted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginMetadataUpdated"
+        401:
+          description: User doesn't own the plugin (if it already exists)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+
+  /api/v1/plugin/{key}/key_info:
+    get:
+      description: Get the plugin's public metadata
+      parameters:
+        - $ref: "#/components/parameters/previewKey"
+      tags: [ "Marketplace Integration" ]
+      responses:
+        200:
+          description: Plugin metadata provided
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginKeyInfoResponse"
+        404:
+          description: The plugin name is not registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+    put:
+      description: Upsert the plugin's public metadata.
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ "Marketplace Integration" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ModifiablePluginClaimComponents"
+                - required: [ "description" ]
+              example: { description: "# New Description" }
+      responses:
+        200:
+          description: Plugin metadata upserted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginMetadataUpdated"
+        401:
+          description: User doesn't own the plugin (if it already exists)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestRejectedOwnership"
+
+  /api/v1/plugin/{name}/v/{version_req}:
+    get:
+      description: Gets a plugin by name and version
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+        - in: path
+          name: version_req
+          schema:
+            type: string
+          required: true
+          description: A properly url-encoded [semver requirement string](https://docs.rs/semver/0.11.0/semver/#requirements)
+      tags: [ "Distribution" ]
+      responses:
+        200:
+          description: Matching plugin found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginArtefactResponse"
+        400:
+          description: Bad semver string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginArtefactBadVerResponse"
+        404:
+          description: No matching plugin found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/PluginArtefactNoVersResponse"
+                  - $ref: "#/components/schemas/PluginArtefactNoVerMatchesResponse"
+
+  /api/v1/plugin/{view_key}/view:
+    get:
+      description: Gets a plugin by view key
+      parameters:
+        - in: path
+          name: view_key
+          schema:
+            type: string
+          required: true
+          description: >-
+            A prefixed crockford-base32 random string which is linked to the plugin the user wants to see.
+
+            There is currently 2 prefixes for plugins:
+              - `r` denotes that the key is the "root key" to the plugin, not metered or removable.
+              - `v` denotes that the key is used to preview the plugin (private preview), not metered.
+              - `u` denotes that the key is being used in a survey, and thus metering and payment is required.
+      tags: [ "Distribution" ]
+      responses:
+        200:
+          description: Matching plugin found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginArtefactResponse"
+        404:
+          description: No matching plugin found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginArtefactNoVersResponse"
+  /api/v1/plugin/{name}/list_versions:
+    get:
+      description: Lists all plugins with that name
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ "Distribution" ]
+      responses:
+        200:
+          description: Versions of the plugin found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListVersionsResponse"
+        404:
+          description: No versions of the plugin found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListVersionsErrResponse"
+  /api/v1/marketplace/landing:
+    get:
+      description: Landing page plugins list
+      parameters:
+        - $ref: "#/components/parameters/pluginsPerPage"
+        - $ref: "#/components/parameters/pageNumber"
+        - $ref: "#/components/parameters/sorting"
+      tags: [ "Marketplace" ]
+      responses:
+        200:
+          description: A list of featured plugins. If authentication is provided, a `liked` field will be embedded into the post objects in `.data[]`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketplacePluginsList"
+  /api/v1/marketplace/search:
+    post:
+      description: Search for plugins
+      parameters:
+        - $ref: "#/components/parameters/pluginsPerPage"
+        - $ref: "#/components/parameters/pageNumber"
+        - $ref: "#/components/parameters/sorting"
+      tags: [ "Marketplace" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarketplaceSearch"
+      responses:
+        200:
+          description: A list of matching plugins. If authentication is provided, a `liked` field will be embedded into the post objects in `.data[]`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketplacePluginsList"
+  /api/v1/marketplace/<post_dri>/toggle_like:
+    post:
+      description: Toggle "liking" a plugin.
+      parameters:
+        - $ref: "#/components/parameters/post_dri"
+      tags: [ "Marketplace" ]
+      responses:
+        200:
+          description: A successful update of the like status for a particular plugin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+  /api/v1/plugin/<name>/publish:
+    put:
+      description: Publish a plugin into the marketplace
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ "Publishing" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublishPluginToMarketplace"
+      responses:
+        202:
+          description: Published pending approval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TODO"
+        401:
+          description: Unauthorized to publish this particular plugin or any referenced resources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TODO"
+  /api/v1/plugin/<name>/transfer:
+    post:
+      description: Create a transfer request (current owner)
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ "Transfer" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferRequest"
+      responses:
+        202:
+          description: Transfer request lodged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferResponse"
+        401:
+          description: Unauthorized to transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TODO"
+  /api/v1/plugin/<name>/transfer/<transfer_id>/acknowledge:
+    put:
+      description: Counterparty acknowledge transfer request
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+        - $ref: "#/components/parameters/transferId"
+      tags: [ "Transfer" ]
+      responses:
+        202:
+          description: Transfer now pending for approval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferResponse"
+        401:
+          description: Unauthorized to consent to transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TODO"
+  /api/v1/plugin/<name>/transfer/<transfer_id>/confirm:
+    put:
+      description: Both parties confirm the transfer
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+        - $ref: "#/components/parameters/transferId"
+      tags: [ "Transfer" ]
+      responses:
+        200:
+          description: Transferred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferResponse"
+        202:
+          description: Transfer will occur once both party agrees
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferResponse"
+        401:
+          description: Unauthorized to confirm transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TODO"
+  /api/v1/plugin/<name>/transfer/<transfer_id>:
+    delete:
+      description: Either party aborts the transfer
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+        - $ref: "#/components/parameters/transferId"
+      tags: [ "Transfer" ]
+      responses:
+        200:
+          description: Aborted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferResponse"
+        401:
+          description: Unauthorized to abort transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TODO"
+components:
+  parameters:
+    post_dri:
+      in: path
+      name: dri
+      schema:
+        type: string
+      required: true
+      description: >-
+        The plugin's post's DRI, it has the prefix `dri:plgMkt::post/`.
+
+        Note that all our endpoints return a standard DRI and it's the responsibility of the frontend to
+        URI-encode the entire DRI before using it as a path parameter with any requests to the backend.
+        In this case, the appropriate function to use is [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
+    dri:
+      in: path
+      name: dri
+      schema:
+        type: string
+      required: true
+      description: >-
+        The plugin's DRI, it can be found in the response's `data.dri` from `/api/v1/plugins/save_and_build`.
+        The DRI is of the root object, and as such has the prefix `dri:plg::plugin/`.
+
+        Note that all our endpoints return a standard DRI and it's the responsibility of the frontend to
+        URI-encode the entire DRI before using it as a path parameter with any requests to the backend.
+        In this case, the appropriate function to use is [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
+    orgName:
+      in: path
+      name: org_name
+      schema:
+        type: string
+        format: url
+      required: true
+      description: An organization's name.
+    plugName:
+      in: path
+      name: name
+      schema:
+        type: string
+        format: url
+        minimum: 6
+        maximum: 128
+      required: true
+      description: >-
+        The plugin's published name. It can be applied by PUT `/api/v1/plugin/<dri>/tag`, and it is initialized by PUT `/api/v1/plugin/<name>/claim`.
+        If it contains questionable characters, they should be URL-encoded.
+    previewKey:
+      in: path
+      name: previewKey
+      schema:
+        type: string
+      required: true
+      description: >-
+        A backend-issued preview key. The current format is a `x-` prefix followed by a random (v4) uuid. It can be found by GET `/api/va/plugin/<name>/preview_key`
+    transferId:
+      in: path
+      name: transfer_id
+      schema:
+        type: string
+      required: true
+      description: >-
+        A backend-issued transfer key. Used for transferral-related operations.
+    skip:
+      in: query
+      name: skip
+      schema:
+        type: number
+      required: false
+      description: "The number of database entries to skip before returning results."
+    take:
+      in: query
+      name: take
+      schema:
+        type: number
+      required: false
+      description: "The number of database entries to retrieve and return."
+    pluginsPerPage:
+      in: query
+      name: plugins_per_page
+      schema:
+        type: number
+        minimum: 4
+        maximum: 25
+      required: false
+      description: The maximum number of plugins to include in the response, and by proxy, the number of plugins per page for the purposes of pagination.
+    pageNumber:
+      in: query
+      name: page
+      schema:
+        type: number
+      required: false
+      description: The page number desired of the overall list of plugins. If omitted, the first page is returned. The page number is zero-indexed. The size of the page is determined by the query parameter `pluginsPerPage`.
+    sorting:
+      in: query
+      name: sort
+      schema:
+        type: string
+      required: false
+      description: >-
+        The sorting method for the result. Options include:
+          * Best match (`best`)
+            - Default for `/api/v1/marketplace/search`
+            - Unavailable for the `/api/v1/marketplace/landing` endpoint
+          * Most recently-updated (`new`)
+            - Default for `/api/v1/marketplace/landing`
+          * Most highly-rated (`top`)
+          * Price: lowest to highest (`cost_asc`)
+          * Price: highest to lowest (`cost_desc`)
+  schemas:
+    GenericResponse:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "dataReachable in-house standard 6-digit response codes. Extension of HTTP response codes"
+        message:
+          type: string
+          description: "Message describing the response in a human-friendly way"
+    InternalServerError:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      description: Internal server error
+      example: {
+        code: 500000,
+        message: "Somewhat human readable server error message."
+      }
+    FileBundle:
+      properties:
+        version:
+          type: string
+          description: >-
+            Version of the plugin we're building against.
+            If unspecified, a semver string will be generated based on the latest semver string + 1 build revision `w.x.y.(z+1)`.
+
+            The user must manually /tag the plugin to actually roll it out into production (ie. set `plugin.pushed`=`true`)
+        files:
+          type: object
+          description: "List of files to send to the build context. The key should be a string with paths delimited by forward slash `/`. The value should be a base64 encoded blob. The underlying format can be raw bytes (eg. images) or strings."
+          required: [ "index.jsx" ]
+          properties:
+            "index.jsx":
+              type: string
+              description: >-
+                The contents should be base64 encoded even if it's a code file.
+
+                All scripts, stylesheets and images in the output should be imported by the root script (`index.jsx`) or its children.
+            "assets/image.png":
+              type: string
+              description: >-
+                Blobs should be base64 strings and will not be checked at runtime.
+
+                Paths should:
+
+                  - Be delimited by `/`
+                  - Not be prefixed with `/`
+                  - Not contain any malicious `./` and `../`s
+
+                Paths violating these rules will be filtered by the build server and rejected.
+      required: [ "files" ]
+      example: {
+        files: {
+          "index.jsx": "Y29uc29sZS5sb2coIkhlbGxvIFdvcmxkISIpOwo=",
+          "assets/image.png": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QAAAB9AMQ5Y0bVAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
+        }
+      }
+    GenericResponseWithPayload:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: "Wrapper around the response data"
+
+    # EntryInfoPayload:
+    #     allOf:
+    #     - $ref: "#/components/schemas/GenericResponse"
+    #     - type: object
+    #       properties:
+    #         data:
+    #           type: object
+    #           properties:
+    #             user_info:
+    #               type: object
+    Res_Email:
+      type: string
+      description: User provided email address. If not provided, the field is `null`.
+      example: "xxxx@datareachable.com"
+
+    Res_Mobile:
+      type: object
+      description: User provided mobile number. If not provided, the field is `null`.
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        number:
+          type: string
+          description: The actual mobile number of the user.
+      example: { "country": "61", "number": "1234567890" }
+
+    Res_EntryInfo_200001:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - properties:
+            data:
+              type: object
+              description: response data
+              properties:
+                user_info:
+                  required:
+                    - "sub"
+                    - "name"
+                  type: object
+                  properties:
+                    sub:
+                      type: string
+                      description: >-
+                        User universally unique id.
+                        <br/>
+                        **Must** be returned and contain value.
+                      example: "xxxxxxxxx-yyyyy_zzzzz"
+                    name:
+                      type: string
+                      description: >-
+                        User name.
+                        <br/>
+                        **Must** be returned and contain value.
+                      example: "John Doe"
+                    email:
+                      $ref: "#/components/schemas/Res_Email"
+                    mobile:
+                      $ref: "#/components/schemas/Res_Mobile"
+                    birthday:
+                      type: string
+                      format: date
+                      description: User birthday
+                      example: "1970-01-01"
+                    gender:
+                      type: string
+                      description: User gender
+                      example: "male"
+                    avatar:
+                      type: string
+                      description: User avatar public-readable URL
+                      example: "https://xxxxxx.aws.com"
+                org_ist:
+                  type: array
+                  description: All organizations the user currently belongs to
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: organization name
+                        example: Fake_Org_400001
+                      dri:
+                        type: string
+                        description: organization DRI
+                        example: dri:acs::org/yYL8JZYUkvdgonkzoo
+                      logo:
+                        type: string
+                        description: organization logo
+                        example: https://xxxxxx.aws.com
+                plg_claim_list:
+                  type: array
+                  description: All pluginClaims owned by the user
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the pluginClaim
+                        example: hello-world
+                      owner:
+                        type: string
+                        description: Identifier of the entity who owns this plugin
+                        example: BEEFFACE-0000-0000-0000-000000000000
+                      description:
+                        type: string
+                        description: Markdown description of the plugin
+                        example: Demo pluginClaim
+
+
+    SaveAndBuildSuccess:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - properties:
+            data:
+              allOf:
+                - $ref: "#/components/schemas/RedisBuildStatus"
+                - $ref: "#/components/schemas/TaggedAndStamped"
+                - properties:
+                    version:
+                      type: string
+                      description: "Version assigned to the plugin by the server, if not already known by the client."
+      example: {
+        code: 202000,
+        message: "Task queued",
+        data: {
+          at: 1619141372,
+          dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+          version: "1.2.3-1",
+          status: "queued"
+        }
+      }
+    SaveAndBuildRejected:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - properties:
+            data:
+              allOf:
+                - $ref: "#/components/schemas/RedisBuildStatus"
+                - $ref: "#/components/schemas/TaggedAndStamped"
+      example: {
+        code: 500000,
+        message: "Task was not queued, please try again in a minute",
+        data: {
+          at: 1619141372,
+          dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+          status: "rejected"
+        }
+      }
+    SaveAndBuildDispatched:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - properties:
+            data:
+              allOf:
+                - $ref: "#/components/schemas/RedisBuildStatus"
+                - $ref: "#/components/schemas/TaggedAndStamped"
+      example: {
+        code: 504000,
+        message: "Timed out while waiting for the task to queue",
+        data: {
+          at: 1619141372,
+          dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+          status: "dispatched"
+        }
+      }
+    RedisBuildStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          description: >-
+            The status describes the state of the plugin build within the system.
+
+              - When `dispatched` is returned from the API, it's possible for the plugin to be built properly but indicates huge capacity problems in the backend. Typically associated with a 504 response.
+              - When `queued` is returned from the API, it's likely that the plugin will be built to completion within 20 seconds. Typically associated with a 202 response.
+              - When `rejected` is returned from the API, it means that there is no capacity to process the plugin. Typically associated with a 500 response.
+              - When `completed` is returned from the API, it means a plugin build has been attempted. The `successful` field and `/api/v1/plugin/<dri>/inspect` endpoint should be consulted.
+          enum:
+            - dispatched
+            - queued
+            - rejected
+            - completed
+        successful:
+          type: boolean
+          description: "If `status: completed`, then this indicates whether the plugin was successfully built and uploaded into the system."
+    TaggedAndStamped:
+      type: object
+      properties:
+        dri:
+          type: string
+          description: "The DRI of the plugin"
+        at:
+          type: number
+          description: "Unix time of when the last status message was lodged into the system."
+    SubprocessOutputs:
+      type: object
+      properties:
+        stdout:
+          type: string
+          description: "The captured stdout"
+        stderr:
+          type: string
+          description: "The captured stderr"
+    BuildInspect:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: "Wrapper around the logs."
+              properties:
+                type:
+                  type: string
+                  enum: [ LowLevelError, ValidationError, ESLintExit, WebpackExit, Success ]
+                  description: >-
+                    The type of the status.
+
+                      - `LowLevelError` means an internal error, user should be informed that the error will be resolved by a dR team. No other fields will be shown.
+                      - `ValidationError` means an error with the request. Consult the `message` field for more details.
+                      - `ESLintExit` means ESLint detected an error, consult `eslint_outputs` for more details.
+                      - `WebpackExit` means webpack exited due to an error. Consult `webpack_outputs` for more details. Webpack is ran after ESLint, so the `eslint_outputs` field will also be available.
+                      - `Success` means everything is fine. `eslint_outputs` and `webpack_outputs` are available to the client for code quality / statistics.
+                code:
+                  type: integer
+                  description: "Exit code. Only present if the `type` is `ESLintExit` or `WebpackExit`"
+                message:
+                  type: string
+                  description: "A more specific description of the error if the `type` is `ValidationError`"
+                eslint_outputs:
+                  allOf:
+                    - $ref: "#/components/schemas/SubprocessOutputs"
+                  description: "Outputs of ESLint"
+                webpack_outputs:
+                  allOf:
+                    - $ref: "#/components/schemas/SubprocessOutputs"
+                  description: "Outputs of webpack"
+                preview:
+                  type: object
+                  description: "Information associated with a shareable preview of this item."
+                  properties:
+                    previewKey:
+                      type: string
+                      description: "The key to be used when the user wishes to preview the plugin. It is a URL-safe, case-insensitive string."
+                    privacy:
+                      type: string
+                      pattern: "writers|public"
+                      description: >-
+                        The privacy level of the plugin when a preview key is used to access it. As the names of the possible values suggest:
+
+                          - `writers` means only people who can edit the plugin can access the plugin
+                          - `public` means everyone who has the link can view the plugin preview
+    BuildSuccessInspect:
+      allOf:
+        - $ref: "#/components/schemas/BuildInspect"
+      example: {
+        code: 200000,
+        message: "Build successful",
+        data: {
+          type: "Success",
+          eslint_outputs: "file.js\n    warning ...",
+          webpack_outputs: "webpack 4.20.69 ...",
+          preview: {
+            previewKey: "AAAAAAAAAAAAAAAAAAAAAA123123",
+            privacy: "public"
+          }
+        }
+      }
+    BuildFailedInspect:
+      allOf:
+        - $ref: "#/components/schemas/BuildInspect"
+      example: {
+        code: 200001,
+        message: "Build failed",
+        data: {
+          type: "ESLintExit",
+          eslint_outputs: "file.js\n    error ...",
+        }
+      }
+    TagPayload:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name to assign to the plugin.
+        version:
+          type: string
+          description: "Optional semver string to assign to the plugin. If omitted, a tag will be assigned by incrementing the 'newest' tag or `0.0.1` if there's none."
+      required: [ "name" ]
+      example: {
+        name: "hello-world",
+        version: "1.2.3"
+      }
+    TagSuccess:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                version:
+                  type: string
+                  description: "The version assigned to this plugin."
+      example: {
+        code: 200000,
+        message: "The object has been successfully tagged",
+        data: {
+          version: "1.2.3"
+        }
+      }
+    TagRejected:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: {
+        code: 400999,
+        message: "`dri` is not valid"
+      }
+    TagDuplicatedVersion:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: {
+        code: 400000,
+        message: "That particular version of the plugin already exists. Please pick a new version number"
+      }
+    RequestRejectedOwnership:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: {
+        code: 401000,
+        message: "You're not authorized to perform any actions on a plugin with that name."
+      }
+    PluginNotFound:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: {
+        code: 404000,
+        message: "Plugin not found"
+      }
+    PluginObjectTaggedResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              allOf:
+                - $ref: "#/components/schemas/PluginObjectCommons"
+                - $ref: "#/components/schemas/TagPayload"
+                - properties:
+                    viewKey:
+                      type: string
+                      description: A context-appropriate view key emitted for the client.
+      example: {
+        code: 200000,
+        message: "Plugin found",
+        data: {
+          dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+          files: {
+            "index.jsx": "HELLO="
+          },
+          name: "hello-world",
+          version: "0.0.1"
+        }
+      }
+    PluginObjectCommons:
+      allOf:
+        - type: object
+          properties:
+            dri:
+              type: string
+              description: "DRI of this plugin document"
+            artefact:
+              type: string
+              description: "(Nullable) The DRI of the artefact object."
+            yanked:
+              type: boolean
+              description: "(Nullable) If `true`, then the plugin is no longer publically available."
+            privileges:
+              type: array
+              description: >-
+                (Nullable) A subset of [sandbox attributes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/sandbox) can be added to the plugin's iframe.
+              items:
+                type: string
+                pattern: "^allow-(modals|popups(-to-escape-sandbox)?|same-origin)$"
+        - $ref: "#/components/schemas/FileBundle"
+    PluginArtefactBadVerResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: { code: 400000, message: "Version requirement is not a valid semver string" }
+    PluginArtefactNoVersResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: { code: 404000, message: "No released versions of plugin found" }
+    PluginArtefactNoVerMatchesResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: { code: 404001, message: "No matching version found" }
+    PluginArtefactResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                dri:
+                  type: string
+                  description: "DRI of the plugin"
+                artefact:
+                  type: string
+                  description: "DRI of the plugin artefact in the distribution system. The client can fetch the plugin bundle by combining this with the CDN url."
+                privileges:
+                  type: array
+                  description: "A list of iframe sandbox permission nodes which the plugin has been granted on top of `allow-scripts`"
+                  items:
+                    type: string
+                # TODO One-time authorization token may be implemented in the future
+      example: {
+        code: 200000,
+        message: "Found matching version of plugin",
+        data: {
+          dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+          artefact: "dri:plg::artefact/DEADBEEF-0000-0000-0000-000000000000",
+          privileges: [ "allow-same-origin" ]
+        }
+      }
+    ListVersionsResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: "List of plugin versions the server knows about."
+              type: array
+              items:
+                $ref: "#/components/schemas/ListVersionItem"
+      example: {
+        code: 200000,
+        message: "Found released versions of the plugin",
+        data: [
+          {
+            "version": "0.0.1",
+            "dri": "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+            "yanked": false,
+            "tagged_at": "1970-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    ListVersionsErrResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: { code: 404000, message: "No released versions of plugin found" }
+    ListVersionItem:
+      type: object
+      properties:
+        version:
+          type: string
+          description: "Version string set for this version."
+        dri:
+          type: string
+          description: "ID of the plugin, for use on the CDN"
+        yanked:
+          type: boolean
+          description: "(Nullable) If `true`, then this plugin isn't available for general use, and the field is occupied."
+        privileges:
+          type: array
+          description: >-
+            (Nullable) A subset of [sandbox attributes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/sandbox) can be added to the plugin's iframe.
+          items:
+            type: string
+            pattern: "^allow-(modals|popups(-to-escape-sandbox)?|same-origin)$"
+        tagged_at:
+          type: string
+          format: date-time
+          description: "ISO8601 Date-Time string of when the plugin was tagged by the pusher."
+    ModifiablePluginClaimComponents:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Markdown description of the plugin"
+    PluginClaim:
+      allOf:
+        - $ref: "#/components/schemas/ModifiablePluginClaimComponents"
+        - type: object
+          properties:
+            name:
+              type: string
+              description: "Name of the plugin"
+            owner:
+              type: string
+              description: "Identifier of the entity who owns this plugin"
+    DetailedPluginCatalogueResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - properties:
+            data:
+              properties:
+                end_of_stream:
+                  type: boolean
+                  description: "Whether there are remaining entries in the database."
+                plugins:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                        description: DRI of the plugin claim
+                      name:
+                        type: string
+                        description: Name of the plugin
+                      creation:
+                        type: object
+                        properties:
+                          creator_name:
+                            type: string
+                            description: Name of the creator
+                          creation_time:
+                            type: string
+                            format: iso8601
+                            description: Time of creation of the plugin
+                      tags:
+                        type: array
+                        description: Tags associated with the plugin
+                      starred:
+                        type: boolean
+                        description: Whether it's starred by the current user(?)
+                      published:
+                        type: boolean
+                        description: Whether there's a corresponding marketplace post associated with the plugin.
+                      project:
+                        type: object
+                        properties:
+                          dri:
+                            type: string
+                          name:
+                            type: string
+                      org:
+                        type: object
+                        properties:
+                          dri:
+                            type: string
+                          name:
+                            type: string
+    PluginCatalogueResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/PluginClaim"
+                  - properties:
+                      owner:
+                        $ref: "#/components/schemas/PseudoUser"
+                      creator:
+                        $ref: "#/components/schemas/PseudoUser"
+                      last_update:
+                        type: string
+                        format: date-time
+                        description: "Time when the plugin was last updated."
+                      image:
+                        type: string
+                        format: uri
+                        description: "(Nullable) The identifier of the first preview image of the plugin."
+
+      example: {
+        code: 200000,
+        message: "List of plugins you own",
+        data: [
+          {
+            name: "hello-world",
+            owner: "BEEFFACE-0000-0000-0000-000000000000",
+            description: "Demo plugin",
+          }
+        ]
+      }
+    PreviewListing:
+      allOf:
+        - $ref: "#/components/schemas/PluginCatalogueResponse"
+        - $ref: "#/components/schemas/PreviewKey"
+
+    PluginInfoResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/PluginClaim"
+      example: {
+        code: 200000,
+        message: "Plugin info",
+        data: {
+          name: "hello-world",
+          owner: "BEEFFACE-0000-0000-0000-000000000000",
+          description: "Demo plugin"
+        }
+      }
+    PluginKeyInfoResponse:
+      allOf:
+        - $ref: "#/components/schemas/PluginInfoResponse"
+        - properties:
+            data:
+              properties:
+                config:
+                  type: object
+                  properties:
+                    yaml_config:
+                      type: string
+                      description: "Raw YAML default config"
+                    parsed_config:
+                      $ref: "#/components/schemas/PluginConfig"
+    PluginConfig:
+      properties:
+        type:
+          type: string
+          pattern: '^(BOOLEAN|NUMBER|STRING|ARRAY|MAP)$'
+          description: "Type of the variable"
+        description:
+          type: string
+          description: "Primary description of this variable"
+        hint:
+          type: string
+          description: "Secondary description of this variable"
+        value:
+          type: object
+          description: "A primitive value, an array of PluginConfig, or a map of PluginConfig"
+    PluginMetadataUpdated:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: { code: 200000, message: "Plugin metadata updated" }
+    MarketplaceSearch:
+      type: object
+      description: "The endpoint will return the INTERSECTION of all of the fields below."
+      properties:
+        has_all_tags:
+          type: array
+          description: "A set of tags to search the the plugin against. The server will only return plugins which contains a SUPERSET of all the tags listed in the request body. (In other words, INTERSECTION)"
+          items:
+            type: string
+            description: "A individual tag within the set of tags"
+        contains_tag:
+          type: array
+          description: "A set of tags to search the plugin against. The server will return any plugins that has ONE OF THE LISTED TAGS in this field. (In other words, UNION)"
+          items:
+            type: string
+            description: "A individual tag within the set of tags"
+        text_search:
+          type: string
+          description: "Text to search within the plugin names and descriptions."
+        author:
+          type: string
+          description: "The DRI of the OIDC organisation which published this plugin."
+    MarketplacePluginsList:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              type: array
+              description: "List of (matching) plugins. The length is controlled by search results and query parameters."
+              minItems: 0
+              maxItems: 25
+              items:
+                type: object
+                properties:
+                  featured:
+                    type: boolean
+                    description: "Whether the plugin is a featured plugin (position in the search results was paid)"
+                  popularity:
+                    type: number
+                    description: "Number of deliverables which have ever included this plugin."
+                  dri:
+                    type: string
+                    format: uri
+                    description: "The machine name of the plugin is contained within: `dri:plgMkt::post/<name>`"
+                  name:
+                    type: string
+                    description: "Human-friendly name of the plugin"
+                  author:
+                    type: string
+                    description: "The name of the plugin's author"
+                  description:
+                    type: string
+                    description: "The entirety of the plugin's description"
+                  tags:
+                    type: array
+                    description: "The tags the plugin was published with"
+                    items:
+                      type: string
+                  pricing:
+                    type: number
+                    description: "(Nullable) Price of the plugin - PLACEHOLDER"
+                  gallery:
+                    type: array
+                    description: "The identifier of all gallery images of the plugin. The first is the cover/preview image."
+                    items:
+                      type: string
+                  recent_versions:
+                    type: array
+                    maxItems: 5
+                    description: >-
+                      The latest significant versions (as determined by semver strings)
+
+                      The algorithm works in the following way:
+                        - List the LATEST version for each unique non-zero SEMVER_MAJOR. (ie. `?.highest.highest`)
+                        - List the LATEST version for each zero SEMVER_MAJOR, and unique non-zero SEMVER_MINOR (ie. `0.?.highest`)
+                        - List the ALL versions of zero SEMVER_MAJOR and SEMVER_MINOR (ie. `0.0.?`)
+                        - Order the list from highest version to lowest version
+                        - Trim it down such that it contains a maximum of 5 entries.
+                    items:
+                      $ref: "#/components/schemas/ListVersionItem"
+      example: {
+        code: 200000,
+        message: "List of plugins",
+        data: [
+          {
+            featured: true,
+            name: "Hello World!",
+            author: "Plugin Developer",
+            description: "Lorem ipsum dolor sit amet",
+            tags: [ "demo" ],
+            pricing: 3.50,
+            gallery: [ "dri:plgMkt::img/DEADBEEF-0000-0000-0000-000000000000" ],
+            recent_versions: [
+              {
+                version: "0.1.0",
+                dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+                yanked: false,
+                tagged_at: "1970-01-01T00:00:00.000Z",
+              },
+              {
+                version: "0.2.0",
+                dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+                yanked: false,
+                tagged_at: "1970-01-01T00:00:00.000Z",
+              },
+              {
+                version: "1.0.0",
+                dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+                yanked: false,
+                tagged_at: "1970-01-01T00:00:00.000Z",
+              },
+              {
+                version: "2.0.0-alpha1",
+                dri: "dri:plg::plugin/DEADBEEF-0000-0000-0000-000000000000",
+                yanked: false,
+                privileges: [ "allow-same-origin" ],
+                tagged_at: "1970-01-01T00:00:00.000Z",
+              }
+            ]
+          }
+        ]
+      }
+    PublishPluginToMarketplace:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "A human-friendly name string that can have nothing to do with the machine-friendly name."
+        images:
+          type: array
+          maxItems: 5
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/ImageBlob"
+              - $ref: "#/components/schemas/ImageDRI"
+        description:
+          type: string
+        tags:
+          type: array
+          description: "A list of keywords the author would like to associate with the plugin."
+          items:
+            type: string
+        permissionRequests:
+          type: array
+          description: >-
+            A permission request attached to the plugin's approval. List of valid requests:
+              * `allow-same-origin` - access to non-opaque XHR / Fetch commands
+          items:
+            type: string
+        versions:
+          type: array
+          description: >-
+            A list of versions to mark as published, rest of the plugins will be unmarked from their published state.
+            
+            If unspecified, no changes will be made to the published list.
+          items:
+            type: string
+      required:
+        - name
+        - description
+      example: {
+        name: "Hello World!",
+        images: [ ],
+        description: "# Some markdown description\nSome text",
+        tags: [ "example", "basic", "simple" ],
+        permissionRequests: [ "allow-same-origin" ]
+      }
+    ImageBlob:
+      type: object
+      properties:
+        blob:
+          type: string
+          format: base64
+      required:
+        - blob
+    ImageDRI:
+      type: object
+      properties:
+        dri:
+          type: string
+          format: uri
+      required:
+        - dri
+    PseudoUser:
+      type: object
+      properties:
+        dri:
+          description: DRI of this user entity
+        name:
+          description: Name of this user entity
+    PreviewKeyCoreAttributes:
+      type: object
+      properties:
+        grantee:
+          type: string
+          format: uri
+          description: The DRI of the organization granted access to the plugin
+          required: true
+        expiry:
+          type: string
+          format: iso8601
+          description: Expiry date of this preview key. If unspecified, it will never expire.
+        preview_in_qe:
+          type: boolean
+          description: Whether the preview key is usable in the questionnaire editor
+          default: true
+    PreviewKeySubmissionAttributes:
+      allOf:
+        - type: object
+          properties:
+            plugin_version:
+              type: string
+              description: The version that this preview key is granted against
+              required: true
+        - $ref: "#/components/schemas/PreviewKeyCoreAttributes"
+    PreviewKey:
+      allOf:
+        - $ref: "#/components/schemas/PreviewKeyCoreAttributes"
+        - type: object
+          properties:
+            key:
+              type: string
+              description: The preview key, usable by the 3rd parties
+            plugin_name:
+              type: string
+              description: The name of the plugin
+            created_at:
+              type: string
+              format: iso8601
+              description: Time which the plugin preview key was created at
+            grantee:
+              allOf:
+                - description: The organization who was allowed to use this preview key
+                - $ref: "#/components/schemas/PseudoUser"
+            grantor:
+              allOf:
+                - description: The last user who updated this preview key
+                - $ref: "#/components/schemas/PseudoUser"
+    PreviewKeyEnumeration:
+      type: array
+      items:
+        type: object
+        properties:
+          plugin_version:
+            type: string
+            description: "Version of the plugin targeted by the specified preview keys"
+          keys:
+            type: array
+            items:
+              $ref: "#/components/schemas/PreviewKey"
+    TransferRequest:
+      type: object
+      properties:
+        receiver:
+          type: string
+          description: "DRI of the organization who will receive this plugin."
+    PluginTransferObj:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Generated transfer ID"
+        plugin_name:
+          type: string
+          format: uri
+          description: "DRI of the plugin claim this transfer references"
+        initiated_at:
+          type: string
+          description: "Time the transfer was initiated"
+          format: iso8601
+        sender:
+          allOf:
+            - description: "The 'current' owner org of the plugin"
+            - $ref: "#/components/schemas/PseudoUser"
+        receiver:
+          allOf:
+            - description: "The 'future' owner org of the plugin"
+            - $ref: "#/components/schemas/PseudoUser"
+        status:
+          type: string
+          pattern: "Initiated|Acknowledged|Approved|Transferred|Cancelled"
+        final_confirmation:
+          type: object
+          description: "Status of the final confirmation, post-approval"
+          properties:
+            sender:
+              type: boolean
+            receiver:
+              type: boolean
+    TransferResponse:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - properties:
+            data:
+              $ref: "#/components/schemas/PluginTransferObj"
+    UserOrgPluginClaimsStandingCount:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - properties:
+            data:
+              properties:
+                total:
+                  type: number
+                  description: "Total count of plugins the user can edit."
+                starred:
+                  type: number
+                  description: "Count of plugins starred by the requesting user."
+                bound:
+                  type: number
+                  description: "Count of plugins bound to a project, including those included from a permission grant. `total - bound = not_bound`"
+                published:
+                  type: number
+                  description: "Count of plugins published on the marketplace"
+                archived:
+                  type: number
+                  description: "Count of archived plugins"
+    TODO:
+      type: object
+      properties:
+        todo:
+          type: string
+          description: "This schema is to-be-completed"
+      example: { todo: "TODO" }

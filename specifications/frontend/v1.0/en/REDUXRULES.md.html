@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="redux-rules-specifications">REDUX RULES SPECIFICATIONS</h1>
+<h1 id="description">DESCRIPTION</h1>
+<p>This document is an introduction of the structure of redux which refers to three typescript files. There are
+type.ts, action.ts and reducer.ts. The structure of comments and the usage of redux are also mentioned in this document. Each Reducer will be defined in folders separately with its own type.ts, action.ts and reducer.ts files. A rootReducer will be defined in the <code>Store</code> folder.</p>
+<h1 id="comments">Comments</h1>
+<p>Comments are necessary in all files.
+Every interface need an introduction to describe its meaning and parameters.</p>
+<h2 id="top-levelfile-comments">Top Level/File Comments</h2>
+<p>The top-level comment is used to tell readers who are not familiar with this code what is included in this file. The general content of the file, its author, dependencies and compatibility information should be provided.</p>
+<pre><code class="language-javascript">/**
+ * @file type/actions/reducer
+ * @date 2020/09/21
+ * @author Administrator
+ * @lastModify Administrator 2020/09/21
+ */
+</code></pre>
+<h2 id="comments-of-interface">Comments of interface</h2>
+<p>The comment below shows how to describe an interface. First of all, An introduction of this interface is needed. Then meanings and types of each parameters should be shown in the comment.</p>
+<pre><code class="language-js">/**
+ * This is an introduction of a interface.
+ * @param {type} parameter the meaning of this parameter
+ * /
+</code></pre>
+<h1 id="typets-file">type.ts file</h1>
+<p>This file contains all interface of types, reducers and actions, constants and an union type of actions.</p>
+<h2 id="type-interface">Type interface</h2>
+<p>Interfaces may needed in other files need to be shown in this file with comments. This kind of interface mostly are parts of a state in reducer.ts file or types of payload in actions.ts file. So all these interfaces are named in the form of <code>xxxType</code>.
+This demo shows a FolderListType which is a part of dashboard reducer.</p>
+<pre><code class="language-js">/**
+ * This interface shows the structure of folders in the database.
+ * @param {string} id the id of this folder, this should be unique
+ * @param {string} name the name of this folder
+ * @param {string} pid the id of its parent folder
+ * @param {Array&lt;FolderListType&gt;} children all children folders included in this folder
+ */
+interface FolderListType {
+  id: string;
+  name: string;
+  pid: string;
+  children: Array&lt;FolderListType&gt;;
+}
+</code></pre>
+<p>After defining all type interfaces, these interfaces should be exported together.</p>
+<pre><code class="language-js">export { FolderListType };
+</code></pre>
+<h2 id="reducer-interface">Reducer interface</h2>
+<p>This kind of interface is used to describe the state and should be exported. It may constructed by several sliced interfaces. Each type.ts file can have only one of this kind of interface. So all these interfaces are named in the form of <code>xxxReducer</code>.
+This demo shows a reducer of dashboard.</p>
+<pre><code class="language-js">/**
+ * This is the structure of dashboard reducer, it contains the information of all folders
+ * @param {FolderListType} folderList the structure of folders
+ * @param {FolderDataType} folderData the data in each folders
+ */
+export interface DashboardReducer {
+  folderList: FolderListType;
+  folderData: FolderDataType;
+}
+</code></pre>
+<h2 id="constants">Constants</h2>
+<p>All constant should be defined in this file, the name of the each constant should be all in capital letters and each word should be connected by character <code>_</code>. The value of a constant is a string of its name. There is no comment needed but the meanings of each constant should be clearly shown in the name.
+Here is an example:</p>
+<pre><code class="language-JS">enum ACTION_TYPE { CREATE_NEW_FOLDER = &#39;CREATE_NEW_FOLDER&#39;}
+</code></pre>
+<p>After defining all the constants, these constants should be exported together.</p>
+<pre><code class="language-js">export enum ACTION_TYPE { CREATE_NEW_FOLDER = &#39;CREATE_NEW_FOLDER&#39;}
+</code></pre>
+<h2 id="action-interface">Action interface</h2>
+<p>All actions interface should be defined in this file, each action interface should contains its type and payload, and name should be in the form of <code>xxxAction</code>. There are only two members in each interface -- type and payload. The type field is in the form of <code>type: typeof XXX_XXX</code> and payload shows the data it needs.</p>
+<pre><code class="language-js">/**
+ * This action will create a new folder and will change the folder list
+ * @param {FolderListType} payload.folderList new folder list
+ */
+interface CreateNewFolderAction {
+  type: ACTION_TYPE.CREATE_NEW_FOLDER;
+  payload: {
+    folderList: FolderListType,
+  };
+}
+</code></pre>
+<p>After defining all the actions, these constants should be combined together and export as one which will be named in the form of <code>xxxActionTypes</code>.</p>
+<pre><code class="language-js">export type DashboardActionTypes = CreateNewFolderAction | DeleteFolderAction;
+</code></pre>
+<h1 id="actionsts-file">actions.ts file</h1>
+<p>This file contains all dispatch actions functions.
+Firstly, add top level comment and then import type.ts file in the following way</p>
+<pre><code class="language-js">import * as types from &quot;./types&quot;;
+</code></pre>
+<p>Then define each function in the form as below with comments. The return type should be as same as the one defined in type.ts file.</p>
+<pre><code class="language-js">/**
+ * create an create new folder action
+ * @param folderList
+ */
+const createNewFolderAction = (
+  folderList: types.FolderListType
+): types.DashboardActionTypes =&gt; ({
+  type: types.CREATE_NEW_FOLDER,
+  payload: {
+    folderList,
+  },
+});
+</code></pre>
+<p><em>The name of a function may as same as the name its corresponding action interface but should start with a lower case letter</em></p>
+<p>After defining all actions, these actions should be exported together.</p>
+<pre><code class="language-js">export { createNewFolderAction, deleteFolderAction };
+</code></pre>
+<h1 id="reducerts-file">reducer.ts file</h1>
+<p>This file contains the initial state and return new state according to dispatch actions.
+Firstly, add top level comment and then import type.ts file in the following way</p>
+<pre><code class="language-js">import * as types from &quot;./types&quot;;
+</code></pre>
+<p>Define the initial state:</p>
+<pre><code class="language-js">const initialState: types.DashboardReducer={
+  folderList: {
+    id: &#39;f_0&#39;,
+    name: &#39;Demo&#39;,
+    pid: &#39;f_-1&#39;,
+    children: [],
+}
+</code></pre>
+<p>Then export an default function to manage the return state:</p>
+<pre><code class="language-js">export default (
+  state = initState,
+  action: types.DashboardActionTypes
+): types.DashboardReducer =&gt; {
+  switch (action.type) {
+    case types.CREATE_NEW_FOLDER:
+      return {
+        ...state,
+        folderList: action.payload.folderList,
+      };
+    default:
+      return state;
+  }
+</code></pre>
+<h1 id="usage-of-reducer">Usage of reducer</h1>
+<h2 id="define-rootreducer">Define rootReducer</h2>
+<p>A project may have several reducers. Using combineReducers to declare all reducers in one file which named rootReducer.ts.</p>
+<pre><code class="language-js">import DashboardReducer from &quot;./Dashboard/reducer&quot;;
+
+const rootReducer = combineReducers({
+  dashboardReducer: DashboardReducer,
+});
+
+export type RootState = ReturnType&lt;typeof rootReducer&gt;;
+export default rootReducer;
+</code></pre>
+<h2 id="get-state">Get state</h2>
+<p>Using <code>useSelector</code> to get state and <code>useDispatch</code> to dispatch actions.</p>
+<pre><code class="language-js">import { useSelector, useDispatch } from &quot;react-redux&quot;;
+import { RootState } from &quot;../../Store/rootReducer&quot;;
+import * as types from &quot;../../Store/Dashboard/types&quot;;
+import * as actions from &quot;../../Store/Dashboard/actions&quot;;
+
+const dashboardState = useSelector(
+  (state: RootState) =&gt; state.dashboardReducer
+);
+const dispatch = useDispatch();
+dispatch(actions.createNewFolderAction(folderList));
+</code></pre>
+
+	</div>
+</body>
+</script>
+</html>

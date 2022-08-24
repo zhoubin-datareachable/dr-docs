@@ -1,0 +1,507 @@
+openapi: 3.0.3
+
+info:
+  version: 0.1.1
+  title: dr_Back_SurveyProjectManager
+  description: >-
+    这个文档主要展示了用户关联的项目相关操作的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://spm.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [SurveyProjectManager API Server](https://github.com/dataReachable/dr_Back_SurveyProjectManager)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://spm.dev.datareachable.net/api/v1/"
+
+paths:
+  /user_project/list:
+    get:
+      summary: 获取项目信息列表（包含组织信息））
+      description: 获取项目信息列表（包含组织信息）
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: false
+          description: 可选, 组织dri
+          schema:
+            type: string
+        - name: project_name
+          in: query
+          required: false
+          description: 可选, 项目名称，支持英文全文检索
+          schema:
+            type: string
+        - name: keywords
+          in: query
+          required: false
+          description: 可选, 项目关键字，不支持模糊查询
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          required: false
+          description: 可选, 起始时间，时间格式为ISO string。start_time和end_time必须同时存在或同时不存在
+          schema:
+            type: string
+          example: "2021-06-25T04:53:00.720Z"
+        - name: end_time
+          in: query
+          required: false
+          description: 可选, 结束时间，时间格式为ISO string。start_time和end_time必须同时存在或同时不存在
+          schema:
+            type: string
+          example: "2021-06-25T05:53:00.720Z"
+        - name: participant_type
+          in: query
+          required: false
+          description: 可选， 参与方式 (client,supplier)
+          schema:
+            type: string
+        - name: is_starred
+          in: query
+          required: false
+          description: 可选, 是否标星，有效值：'true','false'
+          schema:
+            type: string
+        - name: is_archived
+          in: query
+          required: false
+          description: 可选, 是否归档，有效值：'true','false'
+          schema:
+            type: string
+        - name: is_published
+          in: query
+          required: false
+          description: 可选, 是否已发布到market，有效值：'true','false'
+          schema:
+            type: string
+        - name: sort_field
+          in: query
+          required: false
+          description: 可选, 指定排序字段，有效值："project_name", "project_created_at"，默认值：project_created_at
+          schema:
+            type: string
+        - name: sort_rule
+          in: query
+          required: false
+          description: 可选，有效值： '1'(升序), '-1'(降序),默认值：1
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          description: 可选, 指定页码,默认值：1
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          required: false
+          description: 可选, 指定分页大小,默认值：10
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ProjectListInfo_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /user_project/fresh:
+    put:
+      summary: 刷新用户关联的项目列表
+      responses:
+        "200":
+          description: 刷新用户关联的项目列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+  /user_project/folder/count:
+    get:
+      summary: PJ-00001 获取各文件夹项目数量
+      description: 此数据依赖于首屏刷新接口
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+        - in: query
+          name: org_dri
+          description: 当前组织 dri
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 获取信息成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: "A 6-digit status code."
+                  message:
+                    type: string
+                    description: "A user-friendly message describing the status of the response."
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        folder_type:
+                          description: 文件夹类型
+                          type: string
+                          enum:
+                            - all
+                            - starred
+                            - published
+                            - archived
+                        count:
+                          description: 项目数量
+                          type: number
+              example:
+                {
+                  code: 200001,
+                  message: "Successfully get the statistics of the project list",
+                  data: [
+                    { folder_type: "all", count: 20 },
+                    { folder_type: "starred", count: 30 },
+                    { folder_type: "published", count: 40 },
+                    { folder_type: "archived", count: 50 }
+                  ]
+                }
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+                example:
+                  code: 500001
+                  message: An unknown error occurred when counting the number of items in the list
+                  data:
+                    error: details
+  /user_project:
+    get:
+      summary: (CR-00021) 获取用户project和project所属组织列表
+      description: 此数据依赖于首屏刷新接口
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+        - in: query
+          name: org_dri
+          description: 当前组织 dri
+          schema:
+            type: string
+        - in: query
+          name: participant_type
+          description: 当前组织角色
+          schema:
+            type: string
+            enum:
+              - client
+              - supplier
+      responses:
+        '200':
+          description: 获取用户参与的组织列表成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: "A 6-digit status code."
+                  message:
+                    type: string
+                    description: "A user-friendly message describing the status of the response."
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        project_dri:
+                          type: string
+                        project_name:
+                          type: string
+                        org_logo:
+                          type: string
+                        org_name:
+                          type: string
+                example:
+                  {
+                    "code": 200001,
+                    "message": "Succeeded in obtaining user-related projects",
+                    "data": [
+                        {
+                            "project_dri": "dri:spm::proj/DXAhcbJQnNdxTH-2",
+                            "project_name": "This is my first project",
+                            "org_logo": "",
+                            "org_name": "isaac.liao"
+                        },
+                        {
+                            "project_dri": "dri:spm::proj/SjIFrv31hhRvu1eC",
+                            "project_name": "project_name_1",
+                            "org_logo": "",
+                            "org_name": "isaac.liao"
+                        },
+                        {
+                            "project_dri": "dri:spm::proj/zvgekbmNzhAFW1UJ",
+                            "project_name": "project_name_2",
+                            "org_logo": "",
+                            "org_name": "isaac.liao"
+                        }
+                      ]
+                  }
+        '400':
+          description: 客户端参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Organization dri is wrong:
+                  value:
+                    code: 400001
+                    message: Organization dri is wrong
+                Unable to get information:
+                  value:
+                    code: 400002
+                    message: Unable to get organization information
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+                example:
+                  code: 500001
+                  message: An unknown error occurred while getting the user project
+                  data:
+                    error: details
+  /user_project/keywords:
+    get:
+      summary: PR-00033 获取所有project中包含查询内容的keywords
+      description: 此数据依赖于首屏刷新接口
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+        - in: query
+          name: org_dri
+          required: true
+          description: 当前组织 dri
+          schema:
+            type: string
+        - in: query
+          name: keywords
+          required: true
+          description: 项目关键字，支持模糊查询
+          schema:
+            type: string
+        - in: query
+          name: participant_type
+          description: 可选，参与方式
+          schema:
+            type: string
+            enum:
+              - client
+              - supplier
+      responses:
+        '200':
+          description: 获取关键字列表成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: "#/components/schemas/Res_Generic"
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        list:
+                            type: array
+                            description: 关键字数组
+                            items:
+                              type: string
+                            example: ["keywords"]
+        '400':
+          description: 客户端参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Organization dri is wrong:
+                  value:
+                    code: 400001
+                    message: org_dri is required
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+                example:
+                  code: 500001
+                  message: An unknown error occurred while getting the user project
+                  data:
+                    error: details
+
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200001
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "fresh user project successfully"
+
+    Res_AuthenticationFailed:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT验证失败，未授权的访问！" }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: {
+        code: 500001,
+        message: "[Get User Information Controller]: Unexpected error",
+        data: { error: "Details of the error goes here"}
+      }
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 405000, message: "You're using the completely wrong HTTP method!" }
+
+    Res_ProjectListInfo_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                total:
+                    type: number
+                    description: 总数，(若用户同时以甲方和乙方的身份参与了同一个项目，此处认为算两个项目)
+                    example: 23
+                proj_infos:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                        description: 项目的统一定位符
+                        example: ""
+                      name:
+                        type: string
+                        description: 项目名称
+                        example: "John Doe"
+                      status:
+                        type: string
+                        description: 项目状态
+                        example: "private"
+                      keywords:
+                        type: array
+                        items:
+                          type: string
+                        description: 关键字列表
+                        example: ["key word"]
+                      created_at:
+                        type: string
+                        format: date
+                        description: 项目创建时间
+                        example: "2021-05-31T16:00:21:Z"
+                      creator:
+                        type: object
+                        properties:
+                          dri:
+                            type: string
+                            description: 用户的统一定位符
+                            example: ""
+                          name:
+                            type: string
+                            description: 用户名
+                            example: "John Doe"
+                      org_name:
+                        type: string
+                        description: 组织名称
+                        example: "male"
+                      org_dri:
+                        type: string
+                        description: 组织的统一定位符
+                        example: ""
+                      is_starred:
+                        type: boolean
+                        description: 是否标星
+                        example: true
+                      is_archived:
+                        type: boolean
+                        description: 是否归档
+                        example: false

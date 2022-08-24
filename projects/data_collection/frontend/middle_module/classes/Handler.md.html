@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <p><a href="../README.md">Data Collection Frontend Middle Module - v0.0.5</a> / Handler</p>
+<h1 id="class-handler">Class: Handler</h1>
+<p>问卷配置文件处理类</p>
+<h2 id="table-of-contents">Table of contents</h2>
+<h3 id="methods">Methods</h3>
+<ul>
+<li><a href="Handler.md#execscript">execScript</a></li>
+<li><a href="Handler.md#getanswers">getAnswers</a></li>
+<li><a href="Handler.md#next">next</a></li>
+<li><a href="Handler.md#parseconditioncontent">parseConditionContent</a></li>
+<li><a href="Handler.md#parsetext">parseText</a></li>
+<li><a href="Handler.md#prev">prev</a></li>
+<li><a href="Handler.md#start">start</a></li>
+<li><a href="Handler.md#new">new</a></li>
+</ul>
+<h2 id="methods-1">Methods</h2>
+<h3 id="execscript">execScript</h3>
+<p>▸ <strong>execScript</strong>(<code>script_content</code>): <code>Promise</code>&lt;<code>unknown</code>&gt;</p>
+<p>执行问卷配置文件中的脚本</p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>script_content</code></td>
+<td align="left"><code>ScriptContent</code></td>
+<td align="left">问卷配置文件中的 ScriptContent</td>
+</tr>
+</tbody></table>
+<h4 id="returns">Returns</h4>
+<p><code>Promise</code>&lt;<code>unknown</code>&gt;</p>
+<ul>
+<li>unknown</li>
+</ul>
+<h4 id="defined-in">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L325">handler/index.ts:325</a></p>
+<hr>
+<h3 id="getanswers">getAnswers</h3>
+<p>▸ <strong>getAnswers</strong>(): <code>AnswerInformation</code></p>
+<p>获取答案信息</p>
+<h4 id="returns-1">Returns</h4>
+<p><code>AnswerInformation</code></p>
+<ul>
+<li>答案信息</li>
+</ul>
+<h4 id="defined-in-1">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L312">handler/index.ts:312</a></p>
+<hr>
+<h3 id="next">next</h3>
+<p>▸ <strong>next</strong>(<code>answer?</code>): <code>Promise</code>&lt;<code>undefined</code> | <code>CurrentNodeInfo</code>&gt;</p>
+<p>获取下一个 Node 时调用</p>
+<h4 id="parameters-1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>answer?</code></td>
+<td align="left"><code>Record</code>&lt;<code>string</code>, <code>null</code> | <code>string</code>&gt;</td>
+<td align="left">当前 Node 的答案，如果当前 Node 可能是 DisplayNode 或者 ExitNode，那么可以不传递此参数</td>
+</tr>
+</tbody></table>
+<h4 id="returns-2">Returns</h4>
+<p><code>Promise</code>&lt;<code>undefined</code> | <code>CurrentNodeInfo</code>&gt;</p>
+<p>CurrentNodeInfo 或 undefined</p>
+<h4 id="defined-in-2">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L259">handler/index.ts:259</a></p>
+<hr>
+<h3 id="parseconditioncontent">parseConditionContent</h3>
+<p>▸ <strong>parseConditionContent</strong>(<code>condition</code>): <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
+<p>将问卷配置文件中的 Condition Content 解析为一个布尔值</p>
+<h4 id="parameters-2">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>condition</code></td>
+<td align="left"><code>boolean</code> | <code>ConditionContent</code></td>
+<td align="left">问卷配置文件中的 Condition Content</td>
+</tr>
+</tbody></table>
+<h4 id="returns-3">Returns</h4>
+<p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
+<ul>
+<li>ture or false</li>
+</ul>
+<h4 id="defined-in-3">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L114">handler/index.ts:114</a></p>
+<hr>
+<h3 id="parsetext">parseText</h3>
+<p>▸ <strong>parseText</strong>(<code>text_content</code>): <code>Promise</code>&lt;<code>string</code>&gt;</p>
+<p>将问卷配置文件中的 TextContent 处理为字符串</p>
+<h4 id="parameters-3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>text_content</code></td>
+<td align="left"><code>TextContent</code></td>
+<td align="left">问卷配置文件中的 TextContent</td>
+</tr>
+</tbody></table>
+<h4 id="returns-4">Returns</h4>
+<p><code>Promise</code>&lt;<code>string</code>&gt;</p>
+<ul>
+<li>字符串</li>
+</ul>
+<h4 id="defined-in-4">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L345">handler/index.ts:345</a></p>
+<hr>
+<h3 id="prev">prev</h3>
+<p>▸ <strong>prev</strong>(): <code>undefined</code> | <code>CurrentNodeInfo</code></p>
+<p>回到上一个 Node</p>
+<h4 id="returns-5">Returns</h4>
+<p><code>undefined</code> | <code>CurrentNodeInfo</code></p>
+<ul>
+<li>CurrentNodeInfo 或 undefined</li>
+</ul>
+<h4 id="defined-in-5">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L290">handler/index.ts:290</a></p>
+<hr>
+<h3 id="start">start</h3>
+<p>▸ <strong>start</strong>(): <code>Promise</code>&lt;<code>undefined</code> | <code>CurrentNodeInfo</code>&gt;</p>
+<p>开始答题时调用，返回第一个 Node 的信息</p>
+<h4 id="returns-6">Returns</h4>
+<p><code>Promise</code>&lt;<code>undefined</code> | <code>CurrentNodeInfo</code>&gt;</p>
+<ul>
+<li>CurrentNodeInfo 或者 undefined</li>
+</ul>
+<h4 id="defined-in-6">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L99">handler/index.ts:99</a></p>
+<hr>
+<h3 id="new">new</h3>
+<p>▸ <code>Static</code> <code>Readonly</code> <strong>new</strong>(<code>questionnaire</code>, <code>getQuotaCountFunc</code>, <code>answer_info?</code>): <code>Promise</code>&lt;<a href="Handler.md"><code>Handler</code></a>&gt;</p>
+<p>静态的异步方法, 返回一个 Handler 实例</p>
+<h4 id="parameters-4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>questionnaire</code></td>
+<td align="left"><code>Questionnaire</code></td>
+<td align="left">问卷的配置文件</td>
+</tr>
+<tr>
+<td align="left"><code>getQuotaCountFunc</code></td>
+<td align="left">() =&gt; <code>Promise</code>&lt;<code>null</code> | <code>Record</code>&lt;<code>string</code>, <code>number</code>&gt;&gt;</td>
+<td align="left">能获取问卷的 mark 计数的函数, 计数应该由后端进行记录</td>
+</tr>
+<tr>
+<td align="left"><code>answer_info?</code></td>
+<td align="left"><code>AnswerInformation</code></td>
+<td align="left">可选参数, 问卷的答案信息，包含每一题的答案、用户答题的流程以及对答案做的标记。当此参数值有效时，会恢复用户的答题进度。</td>
+</tr>
+</tbody></table>
+<h4 id="returns-7">Returns</h4>
+<p><code>Promise</code>&lt;<a href="Handler.md"><code>Handler</code></a>&gt;</p>
+<ul>
+<li>Handler 实例</li>
+</ul>
+<h4 id="defined-in-7">Defined in</h4>
+<p><a href="https://github.work/dataReachable/dr_Front_DataCollectionMidMod/blob/ac9538d/src/lib/handler/index.ts#L35">handler/index.ts:35</a></p>
+
+	</div>
+</body>
+</script>
+</html>

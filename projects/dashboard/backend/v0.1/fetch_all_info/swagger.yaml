@@ -1,0 +1,177 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: Dashboard Backend Project - Get User information API
+  description: >-
+    获取用户信息的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://dashboard.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [Dashboard API Server](https://github.com/dataReachable/dr_Back_Dashboard)
+  contact:
+    name: Backend Team
+    email: mengming.li@datareachable.com
+
+servers:
+  - url: "https://dashboard.dev.datareachable.net/"
+    description: Sydney Development Cluster for Dashboard Project
+
+paths:
+  /api/v1/info:
+    get:
+      tags:
+        - Get User Information
+      summary: 获取用户信息
+      description: 获取用户信息(包含用户组织), 需要通过鉴权
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: cache
+          in: query
+          required: false
+          description: 可选, 为 false 时后端将从 OP 获取用户数据, 默认为 true， 即直接从 RP 的数据库查询
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: 获取用户信息成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Res_GetInfo_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+    post:
+      tags:
+        - Get User Information
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200001
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "Get user information successfully"
+
+    Res_AuthenticationFailed:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT验证失败，未授权的访问！" }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: {
+        code: 500001,
+        message: "[Get User Information Controller]: Unexpected error",
+        data: { error: "Details of the error goes here"}
+      }
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 405000, message: "You're using the completely wrong HTTP method!" }
+
+    Res_Mobile:
+      type: object
+      description: User provided mobile number. If not provided, the field is `null`.
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        number:
+          type: string
+          description: The actual mobile number of the user.
+      example: { "country": "61", "number": "1234567890" }
+
+    Res_Email:
+      type: string
+      description: User provided email address. If not provided, the field is `null`.
+      example: "xxxx@datareachable.com"
+
+    Res_GetInfo_Success:
+      type: object
+      properties:
+        userinfo:
+          required:
+            - "sub"
+            - "name"
+          type: object
+          properties:
+            sub:
+              type: string
+              description: >-
+                User universally unique id.
+                <br/>
+                **Must** be returned and contain value.
+              example: "xxxxxxxxx-yyyyy_zzzzz"
+            name:
+              type: string
+              description: >-
+                User name.
+                <br/>
+                **Must** be returned and contain value.
+              example: "John Doe"
+            email:
+              $ref: "#/components/schemas/Res_Email"
+            mobile:
+              $ref: "#/components/schemas/Res_Mobile"
+            birthday:
+              type: string
+              format: date
+              description: User birthday
+              example: "1970-01-01"
+            gender:
+              type: string
+              description: User gender
+              example: "male"
+            avatar:
+              type: string
+              description: User avatar public-readable URL
+              example: "https://xxxxxx.aws.com"

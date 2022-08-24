@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="前端代码-review-规则">前端代码 review 规则</h2>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">前端代码review规则</span>
+    </div>
+</div>
+
+<h2 id="描述">描述</h2>
+<p>该文件是前端代码 review 规则，主要包含了如何进行组员之间的代码 reveiew。</p>
+<h2 id="为什么做-code-review">为什么做 code review</h2>
+<p>code review 是在软件开发的过程中进行自检和同级评审，其目的是找出在软件开发过程中出现的错误，保证软件开发的质量，并且提高开发者的水平。</p>
+<h3 id="code-review-标准">code review 标准</h3>
+<ul>
+<li><p>是否存在 Eslint 报错<br>在项目中，我们已经配置了 eslint 进行基本的错误排除，所以在 code review 的过程中第一个要检查的就是是否存在 eslint 的 error 或者 warning</p>
+</li>
+<li><p>css 的命名是否符合规范<br>查看项目中 class 和 id 的命名是否符合规范，从而确保别的开发人员可以快速了解别人的项目。</p>
+</li>
+<li><p>开发者是否滥用 css 中的 id,开发者是否选择了合适的 css 选择器<br>查看项目中是否过多的使用了 id，某些 id 是否必须存在，是否可被 class 替换，是否可根据已有的 class 使用子代选择来替换过量的 class 等。</p>
+</li>
+<li><p>开发者是否使用了正确的 HTML 标签<br>查看项目中的 HTML 标签是否符合场景，例如，在给一段长文字添加标签的时候，是否使用了 p 标签，如果使用 div 标签，则无法通过 code review。</p>
+</li>
+<li><p>开发者是否对代码添加了注释<br>查看项目中的注释是否符合项目的注释规范，并且确保注释完善。</p>
+</li>
+<li><p>开发者是否正确的给定量，变量，函数和类进行了命名<br>查看项目中定量，变量，函数和类的命名是否符合项目命名规范。</p>
+</li>
+<li><p>查看项目中的组建是否具有可读性<br>查看项目中的组建是否具有可读性意味着组建是否过于复杂，是否可以进行拆分等。</p>
+</li>
+<li><p>查看项目的代码是否存在重复代码<br>查看项目中的代码是否存在重复的代码，确保重复的代码可以进行提取。</p>
+</li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

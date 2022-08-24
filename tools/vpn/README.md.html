@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="wireguard-vpn--todo-translation-">WireGuard VPN (/* TODO Translation */)</h1>
+<p>WireGuard VPN allows us to access the internal network through a bastion host.</p>
+<h2 id="client-installation-instructions">Client Installation Instructions</h2>
+<ol start="0">
+<li>Install homebrew.</li>
+<li>Install WireGuard <code>brew install wireguard-tools</code></li>
+<li>Obtain a keypair from Matthew or Travis</li>
+<li>Run the following WireGuard commands:</li>
+</ol>
+<pre><code class="language-sh"># To connect
+wg-quick up &lt;path to wireguard config file&gt;
+# To disconnect
+wg-quick down &lt;path to wireguard config file&gt;
+</code></pre>
+<ol start="4">
+<li>If you have any questions, contact Matthew or Google.</li>
+</ol>
+<h2 id="hints">Hints</h2>
+<p>Try adding <code>./</code> to the relative path of the file if <code>wg-quick</code> produces an error.</p>
+<h2 id="users-notes">Users Notes</h2>
+<p>WireGuard only routes traffic to the following hosts through the VPN:</p>
+<ul>
+<li><code>10.6.0.0/24</code> (VPN internal network)</li>
+<li><code>10.100.0.0/16</code> (Kubernetes internal network)</li>
+<li><code>192.168.0.0/16</code> (VPC of dev/apse2)</li>
+</ul>
+<p>As such, your other traffic (eg. stackoverflow.com) will still originate from your own IP address.</p>
+<p>This may cause IP conflicts/reroutes with local resources at the Glenfield office.</p>
+<h2 id="maintainers-notes">Maintainers Notes</h2>
+<ul>
+<li>Generate new config files by running <code>pivpn -a</code> on the bastion host.</li>
+<li>The generated WireGuard config file proxies the entire internet by default.<ul>
+<li>Please only select the specified IP range above before handing off the WireGuard config file.</li>
+</ul>
+</li>
+<li>In-cluster resource requests are funnelled through <code>10.6.0.3</code>, which is a container under the kubernetes
+namespace <code>wireguard-vpn</code><ul>
+<li>The container in the cluster is a client of the VPN server hosted on the bastion host.</li>
+<li>The container must be ran on a host with wireguard installed. This is signified by the label <code>tools.datareachable.net/vpn=wireguard</code></li>
+<li>This does not work currently.</li>
+</ul>
+</li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="linter-specifications">Linter Specifications</h2>
+<h2 id="⚠️-important-notices">⚠️ IMPORTANT NOTICES</h2>
+<ol>
+<li>Suggestions and modifications are welcome to the linter rules in this document. However, do <strong>NOT</strong> change those rules without discussing with Travis (<a href="mailto:travis.yuan@datareachable.com">travis.yuan@datareachable.com</a>)</li>
+<li>We allow ESLint comments in the source code to disable ESLint checking, but it should <font color="red"><strong>ONLY</strong></font> be used as the last resort in special cases. Do <font color="red"><strong>NOT</strong></font> abuse it.</li>
+<li>The rule list in this document might not be updated in time to reflect the lastest ones used in projects. Always refer to the <a href="https://github.com/dataReachable/dr_nodejs_project_template">nodejs project template</a> for latest settings.</li>
+</ol>
+<h2 id="eslint-rule-plugins">ESLint Rule Plugins</h2>
+<p>The linter rules are a combination of pre-defined rules in popular community ESLint plugins and a set of customised rules. The rule plugins applied are:</p>
+<ul>
+<li><a href="https://eslint.org/docs/rules/">ESLint</a> defines the core rules in general</li>
+<li><a href="https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/docs/rules">TypeScript ESLint</a> defines the core rules specific to TypeScript</li>
+<li><a href="https://github.com/benmosher/eslint-plugin-import/tree/master/docs/rules">ESLint Import</a> defines the rules for module import/export</li>
+<li><a href="https://github.com/mysticatea/eslint-plugin-eslint-comments/tree/master/docs/rules">ESLint Comments</a> defines the rules for ESLint comments</li>
+<li><a href="https://github.com/xjamundx/eslint-plugin-promise/tree/development/docs/rules">ESLint Promise</a> defines the rules for Promise in TypeScript</li>
+<li><a href="https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main/rules">ESLint Unicorn</a> defines a set of community developed awesome rules</li>
+<li><a href="https://github.com/jest-community/eslint-plugin-jest/tree/master/docs/rules">ESLint Jest</a> defines a set of rules for Jest testing code</li>
+<li><a href="https://github.com/dangreenisrael/eslint-plugin-jest-formatting/tree/master/docs/rules">ESLint Jest Formatting</a> defines the rules for Jest testing code styles</li>
+<li><a href="https://github.com/microsoft/tsdoc/tree/master/eslint-plugin">ESLint TS-Doc</a> defines the rules for tsdoc comment syntax</li>
+</ul>
+<p>For the above rule plugins, we adopt the <code>recommended</code> rules in each plugin. Refer to the above links for rule details.</p>
+<h2 id="customised-rules">Customised Rules</h2>
+<p>The customised rules are defined and commented in the single <code>.eslintrc.json</code> file in the root folder. The customised rules are summarised here:</p>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Rules</th>
+<th align="center">Allow/Disallow?</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Console</td>
+<td align="center">✅</td>
+<td align="left">Allow <code>console</code> for logging</td>
+</tr>
+<tr>
+<td align="center">Alert</td>
+<td align="center">❌</td>
+<td align="left">Disallow <code>alert</code></td>
+</tr>
+<tr>
+<td align="center">Quotes</td>
+<td align="center">🚧</td>
+<td align="left">Always use double quotes</td>
+</tr>
+<tr>
+<td align="center">Semicolon</td>
+<td align="center">🚧</td>
+<td align="left">Always use semicolons instead of ASI</td>
+</tr>
+<tr>
+<td align="center">Indention</td>
+<td align="center">🚧</td>
+<td align="left">2 Spaces</td>
+</tr>
+<tr>
+<td align="center">Tabs</td>
+<td align="center">❌</td>
+<td align="left">Disallow tabs</td>
+</tr>
+<tr>
+<td align="center">Spaces and tabs</td>
+<td align="center">❌</td>
+<td align="left">Disallow mixture of spaces and tabs</td>
+</tr>
+<tr>
+<td align="center">Empty lines</td>
+<td align="center">🚧</td>
+<td align="left">One empty line at most</td>
+</tr>
+<tr>
+<td align="center">Object curly spacing</td>
+<td align="center">🚧</td>
+<td align="left">Add spacing before/after curly braces</td>
+</tr>
+<tr>
+<td align="center">Array bracket spacing</td>
+<td align="center">🚧</td>
+<td align="left">Add spacing before/after array brackets</td>
+</tr>
+<tr>
+<td align="center">Key word spacing</td>
+<td align="center">🚧</td>
+<td align="left">Add spacing around language key words</td>
+</tr>
+<tr>
+<td align="center">Object curly newline</td>
+<td align="center">🚧</td>
+<td align="left">Multilines for objects and exports, but one line for imports</td>
+</tr>
+<tr>
+<td align="center">Curly braces</td>
+<td align="center">🚧</td>
+<td align="left">Curly braces for all blocks</td>
+</tr>
+<tr>
+<td align="center">Curly brace style</td>
+<td align="center">🚧</td>
+<td align="left">Stroutstrup style, disallow single line expression</td>
+</tr>
+<tr>
+<td align="center">Line maximum length</td>
+<td align="center">🚧</td>
+<td align="left">128 characters for code, 180 for comments</td>
+</tr>
+<tr>
+<td align="center">Plus-Plus operator</td>
+<td align="center">❌</td>
+<td align="left">Disallow the usage of <code>++</code> expression unless in loop variables</td>
+</tr>
+<tr>
+<td align="center">Bitwise operator</td>
+<td align="center">⚠️</td>
+<td align="left">Warn on the usage of bitwise operators</td>
+</tr>
+<tr>
+<td align="center">Switch-case fall through</td>
+<td align="center">⚠️</td>
+<td align="left">Warn on missing <code>default</code> clause in switch-case blocks</td>
+</tr>
+<tr>
+<td align="center">Function definition style</td>
+<td align="center">🚧</td>
+<td align="left">Disallow function declarations, use expressions only</td>
+</tr>
+<tr>
+<td align="center">Function name omission</td>
+<td align="center">✅</td>
+<td align="left">Allow missing function names under certain conditions to simplify the expression</td>
+</tr>
+<tr>
+<td align="center">Function call spacing</td>
+<td align="center">❌</td>
+<td align="left">Disallow the space between function identifier and the invocation <code>()</code></td>
+</tr>
+<tr>
+<td align="center">Unused variables</td>
+<td align="center">❌</td>
+<td align="left">Disallow unused variables and arguments, unless prefixed with <code>_</code></td>
+</tr>
+<tr>
+<td align="center">Useless class constructors</td>
+<td align="center">❌</td>
+<td align="left">Disallow useless class constructors</td>
+</tr>
+<tr>
+<td align="center">Use before definition</td>
+<td align="center">❌</td>
+<td align="left">Diasllow the usage of later-declared variables, classes, but allow later-declared functions</td>
+</tr>
+<tr>
+<td align="center">Use dot notation to reference members</td>
+<td align="center">✅</td>
+<td align="left">Only use dot notation instead of brackets to reference object members</td>
+</tr>
+<tr>
+<td align="center">Class member line spacing</td>
+<td align="center">🚧</td>
+<td align="left">Enforce empty lines between two class members</td>
+</tr>
+<tr>
+<td align="center">Duplicate class members</td>
+<td align="center">❌</td>
+<td align="left">Disallow duplicate class members</td>
+</tr>
+<tr>
+<td align="center">Duplicate imports</td>
+<td align="center">❌</td>
+<td align="left">Disallow duplicate import declarations from the same module (import everything you need from a module only once)</td>
+</tr>
+<tr>
+<td align="center">Extra semicolons</td>
+<td align="center">❌</td>
+<td align="left">Disallow extra useless semicolons</td>
+</tr>
+<tr>
+<td align="center">Invalid <code>this</code></td>
+<td align="center">❌</td>
+<td align="left">Disallow the usage of <code>this</code> keyword outside of class-like objects</td>
+</tr>
+<tr>
+<td align="center">Variable redeclaration</td>
+<td align="center">❌</td>
+<td align="left">Disallow variable redeclaration</td>
+</tr>
+<tr>
+<td align="center">Throw string literals</td>
+<td align="center">❌</td>
+<td align="left">Disallow throwing only string literals as errors. Only Error-based objects are throwable</td>
+</tr>
+<tr>
+<td align="center">Async function without await</td>
+<td align="center">❌</td>
+<td align="left">Disallow async functions without await expressions</td>
+</tr>
+<tr>
+<td align="center">Space before function parenthesis</td>
+<td align="center">🚧</td>
+<td align="left">Enforce spaces before function parenthesis, except for named and arrow functions</td>
+</tr>
+<tr>
+<td align="center">Type definition</td>
+<td align="center">🚧</td>
+<td align="left">Allow only <code>Interface</code> to define object types and disallow <code>Type</code> (<code>Type</code> is only used for type alias)</td>
+</tr>
+<tr>
+<td align="center">Type imports</td>
+<td align="center">✅</td>
+<td align="left">Distinguish importing a type from other imports via enforcing type imports</td>
+</tr>
+<tr>
+<td align="center">Type assertion</td>
+<td align="center">🚧</td>
+<td align="left">Enforce using <code>as</code> only for type assertion instead of <code>&lt;&gt;</code></td>
+</tr>
+<tr>
+<td align="center">Explicit function return types</td>
+<td align="center">🚧</td>
+<td align="left">Enforce annotation of function return type except for arrow functions</td>
+</tr>
+<tr>
+<td align="center">Explicit module boundary types</td>
+<td align="center">🚧</td>
+<td align="left">Enforce explicit argument and return type annotation on <em>exported</em> functions and classes</td>
+</tr>
+<tr>
+<td align="center">Interface/Type member delimiter style</td>
+<td align="center">🚧</td>
+<td align="left">Only use semicolon as the member delimiter in interface and type definitions</td>
+</tr>
+<tr>
+<td align="center">Class method signature style</td>
+<td align="center">🚧</td>
+<td align="left">Only use class/interface/object property to define methods (Disallow using function declarations)</td>
+</tr>
+<tr>
+<td align="center">Naming conventions</td>
+<td align="center">🚧</td>
+<td align="left">Refer to <a href="./../Naming/README.md">naming conventions</a></td>
+</tr>
+<tr>
+<td align="center">Explicit <code>any</code> type</td>
+<td align="center">❌</td>
+<td align="left">Disallow explict <code>any</code> type. Automatically fixes to <code>unknown</code></td>
+</tr>
+<tr>
+<td align="center">Floating Promises</td>
+<td align="center">❌</td>
+<td align="left">Disallow unattended promises. Allowed iff the promise is annotated as void</td>
+</tr>
+<tr>
+<td align="center">Assignment of <code>any</code> type to other types</td>
+<td align="center">✅</td>
+<td align="left">Allow assignment of <code>any</code>-typed variables to other type variables (for compatibility with JavaScript libs)</td>
+</tr>
+<tr>
+<td align="center">Call an <code>any</code>-typed variable</td>
+<td align="center">✅</td>
+<td align="left">Allow invocation function calls on <code>any</code>-typed variables (for compatibility with JavaScript libs)</td>
+</tr>
+<tr>
+<td align="center">Member access on <code>any</code>-typed variable</td>
+<td align="center">✅</td>
+<td align="left">Allow accessing members of an <code>any</code>-typed variable (for compatibility with JavaScript libs)</td>
+</tr>
+<tr>
+<td align="center">Return <code>any</code>-typed value from a function</td>
+<td align="center">✅</td>
+<td align="left">Allow a function to return an <code>any</code>-typed value (for compatibility with JavaScript libs)</td>
+</tr>
+<tr>
+<td align="center">CommonJS style imports (<code>require</code>)</td>
+<td align="center">❌</td>
+<td align="left">Disallow CommonJS style imports (using the <code>require()</code> syntax) anywhere</td>
+</tr>
+<tr>
+<td align="center">Unnecessary boolean literal comparison</td>
+<td align="center">❌</td>
+<td align="left">Disallow equality comparison with boolean literals (<code>true</code>,<code>false</code>)</td>
+</tr>
+<tr>
+<td align="center">Useless type assertion</td>
+<td align="center">❌</td>
+<td align="left">Disallow useless type assertion if the assertion does not change the type</td>
+</tr>
+<tr>
+<td align="center">Useless type constraints</td>
+<td align="center">❌</td>
+<td align="left">Disallow useless type constraints of <code>any</code> or <code>unknown</code>(This is the default)</td>
+</tr>
+<tr>
+<td align="center">Nullable type assertion style</td>
+<td align="center">🚧</td>
+<td align="left">Enforce using <code>!</code> for type assertion on nullable typed values, instead of <code>as</code></td>
+</tr>
+<tr>
+<td align="center">Prefer <code>includes</code> to <code>indexOf</code> method</td>
+<td align="center">⚠️</td>
+<td align="left">Warn when using &quot;indexOf&quot; method to check element existence in string and array</td>
+</tr>
+<tr>
+<td align="center">Prefer nullish coalescing <code>!!</code> to logic chaining</td>
+<td align="center">⚠️</td>
+<td align="left">Warn when using `</td>
+</tr>
+<tr>
+<td align="center">Prefer using optional chain <code>?.</code> to logic chaining</td>
+<td align="center">⚠️</td>
+<td align="left">Warn when using <code>&amp;&amp;</code> logic chaining</td>
+</tr>
+<tr>
+<td align="center">Prefer <code>readonly</code> modifier on unchanged properties</td>
+<td align="center">⚠️</td>
+<td align="left">Warn when missing <code>readonly</code> modifier on unchanged class properties</td>
+</tr>
+<tr>
+<td align="center">String-typed values only in template expression</td>
+<td align="center">✅</td>
+<td align="left">Allow only string-typed values in string templates</td>
+</tr>
+<tr>
+<td align="center">String-typed or number-typed values only in <code>+</code> operation</td>
+<td align="center">✅</td>
+<td align="left">Allow only string-typed or number-typed operands in <code>+</code> operation</td>
+</tr>
+<tr>
+<td align="center">Spacing around infix operators</td>
+<td align="center">🚧</td>
+<td align="left">Enforce spacing around infix operators</td>
+</tr>
+<tr>
+<td align="center">Unbound method</td>
+<td align="center">❌</td>
+<td align="left">Enforce unbound methods called in expected scope</td>
+</tr>
+<tr>
+<td align="center">Sorting members in intersection/union types</td>
+<td align="center">✅</td>
+<td align="left">Sort the members alphabetically in intersection and union types</td>
+</tr>
+<tr>
+<td align="center">Promise-returning functions annotated by <code>async</code></td>
+<td align="center">✅</td>
+<td align="left">Enforce using <code>async</code> modifier on functions returning a promise</td>
+</tr>
+<tr>
+<td align="center">Triple slash reference</td>
+<td align="center">❌</td>
+<td align="left">Disallow <code>///</code> to import types</td>
+</tr>
+<tr>
+<td align="center">Type annotation spacing</td>
+<td align="center">✅</td>
+<td align="left">Enforce spacing around type annotations</td>
+</tr>
+<tr>
+<td align="center">Ordering import declarations</td>
+<td align="center">🚧</td>
+<td align="left">Import declarations are ordered by groups with empty line spacing among different groups</td>
+</tr>
+<tr>
+<td align="center"><code>default</code> exports</td>
+<td align="center">❌</td>
+<td align="left">Disallow default exports. All exports are explicitly named</td>
+</tr>
+<tr>
+<td align="center">Unused exported items</td>
+<td align="center">✅</td>
+<td align="left">Allow unused exported items</td>
+</tr>
+<tr>
+<td align="center">Mutable exports</td>
+<td align="center">❌</td>
+<td align="left">Disallow mutate exported items outside of the module</td>
+</tr>
+<tr>
+<td align="center">CommonJS modules</td>
+<td align="center">❌</td>
+<td align="left">Disallow CommonJS modules</td>
+</tr>
+<tr>
+<td align="center">Import/Export positions</td>
+<td align="center">🚧</td>
+<td align="left">Place all imports at the top of the file and all exports at the bottom</td>
+</tr>
+<tr>
+<td align="center">Grouping exports</td>
+<td align="center">🚧</td>
+<td align="left">All exports are grouped together</td>
+</tr>
+<tr>
+<td align="center">Allowed dependencies to be imported</td>
+<td align="center">🚧</td>
+<td align="left">Only allow packages under &quot;dependencies&quot; section in <code>package.json</code> to be imported. Other sections are disallowed</td>
+</tr>
+<tr>
+<td align="center">ESLint comments</td>
+<td align="center">✅</td>
+<td align="left">Allow ESLint comments in source code</td>
+</tr>
+<tr>
+<td align="center">Prefer using ES2017 <code>await</code> syntax</td>
+<td align="center">⚠️</td>
+<td align="left">Prefer using <code>await</code> syntax on promises to callbacks or <code>then</code> syntax</td>
+</tr>
+<tr>
+<td align="center">File name style</td>
+<td align="center">🚧</td>
+<td align="left">Enforce <strong>snake_case</strong> naming of files and folders</td>
+</tr>
+<tr>
+<td align="center">Usage of <code>null</code> and <code>undefined</code></td>
+<td align="center">✅</td>
+<td align="left">Allow usage of <code>null</code> and <code>undefined</code> to be compatible with existing JavaScript packages</td>
+</tr>
+<tr>
+<td align="center">Prefer strict equal in Jest</td>
+<td align="center">⚠️</td>
+<td align="left">Prefer using strict equal in Jest to avoid implicit type conversion</td>
+</tr>
+<tr>
+<td align="center">Prefer giving the number of assertions in Jest</td>
+<td align="center">⚠️</td>
+<td align="left">Prefer giving the number of assertions in Jest testing</td>
+</tr>
+<tr>
+<td align="center">TS-Doc syntax checking</td>
+<td align="center">⚠️</td>
+<td align="left">Warn on TS-Doc syntax issues</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="other-non-eslint-rules">Other Non-ESLint Rules</h2>
+<p> ESLint rules can not cover every code styling and usage case in practice. You should always keep in mind that the code should be kept clean, concise, consistent and easy to maintain.</p>
+<p> Some known <font color="red"><strong>BAD</strong></font> coding styles are listed below:</p>
+<ul>
+<li>Extra spaces in empty lines</li>
+<li>Extra spaces at the tail of a line, including comments</li>
+<li>No spaces around infix operators</li>
+<li>Too many spaces in the location where only one space is enough, e.g. more than one space around infix operators, around function arguments, around generics type parameters.</li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

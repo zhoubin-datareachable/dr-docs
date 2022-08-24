@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="gitops最佳实践">GitOps最佳实践</h2>
+<p>在数及公司，我们使用GitOps工作流来自动化DevOps流程，用于从衔接开发阶段和部署阶段。</p>
+<h2 id="概念解释">概念解释</h2>
+<p>简单来说，GitOps的想法就是把应用代码和基础设施代码都放在GitHub托管的代码仓库中，并且认为这些代码仓库是唯一正确可信的。通过一些DevOps工具，应用代码仓库和基础设施代码仓库被自动整合到一起，从而实现从开发到部署的自动化解决方案。关于GitOps的细节，可以参考<a href="https://www.gitops.tech/">GitOps</a>。</p>
+<h2 id="gitops工作流概览">GitOps工作流概览</h2>
+<p>在数及公司，我们采用<a href="https://github.com/features/actions">GitHub Actions</a>作为上述用于自动整合的DevOps工具，使用<a href="https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html">AWS 弹性Kubernetes服务（EKS）</a>为云上Kubernetes集群提供支持。基本的工作流程如下：</p>
+<div align="center">
+    <img src="Assets/GitOps_Workflow.png" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:120%">GitOps工作流程概览</span>
+    </div>
+</div>
+
+<p>应用开发人员提交代码并推送到相应的应用程序代码仓库中。应用开发人员也需要伴随提交Dockerfile用于Docker镜像的打包。在发布新版本的时候，一个预先由DevOps团队编写的GitHub Actions被触发，并根据开发人员提供的Dockerfile构建镜像。该GitHub Actions最后将新构建成的镜像推送到GitHub Package Registry中存储。</p>
+<p>DevOps开发人员提交代码并推送到相应的基础设施程序代码仓库中。该代码仓库的<code>main</code>分支应该完全1对1的反映实际云上部署的状态。因此，涉及到实际部署操作的GitHub Action <strong>只允许</strong> 在这个分支上被触发。部署操作 <strong>仅仅</strong> 应该在如下情形下被触发：</p>
+<ol>
+<li>在<code>main</code>分支上创建一个新的正式发布版本(正式发布版本会触发一次实际线上部署)；</li>
+<li>手动在<code>main</code>分支上打上包含<code>-deploy</code>后缀的tag(用于随时测试，强制触发实际部署，但不应该被滥用)；</li>
+<li>某个来自其他分支的Pull Request被合并到<code>main</code>分支上来(用于多人合作场景);</li>
+</ol>
+<p>具体来说，对于新的功能和随机的发生的bug修改，应该创建一个新的分支，在该分支上完成代码编写。在这个分支上，<strong>不允许</strong>使用/触发部署操作(部署操作只能在<code>main</code>分支上发生)，但是，可以使用任意的非部署操作，比如，对代码进行测试和验证。当新分支上的代码已经没有问题，可以被实际部署的时候，创建一个Pull Request，团队成员对该Pull Request进行审阅和讨论。当最终确认新分支的代码可以被合并入<code>main</code>分支后，完成合并操作。该合并操作会在<code>main</code>分支上触发另一个GitHub Action，该Action会进行实际的部署操作。</p>
+<p>综上，对于基础设施代码仓库，可用操作应遵循下述规则：</p>
+<ol>
+<li><code>main</code> 分支是唯一可以进行实际线上部署操作的分支；</li>
+<li>部署操作仅仅在上述三种情形下会被触发：合并Pull Request、在主分支上创建发布、在在主分支上打含有<code>-deploy</code>后缀的tag;</li>
+<li>使用非<code>main</code>分支进行新功能的开发和bug修复；</li>
+<li>任何非部署操作都可以用在非<code>main</code>分支上；</li>
+<li>当准备好的时候，在非<code>main</code>分支上发起Pull Request；</li>
+<li>把Pull Request合并到<code>main</code>分支上，该合并操作会触发实际部署，在云端反映新功能或者修复的bug；</li>
+</ol>
+<h2 id="相关主题">相关主题</h2>
+<p>为了更好的使用GitOps工作流，需要遵守一些相关约定：</p>
+<ul>
+<li><a href="./Topics/GithubActions.md"><strong>GitHub Actions书写规范</strong></a></li>
+<li><a href="./Topics/GitConventions.md"><strong>Git分支和Pull Requests规范</strong></a></li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

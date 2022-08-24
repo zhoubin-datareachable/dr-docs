@@ -1,0 +1,1662 @@
+openapi: 3.0.3
+
+info:
+  version: 0.1.1
+  title: dr_Back_SurveyProjectManager
+  description: >-
+    这个文档主要展示了与合同相关操作的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://spm.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [SurveyProjectManager API Server](https://github.com/dataReachable/dr_Back_SurveyProjectManager)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://spm.dev.datareachable.net/"
+
+
+paths:
+  /api/v1/contract/sign:
+    put:
+      summary: (CR-00008) 乙方签受合同
+      description: 只有乙方组织的owner可以签受合同
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Sign_Contr'
+      responses:
+        "200":
+          description: 合同签约成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/close/application:
+    put:
+      summary: CR - 00011 申请terminated或者completed一个contract
+      description: 只有甲方项目admin和乙方的supplier，可以申请terminated或者completed一个contract
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Close_Application'
+      responses:
+        "200":
+          description: 合同签约成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/close/approval:
+    put:
+      summary: CR-00018 审批terminated或者completed一个contract的申请
+      description: 只有甲方项目admin和乙方的supplier，有操作权限
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Close_Approval'
+      responses:
+        "200":
+          description: 合同签约成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/deliv_permis_contr:
+    get:
+      summary: PDO00003 获取当前合同选定的permi以及项目所有的deliv和permission列表
+      description: 只有项目的admin有权访问，返回合同所属项目的所有deliverable列表和对应permission列表，以及在该合同中选定的contract permission
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: contract_dri
+          in: query
+          required: true
+          description: 合同的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_DelivAndPermiList_Success"
+        "400":
+          description: 请求失败
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_UserNotBelongOrg"
+                  - $ref: "#/components/schemas/Res_InvalidContract"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/contr_permis:
+    post:
+      summary: PDO0004 创建或删除contract permission
+      description: 只有项目的admin有权访问，[terminated,completed]状态下的合同不能创建或删除contract permission，signed状态不能删除contract permission
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Create_Contr_permis'
+      responses:
+        "200":
+          description: 返回新创建的contract permission及其所属deliv，若所有contract permission都是已存在，则返回空数组
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Create_Contr_Permi_Success"
+        "400":
+          description: 请求失败
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_Forbidden_Contract_Status"
+                  - $ref: "#/components/schemas/Res_InvalidContract"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+  /api/v1/contract/info:
+    get:
+      summary: CR-00006 获取合同详情
+      description: 只有项目甲方的admin，和乙方组织的owner或admin有权限查看，且当合同处于invite_sent状态时，乙方只有组织owner可以看
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: contract_dri
+          in: query
+          required: true
+          description: 合同的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取合同详情成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ContractInfo_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/pro_contrs:
+    get:
+      summary: 获取指定项目包含的合同列表
+      description: 只有项目的admin或supplier可以查看合同列表，且supplier看不到处于drafting状态的合同
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织dri
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目dri
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: 可选, 合同状态。合法值：completed、drafting、invite_sent、signed、terminated 中的一个或多个，多个用逗号分隔
+          schema:
+            type: string
+          example: terminated,completed
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ProjContrBreifList_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/list:
+    get:
+      summary: CR-00016-1,CR-00016-2 获取合同列表
+      description: 只有项目的admin或supplier可以查看合同列表，且supplier看不到处于drafting状态的合同
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          description: 可选, 组织dri
+          schema:
+            type: string
+        - name: participant_type
+          in: query
+          required: true
+          description: 参与方式。可选值：project_admin(甲方身份)，supplier(乙方身份)
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          description: 可选, 项目dri
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: 可选, 合同状态。合法值：completed、drafting、invite_sent、signed、terminated 中的一个或多个，多个用逗号分隔
+          schema:
+            type: string
+          example: terminated,completed
+        - name: project_name
+          in: query
+          required: false
+          description: 可选, 项目名称，支持模糊查询
+          schema:
+            type: string
+        - name: contract_name
+          in: query
+          required: false
+          description: 可选, 合同名称，支持模糊查询
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          required: false
+          description: 可选, 起始时间，时间格式为ISO string。start_time和end_time必须同时存在或同时不存在
+          schema:
+            type: string
+          example: "2021-06-25T04:53:00.720Z"
+        - name: end_time
+          in: query
+          required: false
+          description: 可选, 结束时间，时间格式为ISO string。start_time和end_time必须同时存在或同时不存在
+          schema:
+            type: string
+          example: "2021-06-25T05:53:00.720Z"
+        - name: sort_field
+          in: query
+          required: false
+          description: 可选, 指定排序字段，有效值："project_name"(项目名称), "name"(合同名称)， "created_at"(合同创建时间)， "updated_at"(合同更新时间) 默认值：created_at
+          schema:
+            type: string
+        - name: sort_rule
+          in: query
+          required: false
+          description: 可选，有效值： '1'(升序), '-1'(降序),默认值：-1
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          description: 可选, 指定页码,默认值：1
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          required: false
+          description: 可选, 指定分页大小,默认值：10
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取合同列表成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ContractBreifList_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/permission/tg:
+    get:
+      summary: PDO00006 获取talent group针对一条contract_permission的拥有情况
+      description: 只有乙方组织的 admin 和 owner 才能查看此权限
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: contract_dri
+          in: query
+          required: true
+          description: 合同 dri
+          schema:
+            type: string
+        - name: organization_dri
+          in: query
+          required: true
+          description: 当前组织 dri
+          schema:
+            type: string
+        - name: contract_permission_dri
+          in: query
+          required: true
+          description: contract_permission_dri
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取权限信息成功
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - message
+                properties:
+                  code:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+              example:
+                code: 200001
+                message: 'Succeeded in obtaining permission information'
+                data:
+                  talent_groups_list:
+                    -
+                      talent_group_name: '123'
+                      talent_group_dri: 'dri:acs::role:tg/Yfj2ix77P2LZrCWBJU-dAJzaKgV'
+                      permission_granted: true
+                      talent_group_member:
+                        -
+                          member_name: 'LCY'
+                          member_avatar: 'this is avatar url'
+                          member_dri: 'user_dri'
+        "403":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  message:
+                    type: string
+              example:
+                code: 403001
+                message: 'The current user is not the admin or owner of this organization'
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/grant_permis:
+    post:
+      summary: PDO00007 分配或取消分配contract permission给指定的talent group
+      description: 只有项目的supplier有权访问，
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Grant_Contr_permis'
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "400":
+          description: 请求失败
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_TGNotBelongOrg"
+                  - $ref: "#/components/schemas/Res_InvalidContract"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/deliv/tg:
+    get:
+      summary: 获取deliverable的contract permission被分配的talent group列表
+      description: 只有项目的admin和supplier才能查看此权限
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: contract_dri
+          in: query
+          required: true
+          description: 合同 dri
+          schema:
+            type: string
+        - name: organization_dri
+          in: query
+          required: true
+          description: 当前组织 dri
+          schema:
+            type: string
+        - name: deliv_dri
+          in: query
+          required: true
+          description: deliverable dri
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Deliv_Tgs_Success"
+        "403":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  message:
+                    type: string
+              example:
+                code: 403001
+                message: 'The current user is not the admin or owner of this organization'
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/contract/deliv:
+    get:
+      summary: PJ-00007 获取合同deliverable list
+      description: project admin 有权修改
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目 dri
+          schema:
+            type: string
+        - name: contract_dri
+          in: query
+          required: true
+          description: 合同 dri
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 获取合同 deliverable list 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: "A 6-digit status code."
+                  message:
+                    type: string
+                    description: "A user-friendly message describing the status of the response."
+                  data:
+                    type: array
+                    description: deliverable list
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        type:
+                          type: string
+                        permission:
+                          type: array
+                          items:
+                            type: string
+                        enabled:
+                          type: boolean
+              example:
+                code: 200001
+                message: Successfully obtained contract deliverable
+                data:
+                  - name: deliverable_1
+                    type: qed
+                    permission:
+                      - writer
+                    enabled: true
+        '400':
+          description: 请求失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                coed: 400001
+                message: Unable to obtain contract information
+        '403':
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                coed: 403001
+                message: Contract information does not match
+        '500':
+          description: 发生未知错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: "A 6-digit status code."
+                  message:
+                    type: string
+                    description: "A user-friendly message describing the status of the response."
+                  data:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+              example:
+                code: 500001
+                message: Unknown error occurred while obtaining contract deliverable list
+                data:
+                  error: Details
+  /api/v1/contract/create_grant_permi:
+    post:
+      summary: PJ-00002 创建并分配，以及取消已分配的contract permission
+      description: 只有项目的admin可以访问
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - org_dri
+                - project_dri
+                - contract_dri
+                - create_grant_permis
+                - canceld_tgs
+              properties:
+                org_dri:
+                  type: string
+                  description: 组织 dri
+                project_dri:
+                  type: string
+                  description: 项目的 dri
+                contract_dri:
+                  type: string
+                  description: 合同dri
+                create_grant_permis:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      deliverable_dri:
+                        type: string
+                        description: deliverable dri
+                      permi_and_tgs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            permi_dri:
+                              type: string
+                              description: permission dri
+                            tg_dris:
+                              type: array
+                              items:
+                                type: string
+                              description: talent group dri 数组
+                canceld_tgs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      contr_permi_dri:
+                        type: string
+                        description: contract permission dri
+                      tg_dris:
+                        type: array
+                        items:
+                          type: string
+                        description: talent group dri 数组
+              example: {"org_dri":"dri:acs::org/pPoSsTEoGiJySASkEq","contract_dri":"dri:spm::contract/6ZaNbPqnBm3nmd9f/BhAmdfE5","project_dri":"dri:spm::proj/6ZaNbPqnBm3nmd9f","create_grant_permis":[{"deliverable_dri":"dri:spm::deliv:qed/6ZaNbPqnBm3nmd9f/zMnDQs56DtyPDDj8vMj9m_","permi_and_tgs":[{"permi_dri":"dri:acs::policy:proj_deliv/Kvh0wiNNsq6wmDsJsLQSEUZj","tg_dris":["dri:acs::org:tg/pPoSsTEoGiJySASkEq-htEiJymn"]}]}],"canceld_tgs":[{"contr_permi_dri":"dri:acs::policy:ctr_proj_deliv/RrSviSHlBFlgufqcbSZmGFuI","tg_dris":["dri:acs::org:tg/pPoSsTEoGiJySASkEq-sTEiJykE"]}]}
+      responses:
+        '200':
+          description: 绑定状态修改成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+                example:
+                  code: 200001
+                  message: update deliverable binding status successfully
+        '400':
+          description: 操作失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                can not unbind:
+                  value:
+                    code: 400001
+                    message: the deliverable has unfreezed contract permission, can not unbind
+                can not bind:
+                  value:
+                    code: 400002
+                    message: the deliverable has bind to other project, can not bind
+                deliv_dri invalid:
+                  value:
+                    code: 400003
+                    message: the deliverable dri is invalid
+                status_not_change:
+                  value:
+                    code: 400004
+                    message: the deliverable bind status is same as specify by input, will ignore this operation
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while renaming the deliverable
+                data:
+                  error: details
+  /api/v1/contract/freeze:
+    put:
+      summary: (CR-00019/CR-00020)冻结/解冻合同
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - contract_dri
+                - deliv_dri
+                - role
+                - freeze
+              properties:
+                project_dri:
+                  type: string
+                  description: 项目 dri
+                contract_dri:
+                  type: string
+                  description: 合同 dri
+                deliv_dri:
+                  type: string
+                  description: 当前 deliverable 的 dri
+                role:
+                  type: string
+                  enum:
+                    - writer
+                    - commenter
+                    - task_giver
+                freeze:
+                  type: boolean
+                  description: 设置 deliverable 是否冻结
+              example:
+                {
+                  "project_dri": "dri:spm::proj/SjIFrv31hhRvu1eC",
+                  "contract_dri": "dri:spm::contract/SjIFrv31hhRvu1eC/5Nhagv0N",
+                  "deliv_dri": "dri:spm::deliv:qed/SjIFrv31hhRvu1eC/5qiq2XyoYF8bgUxxzVlqTI",
+                  "role": "writer",
+                  "freeze": true
+                }
+      responses:
+        '200':
+          description: 冻结/解冻操作成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                freeze:
+                  value:
+                    code: 200001
+                    message: Freeze successfully
+                unfreeze:
+                  value:
+                    code: 200001
+                    message: Unfreeze successfully
+        '400':
+          description: 操作失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Unable to obtain contract:
+                  value:
+                    code: 400001
+                    message: Error obtaining contract information
+                Cannot get role details:
+                  value:
+                    code: 400002
+                    message: Cannot get role details
+                Failed to freeze:
+                  value:
+                    code: 400003
+                    message: Failed to freeze
+                Failed to unfreeze:
+                  value:
+                    code: 400003
+                    message: Failed to unfreeze
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred during freezing or thawing
+                data:
+                  error: details
+  /api/v1/contract/folder/count:
+    get:
+      summary: (CR-00022) 获取不同的文件夹类型的合同数量
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+        - in: query
+          name: org_dri
+          description: 当前组织 dri
+          schema:
+            type: string
+        - in: query
+          name: participant_type
+          description: 当前组织的角色
+          schema:
+            type: string
+            enum:
+              - client
+              - supplier
+      responses:
+        '200':
+          description: 获取不同的文件夹类型的合同数量成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: "A 6-digit status code."
+                  message:
+                    type: string
+                    description: "A user-friendly message describing the status of the response."
+                  data:
+                    type: object
+                    properties:
+                      all:
+                        type: number
+                      project_relate:
+                        type: number
+                      terminate:
+                        type: number
+                      complete:
+                        type: number
+              example:
+                {
+                  "code": 200001,
+                  "message": "Get the number of contracts for different folder types successfully",
+                  "data": {
+                      "all": 6,
+                      "project_relate": 4,
+                      "terminate": 0,
+                      "complete": 0
+                  }
+              }
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while counting the number of contracts
+                data:
+                  error: details
+  /api/v1/organization/project/search:
+    get:
+      description: '(CR-00001) 项目管理员在 project 中查询组织'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+        - in: query
+          name: name
+          description: '要查询的组织名'
+          schema:
+            type: string
+          example: 'c'
+        - in: query
+          name: org_dri
+          description: '当前组织 dri'
+          schema:
+            type: string
+          example: 'dri:acs::org/Ts-p_OfdhDBxHTVuyy'
+      responses:
+        '200':
+          description: '查询成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Res_Generic'
+              example:
+                code: 200001
+                message: '合同发送成功'
+                data:
+                  organization_list:
+                    - { dri: "dri:acs::org/bTKidvqV2lK773MkOYtkb", id: 'bTKidvqV2lK773MkOYtkb', name: 'changyu' }
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Res_Generic'
+              example:
+                code: 400001
+                message: '"name" is required'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Res_GenericInternalError'
+              example:
+                code: 500007
+                message: '查询组织时发生未知异常'
+                data:
+                  error: 'something wrong'
+
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200001
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "successfully"
+
+    Res_AuthenticationFailed:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT验证失败，未授权的访问！" }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: {
+        code: 500001,
+        message: "[Get User Information Controller]: Unexpected error",
+        data: { error: "Details of the error goes here"}
+      }
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 405000, message: "You're using the completely wrong HTTP method!" }
+
+    Req_Body_Sign_Contr:
+      type: object
+      required:
+        - "org_dri"
+        - "contract_dri"
+      properties:
+        org_dri:
+          type: string
+          description: 组织dri
+          example: "dri:acs::org/rjdpPoSsTEoGiJySASkEq"
+        contract_dri:
+          type: string
+          description: 合同dridri
+          example: "dri:acs::contract/rjdpbdSsTEoGiJySASkEq/tespPoSsTEoGiJySASkEq"
+    Req_Body_Close_Application:
+      type: object
+      required:
+        - "org_dri"
+        - "project_dri"
+        - "contract_dri"
+        - "wating_status"
+      properties:
+        org_dri:
+          type: string
+          description: 组织dri
+          example: "dri:acs::org/rjdpPoSsTEoGiJySASkEq"
+        project_dri:
+          type: string
+          description: 项目dri
+          example: "dri:acs::proj/tespPoSsTEoGiJySASkEq"
+        contract_dri:
+          type: string
+          description: 合同dri
+          example: "dri:acs::contract/rjdpbdSsTEoGiJySASkEq/tespPoSsTEoGiJySASkEq"
+        wating_status:
+          type: string
+          description: 申请修改后合同的状态
+          example: "completed"
+          enum:
+            - completed
+            - terminated
+    Req_Body_Close_Approval:
+      type: object
+      required:
+        - "org_dri"
+        - "project_dri"
+        - "contract_dri"
+        - "is_agreed"
+      properties:
+        org_dri:
+          type: string
+          description: 组织dri
+          example: "dri:acs::org/rjdpPoSsTEoGiJySASkEq"
+        project_dri:
+          type: string
+          description: 项目dri
+          example: "dri:acs::proj/tespPoSsTEoGiJySASkEq"
+        contract_dri:
+          type: string
+          description: 合同dri
+          example: "dri:acs::contract/rjdpbdSsTEoGiJySASkEq/tespPoSsTEoGiJySASkEq"
+        is_agreed:
+          type: boolean
+          description: 是否同意。true:表示同意，false:表示拒绝
+          example: true
+    Req_Body_Create_Contr_permis:
+      type: object
+      required:
+        - "org_dri"
+        - "project_dri"
+        - "contract_dri"
+      properties:
+        org_dri:
+          type: string
+          description: 组织dri
+          example: "dri:acs::org/tespPoSsTEoGiJySASkEq"
+        project_dri:
+          type: string
+          description: 项目dri
+          example: "dri:spm::proj/tespPoSsTEoGiJySASkEq"
+        contract_dri:
+          type: string
+          description: 合同dri
+          example: "dri:acs::contract/rjdpbdSsTEoGiJySASkEq/tespPoSsTEoGiJySASkEq"
+        contr_permi_grant_list:
+          type: array
+          description: contract permission metedata数组。contr_permi_grant_list和contr_permi_grant_list至少有一个存在且不为空
+          items:
+            type: object
+            required:
+              - "deliverable_dri"
+              - "permission_dris"
+            properties:
+              deliverable_dri:
+                type: string
+                description: delivable dri
+                example: "dri:qed::output/tespPoSsTEoGiJySASkEq"
+              permission_dris:
+                type: array
+                items:
+                  type: string
+                example: ["xxxxxxxxxx"]
+        cancel_contr_permi_dris:
+          type: array
+          description: 待删除的contract permission。contr_permi_grant_list和contr_permi_grant_list至少有一个存在且不为空
+          items:
+            type: string
+          example: ["xxxxxxxxxx"]
+    Req_Body_Grant_Contr_permis:
+      type: object
+      required:
+        - "org_dri"
+        - "contract_dri"
+        - "contr_permi_dri"
+        - "granted_operations"
+      properties:
+        org_dri:
+          type: string
+          description: 组织dri
+          example: "dri:acs::org/exppPoSsTEoGiJySASkEq"
+        contract_dri:
+          type: string
+          description: 合同dri
+          example: "dri:acs::contract/rjdpbdSsTEoGiJySASkEq/tespPoSsTEoGiJySASkEq"
+        contr_permi_dri:
+          type: string
+          description: contract permission dri
+          example: "dri:acs::policy:ctr_proj_deliv/RSgpRjr-q8K_dsXWoG2cARav"
+        granted_operations:
+          type: array
+          description: talent group metedata数组
+          items:
+            type: object
+            required:
+              - "talent_group_dri"
+              - "granted"
+            properties:
+              talent_group_dri:
+                type: string
+                description: talent group dri
+                example: "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-rsf4nw6O"
+              granted:
+                type: boolean
+                description: true代表分配给talent group，false代表取消分配给指定talent group
+                example: true
+
+    File_Breif_Entity:
+      type: object
+      properties:
+        file_name:
+          type: string
+          description: 文件名
+          example: "tt.txt"
+        file_size:
+          type: number
+          description: 文件大小
+          example: 12342
+        file_dri:
+          type: string
+          description: 文件dri
+          example: "dri:acs::attachment/dadfasdfsaYlsjLL_d"
+        file_link:
+          type: string
+          description: 文件链接
+          example: "xxxxxx"
+    Res_ContractInfo_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                contract_dri:
+                  type: string
+                  description: 合同的dri
+                  example: "dri:acs::contract/<proj-uuid-21>/<contract-uuid-21>"
+                contract_name:
+                  type: string
+                  description: 合同name
+                  example: "track"
+                contract_status:
+                  type: string
+                  description: 合同状态
+                  example: "signed"
+                description:
+                  type: string
+                  description: 合同描述
+                  example: ""
+                keywords:
+                  type: array
+                  description: 合同关键字
+                  items:
+                    type: string
+                  example: ["key"]
+                project_dri:
+                  type: string
+                  description: 项目dri
+                  example: "dri:acs::proj/tespPoSsTEoGiJySASkEq"
+                project_name:
+                  type: string
+                  description: 项目名称
+                  example: "测试项目"
+                is_project_archived:
+                  type: boolean
+                  description: 项目是否archived
+                  example: false
+                creator:
+                  type: object
+                  properties:
+                    dri:
+                      type: string
+                      description: 合同创建用户dri
+                    name:
+                      type: string
+                      description: 合同创建用户名
+                  example: {"dri":"dri:acs::user/tespPoSsTEoGiJySASkEq","name":"test-dr"}
+                acceptor:
+                  type: object
+                  properties:
+                    dri:
+                      type: string
+                      description: 合同创建用户dri
+                    name:
+                      type: string
+                      description: 合同创建用户名
+                  example: {"dri":"dri:acs::user/tespPoSsTEoGiJySASkEq","name":"test-dr"}
+                contacts:
+                  type: array
+                  description: 合同联系人列表
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: array
+                        items:
+                          type: string
+                      email:
+                        type: array
+                        items:
+                          type: string
+                  example: [{"name":"zhangsan","phone":["xxxx"],"email":["xxx@email.com"]}]
+                work_scopes:
+                  type: array
+                  description: 合同工作范围
+                  items:
+                    type: string
+                  example: ["key"]
+                client_org_dri:
+                  type: string
+                  description: 合同甲方组织dri
+                  example: "dri:acs::org/tespPoSsTEoGiJySASkEq"
+                client_org_name:
+                  type: string
+                  description: 合同甲方组织名称
+                  example: "人生基金会"
+                supplier_org_dri:
+                  type: string
+                  description: 合同乙方组织dri
+                  example: "dri:acs::org/tespPoSsTEoGiJySASkEq"
+                supplier_org_name:
+                  type: string
+                  description: 合同乙方组织名称
+                  example: "人生基金会乙"
+                pre_closed:
+                  type: object
+                  properties:
+                    wating_status:
+                      type: string
+                      description: 等待更新后的状态值
+                      enum:
+                        - completed
+                        - terminated
+                    init_org_dri:
+                      type: string
+                      description: 申请terminated或completed的组织
+                  description: 合同乙方组织dri
+                  example: {"wating_status":"completed","init_org_dri":"dri:acs::org/tespPoSsTEoGiJySASkEq"}
+                created_at:
+                  type: string
+                  description: 合同创建时间
+                  format: date
+                  example: "2021-06-23T16:00:00Z"
+                updated_at:
+                  type: string
+                  description: 合同更新时间
+                  format: date
+                  example: "2021-06-23T16:00:00Z"
+                extra_emails:
+                  type: array
+                  description: 额外的邮件列表
+                  items:
+                    type: string
+                  example: ["xxx@eamil.com"]
+                delivs_permis:
+                  type: array
+                  description: deliv及其权限集合
+                  items:
+                    type: object
+                    properties:
+                      deliverable_dri:
+                        type: string
+                      app_ins_name:
+                          type: string
+                      app_ins_type:
+                          type: string
+                      permissions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            dri:
+                                type: string
+                            role:
+                                type: string
+                            enabled:
+                                type: boolean
+                            contr_permi:
+                                type: object
+                                properties:
+                                  dri:
+                                    type: string
+                                  enabled:
+                                      type: boolean
+                  example: [{"deliverable_dri":"dri:spm::deliv:qed/6ZaNbPqnBm3nmd9f/MOoq-v9YKTGFTG6_cx0NAj","app_ins_name":"survey015","app_ins_type":"qed","permissions":[{"dri":"dri:acs::policy:proj_deliv/Kvh0wiNNsq6wmDsJsLQSEUZj","role":"commenter","enabled":false,"contr_permi":{"dri":"dri:acs::policy:ctr_proj_deliv/uOMCd7rR2vU63Tl0bhE_Y2JG","enabled":true}}]}]
+                client_attachs:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/File_Breif_Entity"
+                supplier_attachs:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/File_Breif_Entity"
+    Res_UserNotBelongOrg:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400001, message: "cuurent user ${user_dri} not belong to organization ${org_dri}" }
+    Res_TGNotBelongOrg:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400003, message: "tg_dris:${tg_dri_diff.toString()} is not belong to organization:${org_dri}" }
+    Res_Forbidden_Contract_Status:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400002, message: "current Contract status is ${contract.status!}，this status can not create contract permission" }
+
+    Res_InvalidContract:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400002, message: "The contract does not exist, or the project or the organization to which the contract belongs is inconsistent with that specified by input" }
+    Res_DelivAndPermiList_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                deliverable_list:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      deliverable_dri:
+                        type: string
+                        description: the deliverable's unique dri
+                        example: "dri:spm::deliv:qed/<proj-uuid-16>/<app-output-uuid-22>"
+                      app_ins_type:
+                        type: string
+                        description: the type of application instance binds to the deliverable.
+                        example: "qed"
+                      app_ins_name:
+                        type: string
+                        description: the name of application instance binds to the deliverable
+                        example: "survey name"
+                      created_at:
+                        type: string
+                        format: date
+                        description: the date created the deliverable
+                        example: "2021-05-31T16:00:21:Z"
+                      permis:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            dri:
+                              type: string
+                              description: the permission's unique dri
+                              example: "dri:spm::deliv:qed/<proj-uuid-16>/<app-output-uuid-22>"
+                            enabled:
+                              type: boolean
+                              description: indicate permission is enabled or not.
+                              example: true
+                            role:
+                              type: string
+                              description: the role of application instance binds to the deliverable
+                              example: "writer"
+                            contr_permis:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  dri:
+                                    type: string
+                                    description: the contract permission's unique dri
+                                    example: "dri:spm::deliv:qed/<proj-uuid-16>/<app-output-uuid-22>"
+                                  enabled:
+                                    type: boolean
+                                    description: indicate contract permission is enabled or not.
+                                    example: true
+    Res_Create_Contr_Permi_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  deliverable_dri:
+                    type: string
+                    description: the deliverable's unique dri
+                    example: "dri:spm::deliv:qed/<proj-uuid-16>/<app-output-uuid-22>"
+                  permissions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        permi_dri:
+                          type: string
+                          description: the permission's unique dri
+                          example: "dri:spm::deliv:qed/<proj-uuid-16>/<app-output-uuid-22>"
+                        contr_permi_dri:
+                          type: string
+                          description: the contract permission's unique dri
+                          example: "dri:spm::deliv:qed/<proj-uuid-16>/<app-output-uuid-22>"
+    Res_Deliv_Tgs_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  contr_permi_dri:
+                    type: string
+                    description: contract permission unique dri
+                    example: "dri:acs::policy:ctr_proj_deliv/RSgpRjr-q8K_dsXWoG2cARav"
+                  talent_groups:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dri:
+                          type: string
+                          description: talent group dri
+                          example: "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-rsf4nw6O"
+                        name:
+                          type: string
+                          description: talent group name
+                          example: "tg_001"
+    Res_ProjContrBreifList_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                    description: 合同的dri
+                    example: "dri:spm::contract/<proj-uuid-21>/<contract-uuid-21>"
+                  project_dri:
+                    type: string
+                    description: 项目的dri
+                    example: "dri:spm::proj/<proj-uuid-21>"
+                  project_name:
+                    type: string
+                    description: 项目的名称
+                    example: "project 01"
+                  client_org_dri:
+                    type: string
+                    description: 合同甲方组织的dri
+                    example: "dri:acs::org/<org-uuid-21>"
+                  supplier_org_dri:
+                    type: string
+                    description: 合同乙方组织的dri
+                    example: "dri:acs::org/<org-uuid-21>"
+                  supplier_org_name:
+                    type: string
+                    description: 合同乙方组织的名称
+                    example: "xxxx"
+                  name:
+                    type: string
+                    description: 合同name
+                    example: "track"
+                  status:
+                    type: string
+                    description: 合同状态
+                    example: "signed"
+                  created_at:
+                    type: string
+                    description: 合同创建时间
+                    format: date
+                    example: "2021-06-23T16:00:00Z"
+    Res_ContractBreifList_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                total:
+                  type: number
+                  description: 总数
+                  example: 25
+                list:
+                  type: array
+                  items:
+                    type: object
+                    description: 合同列表
+                    properties:
+                      dri:
+                        type: string
+                        description: 合同的dri
+                        example: "dri:spm::contract/<proj-uuid-21>/<contract-uuid-21>"
+                      name:
+                        type: string
+                        description: 合同name
+                        example: "track"
+                      status:
+                        type: string
+                        description: 合同状态
+                        example: "signed"
+                      description:
+                        type: string
+                        description: 合同的描述信息
+                        example: "dfafadsdfa"
+                      keywords:
+                        type: string
+                        description: 关键字
+                        example: "key"
+                      created_at:
+                        type: string
+                        description: 合同创建时间
+                        format: date
+                        example: "2021-06-23T16:00:00Z"
+                      updated_at:
+                        type: string
+                        description: 合同更新时间
+                        format: date
+                        example: "2021-06-23T16:00:00Z"
+                      project_dri:
+                        type: string
+                        description: 项目的dri
+                        example: "xxxxxx"
+                      project_name:
+                        type: string
+                        description: 项目的名称
+                        example: "project 01"
+                      peer_org_dri:
+                        type: string
+                        description: 对等方组织的dri
+                        example: "dri:acs::org/<org-uuid-21>"
+                      peer_org_logo:
+                        type: string
+                        description: 对等方组织的logo
+                        example: "xxxx"

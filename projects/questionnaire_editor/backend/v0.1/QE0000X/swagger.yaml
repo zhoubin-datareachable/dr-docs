@@ -1,0 +1,2160 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: QEditor Backend Project - QEditor main APIs
+  description: >-
+    QE0000X, 包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://qeditor.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [QEditor API Server](https://github.com/dataReachable/dr_Back_QuestionnaireEditor)
+  contact:
+    name: Backend Team
+    email: mengming.li@datareachable.com
+
+servers:
+  - url: "https://qeditor.dev.datareachable.net/"
+    description: Sydney Development Cluster
+
+paths:
+  /api/v1/survey/check_exists_by_id:
+    post:
+      summary: (QE00000) 通过 ID 查找 Survey
+      description: 通过查找 survey ID 确认一个 survey 是否存在。如果存在, 则返回 survey 现在绑定的 project 和 name。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_id
+              example:
+                {
+                    "survey_id": "app6ZaNbPmnqnBqm3nmd9f"
+                }
+              properties:
+                survey_id:
+                  type: string
+                  description: survey 的 id, 唯一标识
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00000_200001"
+                  - $ref: "#/components/schemas/Res_QE00000_200002"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00000_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/check_exists_by_name:
+    post:
+      summary: (QE00001) 通过 name 查找 Survey
+      description:  通过查找 survey name 确认一个 survey 是否存在。如果存在, 则返回 survey 现在绑定的 project 和 id。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_name
+              example:
+                {
+                    "survey_name": "survey001"
+                }
+              properties:
+                survey_name:
+                  type: string
+                  description: survey 的 name
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00001_200001"
+                  - $ref: "#/components/schemas/Res_QE00001_200002"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00001_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/edit_session/check_writing:
+    post:
+      summary: (QE00002) 确认是否有用户正在编辑 Survey
+      description:  通过 survey dri 确认是否有用户正在编辑 survey
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_dri
+              example:
+                {
+                    "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                }
+              properties:
+                survey_dri:
+                  type: string
+                  description: 待检查的 survey 的 dri, 由固定的前缀和唯一的 id 组成
+                access_token:
+                  type: string or null
+                  description: |-
+                    可选参数，可以不传或者传 null。用户访问某个 survey 的 access_token，包含用户的 organization、 talent group、 survey_dri等信息(survey_dri 在本 API 中用不到, 用户可以使用这个 access_token 检查任何 survey 是否正在被编辑，实际检查的 survey 是 payload 中 survey_dri 代表的 survey)。
+                    如果 access_token 中包含的 talent group 信息和 user 信息与正在编辑待检查的 survey 的用户的信息以及用户所属的 talent group 信息相同的话, 即使 survey 正在被编辑, http 响应中的 in_use 也会为 false, 以告知当前用户可以申请对此 survey 进行编辑
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00002_200001"
+                  - $ref: "#/components/schemas/Res_QE00002_200002"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00002_400001"
+                  - $ref: "#/components/schemas/Res_QE00002_400002"
+                  - $ref: "#/components/schemas/Res_QE00002_400003"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/role/check_roles:
+    post:
+      summary: (QE00003) 确认 user 是否有所提交的 role 权限
+      description: 确认是 user 是否有所提交的 role 权限, 返回已被授权的 roles
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_dri
+                - roles
+                - organization_dri
+                - project_dri
+                - talent_group_dri
+              example:
+                {
+                    "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                    "roles": [
+                        "writer",
+                        "commenter",
+                        "task_giver"
+                    ],
+                    "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1",
+                    "project_dri": "dri:spm::proj/6ZaNbPqnBm3nmd9f",
+                    "talent_group_dri": "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-rsf4nw6O",
+                }
+              properties:
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+                roles:
+                  type: array
+                  description: 需要检查的 roles 数组, 元素只能为 writer 或者 commenter 或者 task_giver
+                organization_dri:
+                  type: string
+                  description: organization 的 dri, 由固定的前缀和唯一的 id 组成
+                project_dri:
+                  type: string
+                  description: survey 绑定的 project 的 dri, 由固定的前缀和唯一的 id 组成
+                talent_group_dri:
+                  type: string
+                  description: 用户要确认的 role 的 talent group 的 dri, 由固定的前缀和唯一的 id 组成
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00003_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00003_400001"
+                  - $ref: "#/components/schemas/Res_QE00003_400002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/role/token/apply:
+    post:
+      summary: (QE00004) 请求一个 role 所对应的 access token
+      description: 获取一个 role 的 token, 用于后续对 survey 进行操作的权限鉴定
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_dri
+                - role
+                - organization_dri
+                - project_dri
+                - talent_group_dri
+              example:
+                {
+                    "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                    "role": "commenter",
+                    "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1",
+                    "project_dri": "dri:spm::proj/6ZaNbPqnBm3nmd9f",
+                    "talent_group_dri": "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-rsf4nw6O",
+                }
+              properties:
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+                role:
+                  type: string
+                  description: 需要申请的 token 的 role, 只能为 writer 或者 commenter 或者 task_giver
+                organization_dri:
+                  type: string
+                  description: organization 的 dri, 由固定的前缀和唯一的 id 组成
+                project_dri:
+                  type: string
+                  description: survey 绑定的 project 的 dri, 由固定的前缀和唯一的 id 组成
+                talent_group_dri:
+                  type: string
+                  description: 用户要确认的 role 的 talent group 的 dri, 由固定的前缀和唯一的 id 组成
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00004_200001"
+                  - $ref: "#/components/schemas/Res_QE00004_200002"
+                  - $ref: "#/components/schemas/Res_QE00004_200003"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00004_400001"
+                  - $ref: "#/components/schemas/Res_QE00004_400002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/get_dri:
+    post:
+      summary: (QE00005) 根据 survey id 返回 dri
+      description: 通过 survey 的 id 获取 survey 的 dri, 此 dri 目前在后端不是从数据库查询到的, 而是拼接字符串并返回
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_id
+              example:
+                {
+                    "survey_id": "7jb2W_5OnV9ZBISslq0eWa"
+                }
+              properties:
+                survey_id:
+                  type: string
+                  description: survey 的唯一 id
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00005_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00005_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/temp_ver_conf/get:
+    post:
+      summary: (QE00006) 获取 temporary version configuration
+      description: 根据 survey dri 获取 survey 的 temporary version configuration
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - survey_dri
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00006_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00006_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00006_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/get/info/base:
+    post:
+      summary: (QE00007) 通过 dri 获取 survey 的基本信息
+      description:  通过 survey 的 dri 获取 survey 的基本信息, 任何已登录用户都能访问此 API
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_dri
+              example:
+                {
+                    "survey_dri": "dri:qed::output/78HWoy2uXq9mDQkuSz99bh"
+                }
+              properties:
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成唯一标识符
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00007_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00007_400001"
+                  - $ref: "#/components/schemas/Res_QE00007_400002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/save/temp_ver_conf:
+    post:
+      summary: (QE00008) 保存 Temporary Version Configuration
+      description: 正在编辑的 writer 对 Temporary Version Configuration 进行保存
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - save_type
+                - survey_configuration
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "save_type": "auto",
+                    "survey_configuration": {
+                        "kind": "Questionnaire",
+                        "list": [],
+                        "meta": {
+                            "lan": [
+                                "ENG"
+                            ],
+                            "defaultLan": "ENG",
+                            "scripts": {},
+                            "builtin_scripts": {},
+                            "optionLists": {}
+                        },
+                        "id": "app6ZaNbPmnqnBqm3nmd9f",
+                        "survey_name": "Survey002",
+                        "survey_note": "",
+                        "editor": {
+                            "comment": "ba48d6b4-0629-15d1-ccb3-213dddcc7c43",
+                            "task": "f3dd6bf5-c90f-6eef-db3c-a05dc4ec0b71"
+                        }
+                    }
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                save_type:
+                  type: string
+                  description: 标识前端发起保存的类型, 可以为 "manual"(手动) 或者 "auto"(自动)
+                survey_configuration:
+                  type: object
+                  description: 新的 survey_configuration
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00008_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00008_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00008_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/role/token/writer/refresh:
+    post:
+      summary: (QE00009) writer 对 access_token 进行刷新
+      description: 正在编辑的 writer 使用调用此 API 可以重置 access_token 的过期时间
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00009_200001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00009_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/publish:
+    post:
+      summary: (QE00010) 对 survey 进行 publish
+      description: writer 可以掉用此 API 对 survey 进行 publish。 publsih 之后, Temporary Version 会进行保存并基于新的 Base Version
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - survey_note
+                - survey_configuration
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "survey_note": "v2",
+                    "survey_configuration": {
+                        "kind": "Questionnaire",
+                        "list": [],
+                        "meta": {
+                            "lan": [
+                                "ENG"
+                            ],
+                            "defaultLan": "ENG",
+                            "scripts": {},
+                            "builtin_scripts": {},
+                            "optionLists": {}
+                        },
+                        "id": "app6ZaNbPmnqnBqm3nmd9f",
+                        "survey_name": "Survey002",
+                        "survey_note": "",
+                        "editor": {
+                            "comment": "ba48d6b4-0629-15d1-ccb3-213dddcc7c43",
+                            "task": "f3dd6bf5-c90f-6eef-db3c-a05dc4ec0b71"
+                        }
+                    }
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                survey_note:
+                  type: string
+                  description: 用户对一个 base version 的标记
+                survey_configuration:
+                  type: object
+                  description: 要 publish 的 survey_configuration
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00010_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00010_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00010_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/org/get/talent_groups:
+    post:
+      summary: (QE00011) 获取组织下所有的 talent group 的信息
+      description: 根据 organization dri 获取组织下所有的 talent group 的简要信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - organization_dri
+              example:
+                {
+                    "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1"
+                }
+              properties:
+                organization_dri:
+                  type: string
+                  description: 要查询的 organization 的 dri
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00011_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00011_400001"
+                  - $ref: "#/components/schemas/Res_QE00011_400002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/get/unpublished/version_tag:
+    post:
+      summary: (QE00012) 获取 Survey 未被 published 的 Base version 的 tag
+      description: 根据 Survey 的 dri 获取 Survey 未被 published 的 Base version 的 tag
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_dri
+              example:
+                {
+                    "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f"
+                }
+              properties:
+                survey_dri:
+                  type: string
+                  description: 要查询的 survey 的 dri
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00012_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00012_400001"
+                  - $ref: "#/components/schemas/Res_QE00012_400002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/survey/get/base_vers/info:
+    post:
+      summary: (QE00013) 获取 Survey 所有的 Base Version 信息
+      description: 根据 Survey 的 dri 获取 Survey 所有的的 Base version 的简要信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_dri
+              example:
+                {
+                    "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f"
+                }
+              properties:
+                survey_dri:
+                  type: string
+                  description: 要查询的 survey 的 dri
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00013_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00013_400001"
+                  - $ref: "#/components/schemas/Res_QE00013_400002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/edit_session/destroy:
+    post:
+      summary: (QE00014) Writer 注销当前的 Editing Session
+      description: 正在编辑的 writer 调用此 API 可以注销 editing session, 注销后 access_token 会立即过期
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00014_200001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00014_403001"
+                  - $ref: "#/components/schemas/Res_QE00014_403002"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/project/roles:
+    post:
+      summary: (QE00015) 获取用户在项目中的角色
+      description: 此 API 在 Project Manager 项目中, 请点击 <a target="view_window" href="http://documentation-doc-server.documentation.svc.cluster.local/projects/survey_project_manager/backend/v0.1/project/index.html#/paths/~1api~1v1~1project~1roles/get">查看</a>
+
+  /api/v1/survey/fuzzy_search:
+    post:
+      summary: (QE00016) 根据用户输入搜索 survey
+      description: 根据用户输入的不完整 survey name 对 survey 进行模糊搜索, 只返回根据最后编辑时间排序后最前面的 50 条结果
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_input
+              example:
+                {
+                    "user_input": "survey"
+                }
+              properties:
+                user_input:
+                  type: string
+                  description: 用户输入的不完整的 survey name
+                organization_dri:
+                  type: string
+                  description: |-
+                    可选参数, 用户所在的某个组织的 dri。当此参数存在有效值时, 会将 survey 的搜索范围限制到该 dri 对应的组织有权限访问的 survey。
+                    因此返回的结果理论上不会再有没有绑定 project 的 survey, 但仍然不是每个 survey 都一定是当前用户可以编辑的，因为用户所在的
+                    talent group 可能没有被授予任何 role，能访问 survey 的是另外的 talent group, 但用户不在那些 talent group 中。
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QE00016_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QE00016_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+####################################################################################################
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      description: 成功响应的通用部分
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "对响应的一段简短的描述"
+
+    Res_AuthenticationFailed:
+      type: object
+      description: 用户未登录或者登录过期的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示 jwt 不存在或者已经过期"
+      example:
+        {
+            "code": 401001,
+            "message": "Cannot get JWT in request, unauthorized access."
+        }
+
+    Res_GenericInternalError:
+      type: object
+      description: 服务器内部错误的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "发生错误时的简短提示"
+        data:
+          type: object
+          description: 错误响应携带的数据
+          properties:
+            error:
+              description: 错误的详细信息
+              type: string
+      example:
+        {
+          "code": 500001,
+          "message": "[xxxx Controller]: An unknown error occurred, please check",
+          "data":
+            {
+              "error": "Details of the error goes here"
+            }
+        }
+
+    Res_MissingOrWrongParameters:
+      type: object
+      description: 参数错误或缺失时的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示参数错误或参数缺失"
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example:
+        {
+          "code": 405000,
+          "message": "You're using the completely wrong HTTP method!"
+        }
+
+    Res_UnauthorizedOperation:
+      type: object
+      description: 未授权的操作
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: 提示操作没有被授权
+
+    Res_QE00000_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Survey does not exist",
+            "data": {
+                "existed": false,
+                "project_dri": null,
+                "survey_name": null,
+                "survey_dri": null
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                existed:
+                  type: boolean,
+                  description: 描述 survey 否存在
+
+    Res_QE00000_200002:
+      type: object
+      example:
+        {
+            "code": 200002,
+            "message": "Survey exists",
+            "data": {
+                "existed": true,
+                "project_dri": "dri:spm::proj/6ZaNbPqnBm3nmd9f",
+                "survey_name": "survey001",
+                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                existed:
+                  type: boolean,
+                  description: 描述 survey 否存在
+                project_dri:
+                  type: string
+                  description: project 的 dri, 由固定的前缀和唯一的 id 组成
+                survey_name:
+                  type: string
+                  description: survey 的 name
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+
+    Res_QE00000_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_id\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00001_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Survey does not exist",
+            "data": {
+                "existed": false,
+                "surveys": []
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                existed:
+                  type: boolean,
+                  description: 描述 survey 否存在
+                surveys:
+                  type: array
+                  description: an empty array
+
+    Res_QE00001_200002:
+      type: object
+      example:
+        {
+            "code": 200002,
+            "message": "Survey exists",
+            "data": {
+                "existed": true,
+                "surveys": [
+                    {
+                        "project_name": "test-prject2",
+                        "project_dri": "dri:spm::proj/6ZaNbPqnBm3nmd9f",
+                        "survey_name": "survey001",
+                        "survey_id": "0-CQhzB0xveT869TsVxPCo",
+                        "survey_dri": "dri:qed::output/0-CQhzB0xveT869TsVxPCo",
+                        "organization_name": "test-dr2",
+                        "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1"
+                    },
+                    {
+                        "project_name": "test-prject3",
+                        "project_dri": "dri:spm::proj/aXmdqnPm3nfB9aNb",
+                        "survey_name": "survey001",
+                        "survey_id": "app6ZaNbPmnqnBqm3nmd9f",
+                        "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                        "organization_name": "test-dr2",
+                        "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1"
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                existed:
+                  type: boolean,
+                  description: 描述 survey 否存在
+                surveys:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      project_name:
+                        type: string
+                        description: project 的 name
+                      project_dri:
+                        type: string
+                        description: project 的 dri, 由固定的前缀和唯一的 id 组成
+                      survey_name:
+                        type: string
+                        description: survey 的 name
+                      survey_id:
+                        type: string
+                        description: survey 的 id, 唯一标识符
+                      survey_dri:
+                        type: string
+                        description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+                      organization_name:
+                        type: string
+                        description: organization 的 name
+                      organization_dri:
+                        type: string
+                        description: organization 的 dri, 由固定的前缀和唯一的 id 组成
+
+    Res_QE00001_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_name\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00002_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "No one is editing",
+            "data": {
+                "in_use": false,
+                "survey_name": "survey001",
+                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                "time": 1625535137857
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                in_use:
+                  type: string
+                  description: 描述是否有用户正在编辑
+                survey_name:
+                  type: string
+                  description: survey 的 name
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+                time:
+                  type: number
+                  description: 后端返回的参考时间
+
+    Res_QE00002_200002:
+      type: object
+      example:
+        {
+            "code": 200002,
+            "message": "Someone is editing the survey",
+            "data": {
+                "in_use": true,
+                "survey_name": "survey001",
+                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                "time": 1625535159937
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                in_use:
+                  type: string
+                  description: 描述是否有用户正在编辑
+                survey_name:
+                  type: string
+                  description: survey 的 name
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+                time:
+                  type: number
+                  description: 后端返回的参考时间
+
+    Res_QE00002_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00002_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00002_400003:
+      type: object
+      example:
+        {
+            "code": 400003,
+            "message": "Abnormal access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00003_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Checked roles succcessfully",
+            "data": {
+                "authorized": [
+                    "writer",
+                    "commenter",
+                    "task_giver"
+                ],
+                "time": 1625535286294,
+                "survey_name": "survey001",
+                "user_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1",
+                "talent_group_dri": "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-rsf4nw6O"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                authorized:
+                  type: array
+                  description: 已被授予的 role 的列表, 是请求参数中 roles 的子集
+                time:
+                  type: number
+                  description: 后端返回的参考时间
+                user_dri:
+                  type: string
+                  description: 当前登录的用户的 dri, 由固定的前缀和唯一的 id 组成
+                organization_dri:
+                  type: string
+                  description: 组织的 dri, 由固定的前缀和唯一的 id 组成
+                talent_group_dri:
+                  type: string
+                  description: 被分配角色的 talent group 的 dri, 由固定的前缀和唯一的 id 组成
+
+    Res_QE00003_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00003_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00004_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Agreed to grant token",
+            "data": {
+                "granted": true,
+                "role": "writer",
+                "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "time": 1625535346019
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                granted:
+                  type: boolean
+                  description: 标识 token 是否被授予
+                role:
+                  type: string
+                  description: 被授予的 token 的 role, 即 token 的类型
+                access_token:
+                  type: string
+                  description: 后端授予的 token 的值
+                time:
+                  type: number
+                  description: 后端返回的参考时间
+
+    Res_QE00004_200002:
+      type: object
+      example:
+        {
+            "code": 200003,
+            "message": "Refused to grant token",
+            "data": {
+                "granted": false,
+                "reason": "others are editing",
+                "time": 1625221158984
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                granted:
+                  type: boolean
+                  description: 标识 token 是否被授予
+                reason:
+                  type: string
+                  description: 对没有授予 token 的原因的描述
+                time:
+                  type: number
+                  description: 后端返回的参考时间
+
+    Res_QE00004_200003:
+      type: object
+      example:
+        {
+            "code": 200003,
+            "message": "Refused to grant token",
+            "data": {
+                "granted": false,
+                "reason": "user is not writer of suvey",
+                "time": 1625221158984
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                granted:
+                  type: boolean
+                  description: 标识 token 是否被授予
+                reason:
+                  type: string
+                  description: 对没有授予 token 的原因的描述
+                time:
+                  type: number
+                  description: 后端返回的参考时间
+
+    Res_QE00004_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00004_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00005_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get survey dri successfully",
+            "data": {
+                "survey_dri": "dri:qed::output/7jb2W_5OnV9ZBISslq0eWa"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+
+    Res_QE00005_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_id\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00006_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get temporary version configuration successfully",
+            "data": {
+                "survey_configuration": {
+                    "kind": "Questionnaire",
+                    "list": [],
+                    "meta": {
+                        "lan": [
+                            "ENG"
+                        ],
+                        "defaultLan": "ENG",
+                        "scripts": {},
+                        "builtin_scripts": {},
+                        "optionLists": {}
+                    },
+                    "id": "app6ZaNbPmnqnBqm3nmd9f",
+                    "survey_name": "Survey002",
+                    "survey_note": "",
+                    "editor": {
+                        "comment": "ba48d6b4-0629-15d1-ccb3-213dddcc7c43",
+                        "task": "f3dd6bf5-c90f-6eef-db3c-a05dc4ec0b71"
+                    }
+                },
+                "last_saved_at": "2022-01-07T08:06:40.922Z"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                survey_configuration:
+                  type: object
+                  description: survey 的 temporary version configuration 对象
+                last_saved_at:
+                  type: string
+                  description: survey 的最后保存时间
+
+    Res_QE00006_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00006_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QE00007_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get survey basic information data successfully",
+            "data": {
+                "project_name": null,
+                "project_dri": null,
+                "survey_name": "survey036",
+                "survey_id": "78HWoy2uXq9mDQkuSz99bh",
+                "survey_dri": "dri:qed::output/78HWoy2uXq9mDQkuSz99bh",
+                "organization_name": "test-dr",
+                "organization_dri": "dri:acs::org/pPoSsTEoGiJySASkEq"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                project_name:
+                  type: string
+                  description: project 的 name
+                project_dri:
+                  type: string
+                  description: project 的 dri, 由固定的前缀和唯一的 id 组成
+                survey_name:
+                  type: string
+                  description: survey 的 name
+                survey_id:
+                  type: string
+                  description: survey 的 id, 唯一标识符
+                survey_dri:
+                  type: string
+                  description: survey 的 dri, 由固定的前缀和唯一的 id 组成
+                organization_name:
+                  type: string
+                  description: organization 的 name
+                organization_dri:
+                  type: string
+                  description: organization 的 dri, 由固定的前缀和唯一的 id 组成
+
+    Res_QE00007_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00007_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00008_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Save temporary version configuration successfully",
+            "data": {
+                "log_entry_id": "4uP9FdCkizRX7OGOLWvx-AiIoUjH",
+                "updated_time": "2021-11-18T01:50:07.421Z"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                log_entry_id:
+                  type: string
+                  description: 此次操作对应的 change log 的 id
+                updated_time:
+                  type: string
+                  description: 问卷配置文件的最后更新时间
+
+    Res_QE00008_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"save_type\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00008_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QE00008_403002:
+      type: object
+      example:
+        {
+            "code": 403002,
+            "message": "access_token has expired"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QE00009_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Refresh access_token successfully"
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+
+    Res_QE00009_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QE00009_403002:
+      type: object
+      example:
+        {
+            "code": 403002,
+            "message": "access_token has expired"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QE00010_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Publish a version successfully",
+            "data": {
+                "survey_configuration": {
+                    "kind": "Questionnaire",
+                    "list": [],
+                    "meta": {
+                        "lan": [
+                            "ENG"
+                        ],
+                        "defaultLan": "ENG",
+                        "scripts": {},
+                        "builtin_scripts": {},
+                        "optionLists": {}
+                    },
+                    "id": "app6ZaNbPmnqnBqm3nmd9f",
+                    "survey_name": "Survey002",
+                    "survey_note": "",
+                    "editor": {
+                        "comment": "ba48d6b4-0629-15d1-ccb3-213dddcc7c43",
+                        "task": "f3dd6bf5-c90f-6eef-db3c-a05dc4ec0b71"
+                    }
+                }
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                survey_configuration:
+                  type: object
+                  description: survey configuration object
+
+    Res_QE00010_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_note\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00010_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QE00011_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get talent groups of organization successfully",
+            "data": {
+                "talent_groups": [
+                    {
+                        "talent_group_dri": "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-rsf4nw6O",
+                        "talent_group_name": "tg_01"
+                    },
+                    {
+                        "talent_group_dri": "dri:acs::org:tg/org2JoHPmEXzkDCmZ1-cus83vv9",
+                        "talent_group_name": "tg_02"
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                talent_groups:
+                  type: array
+                  description: talent group 信息的对象数组
+                  items:
+                    type: object
+                    properties:
+                      talent_group_dri:
+                        type: string
+                        description: talent group 的 dri, 唯一标识符
+                      talent_group_name:
+                        type: string
+                        description: talent group 的 name
+
+    Res_QE00011_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"organization_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00011_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "The organization does not exist"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00012_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get survey's unpublished base version tag successfully",
+            "data": {
+                "version_tag": "V8"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                version_tag:
+                  type: string
+                  description: "base version 的 tag, 格式为固定的: V + 数"
+
+    Res_QE00012_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00012_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00013_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get survey's all base version successfully",
+            "data": {
+                "base_versions": [
+                    {
+                        "base_version_dri": "dri:qed::basev/PJONuzYSUcEAM0Z8UE3Mla",
+                        "version_tag": "V1",
+                        "survey_note": "v0.0.0",
+                        "published": true,
+                        "updated_time": "2021-07-07T09:46:10.854Z"
+                    },
+                    {
+                        "base_version_dri": "dri:qed::basev/IAHQWz4cbaxaAmtTJ4YnWO",
+                        "version_tag": "V2",
+                        "survey_note": "v0.0.1",
+                        "published": true,
+                        "updated_time": "2021-08-23T09:29:17.679Z"
+                    },
+                    {
+                        "base_version_dri": "dri:qed::basev/AIMd43Wb8A7ulwc0zBnELD",
+                        "version_tag": "V3",
+                        "survey_note": "",
+                        "published": false,
+                        "updated_time": "2021-08-24T06:32:24.352Z"
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                base_versions:
+                  type: array
+                  description: base version 信息的对象数组
+                  items:
+                    type: object
+                    properties:
+                      base_version_dri:
+                        type: string
+                        description: base version 的 dri, 唯一标识符
+                      version_tag:
+                        type: string
+                        description: "base version 的 tag, 格式为固定的: V + 数"
+                      survey_note:
+                        type: string
+                        description: 用户设置的 base version 的一个标记, 只有被 publish 的 base version 是非空值, 没有被 publish 的 base version 的 survey_note 一定是空字符串
+                      published:
+                        type: string
+                        description: 标识此 base version 是否被 publish 过
+                      updated_time:
+                        type: string
+                        description: base version 上次被更新的时间
+
+    Res_QE00013_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00013_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QE00014_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Destroy editing session successfully"
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+
+    Res_QE00014_403001:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QE00014_403002:
+      type: object
+      example:
+        {
+            "code": 403002,
+            "message": "access_token has expired"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+
+    Res_QE00016_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Search successfully",
+            "data": {
+                "surveys": [
+                    {
+                        "survey_dri": "dri:qed::output/app2ZaNbPmnqnBqm3nmd9f",
+                        "survey_name": "survey012a",
+                        "organization_dri": "dri:acs::org/pPoSsTEoGiJySASkEq",
+                        "organization_name": "test-dr1"
+                    },
+                    {
+                        "survey_dri": "dri:qed::output/zMnDQs56DtyPDDj8vMj9m_",
+                        "survey_name": "survey012b",
+                        "organization_dri": "dri:acs::org/pPoSsTEoGiJySASkEq",
+                        "organization_name": "test-dr1"
+                    },
+                    {
+                        "survey_dri": "dri:qed::output/3gSA4vm6bsXQBuYkGKR3qt",
+                        "survey_name": "survey012b",
+                        "organization_dri": "dri:acs::org/GiJySASkEqpPoSsTEo",
+                        "organization_name": "test-dr2"
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                surveys:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      survey_dri:
+                        type: string
+                        description: survey 的 dri, 唯一标识
+                      survey_name:
+                        type: string
+                        description: survey 的完整名称
+                      organization_dri:
+                        type: string
+                        description: survey 所属的组织的 dri
+                      organization_name:
+                        type: string
+                        description: survey 所属的组织的 name
+
+
+    Res_QE00016_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"user_input\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"

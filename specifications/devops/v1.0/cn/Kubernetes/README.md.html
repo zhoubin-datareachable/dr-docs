@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="在kubernetes中部署应用的devops项目开发规范">在Kubernetes中部署应用的DevOps项目开发规范</h2>
+<h2 id="工具链">工具链</h2>
+<p>对于管理Kubernetes集群以及开发在上面部署的应用， <strong>YAML</strong> 和 <strong>Terraform</strong> 格式的文件都应该被允许使用，但是，Terraform是优先选择。尽量 <strong>不要使用</strong> <code>YAML</code> 格式的k8s配置文件。只有在如下情况下，允许在k8s中使用<code>YAML</code>配置文件：</p>
+<ol>
+<li><p>已经存在YAML配置文件的应用</p>
+<p> 很多已经存在的Kubernetes上的应用是使用yaml文件编写配置的。对于部署这样已有的应用，没有必要把yaml文件改写成Terraform格式。有些简单的应用很容易改写，对于一些复杂的应用，比如：使用<code>helm</code>部署的复杂应用，很难改写成Terraform格式。</p>
+</li>
+</ol>
+<p><strong>备注：⚠️ 一些特殊情况</strong></p>
+<ol>
+<li><p>Kubernetes中的自定义资源 (CRD资源)</p>
+<p> 当前官方的Terraform Kubernetes provider (<a href="https://registry.terraform.io/providers/hashicorp/kubernetes/2.3.2">v2.x</a>) 并不支持Kubernetes中的自定义资源 (CRD资源)。虽然Terrafrom 正在计划在未来版本中引入一个 <code>manifest</code> 资源类型 <a href="https://github.com/hashicorp/terraform-provider-kubernetes/blob/master/_about/ROADMAP.md#kubernetes-manifest-resource">链接</a>，来解决这个问题，但是，仍然遥遥无期。作为替代，使用Terraform的另一个provider: <a href="https://registry.terraform.io/providers/hashicorp/kubernetes-alpha/latest">kubernetes alpha provider</a>。</p>
+</li>
+<li><p>Helm Charts</p>
+</li>
+</ol>
+<p>  Terraform 提供了关于Helm Charts的provider: <a href="https://registry.terraform.io/providers/hashicorp/helm/latest">link</a>。在项目中使用该provider。</p>
+<h2 id="项目结构">项目结构</h2>
+<p>对于每一个Kubernetes应用，应该遵循如下的项目结构。通常来说，位于最顶层的文件夹应该根据不同的terraform provider进行拆分，也就是说每一个文件夹使用同一个provider，而不同的文件夹内使用不同的provider。如果使用了Kubernetes YAML 类型的配置文件，应该提供一个 <strong>shell脚本</strong> 用于方便的部署、更改、销毁YAML文件定义的资源。这个脚本应该放置在最顶级文件夹<code>bin</code>中。在Kubernetes应用的<code>README.md</code>文件中，应该说明使用terraform定义的资源和使用YAML定义的资源的依赖关系。</p>
+<p>下面给出了一个典型的Kubernetes项目的结构</p>
+<!-- DIRSTRUCTURE_START_MARKER -->
+<pre>
+kubernetes-example-project/
+├─ README.md ...................项目的描述和说明文档
+├─ bin/ ........................命令行工具
+│  └─ example.sh ...............用于部署含有yaml配置文件的shell脚本
+├─ terragrunt.hcl ..............最顶层terragrunt配置文件(不应该带有任何provider设置)
+├─ aws/ ........................AWS云端资源(使用AWS provider)
+│  ├─ terragrunt.hcl ...........AWS资源的顶层terragrunt配置文件(需要配置aws provider)
+│  ├─ acm/ .....................AWS ACM资源
+│  │  ├─ main.tf ...............AWS ACM资源的Terraform主配置文件
+│  │  ├─ outputs.tf ............Terraform输出变量文件
+│  │  └─ terragrunt.hcl ........AWS ACM资源的Terragrunt主配置文件
+│  └─ route53/ .................AWS Route53资源
+│     ├─ main.tf ...............AWS Route53资源的Terraform主配置文件
+│     ├─ terragrunt.hcl ........AWS Route53资源的Terragrunt主配置文件
+│     └─ variables.tf ..........AWS Route53资源的输入变量定义文件
+└─ k8s/ ........................Kubernetes资源(使用Kubernetes provider)
+   ├─ terragrunt.hcl ...........Kubernetes资源的顶层terragrunt配置文件(需要配置Kubernetes provider)
+   ├─ deployment/ ..............Kubernetes Deployment资源
+   │  ├─ main.tf ...............Kubernetes Deployment资源的Terraform主配置文件
+   │  └─ terragrunt.hcl ........Kubernetes Deployment资源的Terragrunt主配置文件
+   ├─ ingress/ .................Kubernetes Ingress资源
+   │  ├─ main.tf ...............Kubernetes Ingress资源的Terraform主配置文件
+   │  ├─ outputs.tf ............Terraform输出变量文件
+   │  ├─ terragrunt.hcl ........Kubernetes Ingress资源的Terragrunt主配置文件
+   │  └─ variable.tf ...........Terraform输入变量定义文件
+   ├─ namespace/ ...............Kubernetes Namespace资源
+   │  ├─ main.tf ...............Kubernetes Namespace资源的Terraform主配置文件
+   │  └─ terragrunt.hcl ........Kubernetes Namespace资源的Terragrunt主配置文件
+   ├─ service/ .................Kubernetes Service资源
+   │  ├─ main.tf ...............Kubernetes Service资源的Terraform主配置文件
+   │  └─ terragrunt.hcl ........Kubernetes Service资源的Terragrunt主配置文件
+   └─ yaml/ ....................Kubernetes YAML格式的配置文件夹
+</pre>
+<!-- DIRSTRUCTURE_END_MARKER -->
+
+	</div>
+</body>
+</script>
+</html>

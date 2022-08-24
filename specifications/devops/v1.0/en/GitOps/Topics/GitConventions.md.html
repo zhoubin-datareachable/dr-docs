@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="git-conventions-for-gitops">Git Conventions for GitOps</h2>
+<p>This documentation lists the conventions that should be followed using git for GitOps, e.g. name conventions.</p>
+<h2 id="application-code-repo">Application Code Repo</h2>
+<p>Please refer to application git conventions for <a href="../../../../../frontend/v1.0/en/GITUSAGE.md">frontend projects</a> and <a href="../../../../../backend/v1.0/en/Git/README.md">backend projects</a>, respectively.</p>
+<h2 id="infrastructure-code-repo">Infrastructure Code Repo</h2>
+<p>This section sets the git usage specifications for infrastructure code repos. In general, the git usage conventions are similar to those for application code repos.</p>
+<h3 id="1-branches">1. Branches</h3>
+<p>In order to standardize DevOps IAC development, keep the code submission record and the git branch structure clear to facilitate subsequent maintenance, and now standardize the relevant operations of git.</p>
+<ul>
+<li><h4 id="main-branch">Main Branch</h4>
+<p>The main branch is used to formally release code. The main branch can be <strong>ONLY</strong> merged from the feature branches. The merge should be conducted by the admin.</p>
+<p>  The main branch might <strong>NOT</strong> be the 1:1 reflection of the real-world infrastructure. It keeps the latest stable remote infrastructure.</p>
+<p>  <strong>Branch Naming Rule:</strong> main</p>
+<p>  <strong>Deletion Rule:</strong> main branch should <strong>NEVER</strong> be deleted</p>
+<p>  <strong>Tagging Rule:</strong> tagged with formal version numbers only in the <a href="https://semver.org/">semantic versioning convention</a>, e.g. <code>v0.1.2</code></p>
+</li>
+<li><h4 id="feature-branch">Feature Branch</h4>
+<p>One IAC code repo might contain multiple independent applications that are closely related to be deployed online. It might  contain multiple region deployment or different clusters (dev/prod) deployment for the same application. To distinguish these situations, we call each of them a <code>feature</code> to keep it consistent with the application repo git conventions. Thus, create a feature branch from the main branch.</p>
+<p>  The feature branch is kept as the <strong>real-world infrastructure 1:1 reflection</strong>. The feature branch can be <strong>ONLY</strong> merged from the development branches and pull requests with code reviews are enforced. Before merging into a feature branch, IAC code validation should be passed and deployment plan should be generated and checked on the development branch.</p>
+<p>  Feature branches are created and managed by admin.</p>
+<p><strong>Branch Naming Rule:</strong> The name of the branch starts with the keyword <em>feature</em>, and connects with / followed by the feature&#39;s name, such as <code>feature/dashboard</code>, <code>feature/web_app_frontend</code>, or simply <code>feature/requirement_0011223344</code>, etc.</p>
+<p>  <strong>Deletion Rule:</strong> Once a feature is completed, deployed and merged into the main branch, it can be safely deleted. All development branches based on the feature branch are deleted at the same time. Deletion of a feature branch requires Admin privileges.</p>
+<p>  <strong>Tagging Rule:</strong> freely tagged by admin (especially, when destroying the feature a specific <code>-destroy</code> tag should be given)</p>
+</li>
+<li><h4 id="development-branch">Development Branch</h4>
+<p>  Development branch is ad hoc branches on the feature branches and is the main working branch. When multiple programmers collaborate on a single feature, development branches should be created <em>onto</em> the feature branch and can <strong>ONLY</strong> be merged into feature branch by pull requests. Never merge a development branch into the main branch.</p>
+<p>  IAC code validation and deployment planning are conducted on each development branch.</p>
+<p>  <strong>Branch Naming Rule:</strong> The name of the branch starts with the keyword <em>dev</em>, and connects with / followed by the feature name combined with the developer name, such as <code>dev/dashboard_john</code>, <code>dev/web_app_frontend_marry</code>, etc.</p>
+<p>  <strong>Deleteion Rule:</strong> The programmers can freely decide if his/her own branch should be deleted. No special privileges are required on this branch.</p>
+<p>  <strong>Tagging Rule:</strong> freely tagged by developers</p>
+</li>
+</ul>
+<h3 id="branch-summary">Branch Summary</h3>
+<table>
+<thead>
+<tr>
+<th align="center">Branch</th>
+<th align="center">Naming Convention</th>
+<th align="center">Base branch</th>
+<th align="center">Merging Rule</th>
+<th align="center">Deletion Rule</th>
+<th align="center">Tagging Rule</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Main</td>
+<td align="center">main</td>
+<td align="center">N/A</td>
+<td align="center">Into: N/A<br/>From: Feature</td>
+<td align="center">Never deleted</td>
+<td align="center">Formal versions</td>
+</tr>
+<tr>
+<td align="center">Feature</td>
+<td align="center">feature/<feature_name></td>
+<td align="center">Main</td>
+<td align="center">Into: Main via pull request<br/>From: Development</td>
+<td align="center">Delete by Admin Only</td>
+<td align="center">Tagged by admin</td>
+</tr>
+<tr>
+<td align="center">Development</td>
+<td align="center">dev/<feature_name>_<developer_name></td>
+<td align="center">Feature</td>
+<td align="center">Into: Feature via merge<br/>From: N/A</td>
+<td align="center">Delete freely</td>
+<td align="center">Freely tagged</td>
+</tr>
+</tbody></table>
+<div align="center">
+    <img src="../Assets/DevOps_Git_Branch_Relationship.png" />
+</div>
+
+<h3 id="branch-miscellaneous">Branch Miscellaneous</h3>
+<p>In reality, one logical deployment task might contain so many independent infrastructure pieces and each piece is modified individually. If the <strong>One-branch rule</strong> is followed, this causes a lot of small repos for a single deployment task, each of which only contains a small decoupled piece. Otherwise, there will be a very long buiding time, because the program has to go through each piece in the repo, even when only a minor modification is needed.</p>
+<p>To avoid the above issues, under most circumstances, we need to merge physically decoupled, but logically related pieces into one repo and lose the <strong>One-branch rule</strong>. This is a deliberate design. As long as the features (small pieces) are carefully decoupled from each other, e.g. frontend and backend, independent k8s applications, it should be alright.</p>
+<p>There&#39;s no <code>Hotfix</code> branch in IAC code repo, because even the smallest changes might affect a lot. For any hotfix task, a plan is required to be generated in advance and the process should involve an admin user who has control over the main and feature branch. The developer has to go through from the development branch to the feature branch to complete the task.</p>
+<hr>
+<h3 id="2-tags">2. Tags</h3>
+<ul>
+<li><h4 id="tags-on-the-main-branch">Tags on the main branch</h4>
+</li>
+</ul>
+<p>Tagging on main branch is only allowed when the code reaches a release-ready stage. Prefixed with character <code>v</code>, the tag name should follow the <a href="https://semver.org/">semantic versioning convention</a>. Specifically, the version number should use <code>Major.Minor.Patch</code> format. For example, &quot;v1.2.3&quot;, &quot;v2.0.0&quot;. Such tags trigger an automatic release github action.</p>
+<ul>
+<li><h4 id="tags-on-the-feature-branch">Tags on the feature branch</h4>
+</li>
+</ul>
+<p>The ONLY useful tagging on the feature branch is the <code>destroy</code> tag. Normally, it&#39;s named as <code>&lt;feature_name&gt;-destroy</code>. It triggers the <code>terraform destroy</code> action and tears down the deployed infrastructure piece. Other tags not suffixed with <code>-destroy</code> are freely added by the admin user when appropriate.</p>
+<ul>
+<li><h4 id="tags-on-the-development-branch">Tags on the development branch</h4>
+</li>
+</ul>
+<p>The ONLY useful tagging on the development branch is the <code>plan</code> tag. Normally, it&#39;s named as <code>plan-&lt;feature_name&gt;</code>. It triggers the <code>terraform validate</code> and <code>plan</code> action. Other tags not prefixed with <code>plan-</code> are freely added by the developer when appropriate.</p>
+<hr>
+<h3 id="3-commit-titles">3. Commit Titles</h3>
+<p>The commit titles should be the same as application code repos: see <a href="../../../../../backend/v1.0/en/Git/README.md"><em>git conventions</em></a>.</p>
+
+	</div>
+</body>
+</script>
+</html>

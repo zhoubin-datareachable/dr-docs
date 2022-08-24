@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="测试规范">测试规范</h2>
+<p><font color=red><strong>通知:</strong></font> 写测试对于应用开发程序员来说是<strong>最不重要的</strong>。如果你没有时间写测试，不写也没关系。</p>
+<p>公司使用<a href="https://github.com/facebook/jest">jest</a>作为NodeJS应用的标准测试框架。Jest已经包含了IstanbulJS库来提供代码覆盖率统计，因此不再需要安装其他统计工具（比如，nyc）。请参考<a href="https://github.com/facebook/jest/blob/master/docs/Configuration.md">Jest配置</a>。</p>
+<h2 id="单元测试要求">单元测试要求</h2>
+<p>单元测试的目的是将项目中每个模块隔离并单独测试。</p>
+<p>在单元测试中，做某些测试的时候，可能需要启动虚拟的HTTP服务器。</p>
+<p>下列后端项目中的模块需要单独测试：</p>
+<ul>
+<li><p><font color=red><strong>服务</strong></font></p>
+<p>服务定义了所有底层的数据操作逻辑，因此需要测试。当连接数据库的时候，可以使用真实的测试数据库或者模拟的内存数据库（比如，<a href="https://github.com/shelfio/jest-mongodb">@shelf/jest-mongodb</a>）。我们推荐使用真实的测试数据库。</p>
+<p><strong>注意：</strong>在启动测试前，向数据库插入一组测试所需的数据，然后，在测试完成后，需要将测试数据删除。</p>
+</li>
+<li><p><font color=red><strong>控制器</strong></font></p>
+<p>控制器定义了处理输入请求的所有业务逻辑，因此需要测试。当需要调用数据服务的时候，使用一个模拟的数据服务模块，这样，就不需要数据库连接了。针对控制器的单元测试应该<strong>仅仅</strong>涉及控制器内部的业务逻辑，并假设数据服务都是正确无bug的。</p>
+</li>
+<li><p><font color=red><strong>工具</strong></font></p>
+<p>工具定义了项目所需的所有自定义库，因此需要被测试。</p>
+</li>
+</ul>
+<h2 id="集成测试要求">集成测试要求</h2>
+<p>集成测试的目的是整体测试一个项目中的某个功能。</p>
+<p>在集成测试时，需要在localhost上启动一个HTTP服务器，并且在测试完成后，优雅地停止该服务器。</p>
+<p>在集成测试时，需要数据库连接时，连接一个真实的测试数据库。</p>
+<p><strong>注意：</strong>在启动测试前，向数据库插入一组测试所需的数据，然后，在测试完成后，需要将测试数据删除。</p>
+<h2 id="有用的工具">有用的工具</h2>
+<p><a href="https://github.com/visionmedia/supertest">supertest</a>包是测试HTTP Restful API的有利工具。</p>
+<h2 id="代码覆盖率">代码覆盖率</h2>
+<p>我们认为<font color=gree>80%</font>的代码覆盖率为合格的测试。这<strong>并不</strong>意味着总体的代码覆盖率应该达到这条线。</p>
+<p>对于单元测试，每一个被测试单元需要达到这条线。</p>
+<p>对于集成测试，路由，中间件，控制器，数据服务都应该达到这条线。自定义库则不需要。</p>
+<h2 id="例子">例子</h2>
+<p>请参考<a href="https://github.com/dataReachable/dr_nodejs_project_template">样例项目</a>。</p>
+
+	</div>
+</body>
+</script>
+</html>

@@ -1,0 +1,646 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: Profile Backend Project - User info updates
+  description: >-
+    This document contains the RESTful APIs provided by the profile API server to update user info.
+    <br/>
+    <br/>
+    **Project server domain:** https://profile.dev.datareachable.net/api/v1/user/update/
+    <br/>
+    <br/>
+    **Project GitHub Repos:**
+      - [User Profile API Server](https://github.com/dataReachable/dr_Back_UserSystemProfile)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://profile.dev.datareachable.net/api/v1/user/update/"
+    description: Sydney Development Cluster
+
+paths:
+  /code/request:
+    get:
+      tags:
+        - Send Verification Code
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    post:
+      tags:
+        - Send Verification Code
+      summary: Request a verification code to be sent to the provided email or mobile.
+      description: >-
+        Prior to changing user email/mobile/password, frontend should ensure that user's new info should be verified via requesting a verification code be sent to the new (email/mobile) or existing (password) email/mobile.
+        <br/>
+        If the API is called to update email/mobile, then `isPasswordUpdate` parameter should be set to `false`. If the API is called to update password, then `isPasswordUpdate` parameter should be set to `true`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/Req_CodeChallenge_Email"
+                - $ref: "#/components/schemas/Req_CodeChallenge_Mobile"
+      responses:
+        "200":
+          description: Verification code has been sent out.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_CodeSend_Success"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_GenericBadFields"
+                  - $ref: "#/components/schemas/Res_CodeSendEmailUpdate_BadEmail"
+                  - $ref: "#/components/schemas/Res_CodeSendPasswordUpdate_BadEmail"
+                  - $ref: "#/components/schemas/Res_CodeSendMobileUpdate_BadMobile"
+                  - $ref: "#/components/schemas/Res_CodeSendPasswordUpdate_BadMobile"
+        "429":
+          $ref: "#/components/responses/RateLimit"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /code/verify:
+    get:
+      tags:
+        - Check Verification Code
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    post:
+      tags:
+        - Check Verification Code
+      summary: Check the user entered verification code
+      description: >-
+        Prior to changing user email/mobile/password, frontend should ensure that user's new info should be verified via requesting a verification code be sent to the new (email/mobile) or existing (password) email/mobile.
+        <br/>
+        This API is for verifying the user entered challenge code.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_CodeValidation"
+
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_CodeValidation_Success"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_GenericBadFields"
+                  - $ref: "#/components/schemas/Res_CodeValidation_Failure"
+        "429":
+          $ref: "#/components/responses/RateLimit"
+
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /info/email_or_mobile:
+    get:
+      tags:
+        - Update Email or Mobile
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    put:
+      tags:
+        - Update Email or Mobile
+      summary: Update or insert user email or mobile after verification.
+      description: >-
+        If user already registered with email(mobile), then update the email(mobile). If not, then insert the email(mobile) as new information.
+        <br/>
+        This API checks whether the user has verified the claimed email/mobile or not to avoid misconduct. The frontend should ensure the verification procedure and provide user entered code to this API.
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/Req_UpdateUserEmail"
+                - $ref: "#/components/schemas/Req_UpdateUserMobile"
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_UpdateUserMobile_Success"
+                  - $ref: "#/components/schemas/Res_UpdateUserEmail_Success"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_GenericBadFields"
+                  - $ref: "#/components/schemas/Res_CodeValidation_Failure"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_SessionTimeOut"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /info/password:
+    get:
+      tags:
+        - Update Password
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    put:
+      tags:
+        - Update Password
+      summary: Update an existing user's password
+      description: >-
+        The user is `required` to be registered prior to updating password.
+        <br/>
+        This API checks whether the user has verified the registered email/mobile or not to avoid misconduct. The frontend should ensure the verification procedure and provide user entered code to this API.
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Req_UpdateUserPassword"
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_UpdateUserPassword_Success"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_GenericBadFields"
+                  - $ref: "#/components/schemas/Res_BadPassword"
+                  - $ref: "#/components/schemas/Res_CodeValidation_Failure"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_SessionTimeOut"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /info/avatar:
+    get:
+      tags:
+        - Update Avatar
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    post:
+      tags:
+        - Update Avatar
+      summary: Update an existing user's avatar
+      description: >-
+        The user is `required` to be registered prior to updating the avatar.
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Req_UpdateUserAvatar"
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_UpdateUserAvatar_Success"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_UpdateUserAvatar_NoFileUploaded"
+                  - $ref: "#/components/schemas/Res_UpdateUserAvatar_FileNotFound"
+                  - $ref: "#/components/schemas/Res_UpdateUserAvatar_MultipleFiles"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_SessionTimeOut"
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  responses:
+    RateLimit:
+      description: >-
+        Too many requests.
+        The rate limit is controlled by a [sliding window](https://cloud.google.com/solutions/rate-limiting-strategies-techniques#techniques-enforcing-rate-limits) of 60 seconds. Each endpoint (or group thereof) defines separate request caps within these bounds.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Res_RateLimit"
+
+  schemas:
+    SessionCode:
+      type: string
+      properties:
+        sessionCode:
+          type: string
+          description: >-
+            UUID of the client which requested the code.This UUID is generated by the client, supposedly randomly.It will only be used as a sharding/discriminating mechanism.Duplications in UUID is not only tolerated, but expected by the backend.Lower-case UUIDs that only use the `-` separator will be the only accepted variant.The client is expected to keep the same `sessionCode` in any given usage flow that involves the authentication code subsystem.
+
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200000
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "Success!"
+
+    Res_GenericBadFields:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400001, message: "The error of the fields will be described here." }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: { code: 500000, message: "General error message", data: { error: "Details of the error goes here" } }
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 405000, message: "You're using the completely wrong HTTP method!" }
+
+    Mobile:
+      type: object
+      description: Mobile which the user would like to validate against.
+      required:
+        - "country"
+        - "number"
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        number:
+          type: string
+          description: >-
+            The actual mobile number of the user. When this is concatenated with `country`, the number should be an addressable international number.
+            Eg. for the Australian mobile number 0420 696 969, the country code would be 61, and the number would be "420 696 969".
+            When they're concatenated together, they form +61 420 696 969, which is the correct format of an international number.
+            Spaces will not be tolerated or normalized by the backend. Please remove any spaces in the numbers. eg. `0420 696 969` &rarr; `0420696969`
+
+    Email:
+      type: string
+      description: A valid email address that is at or under 128 characters in length, including any quotation marks.
+
+    Password:
+      type: string
+      description: >-
+        A string that is between 6 and 20 characters in length, inclusive of both. Must contain all of the following
+          - Lowercase letters
+          - Uppercase letters
+          - Digits
+          - Special characters (anything that's not letters or digits)
+        The string SHOULD NOT be longer than 72 bytes in length when encoded in UTF-8 due to [security concerns](https://github.com/kelektiv/node.bcrypt.js#security-issues-and-concerns). However, the backend will not check for this.
+
+    Res_RateLimit:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 429000, message: "You've made too many requests for new codes. Please wait a minute." }
+
+    Req_CodeChallenge_Mobile:
+      required:
+        - "sessionCode"
+        - "mobile"
+      allOf:
+        - $ref: "#/components/schemas/SessionCode"
+        - type: boolean
+          description: Inform backend if the code sending request is for email/mobile update or password update.
+        - type: object
+          properties:
+            mobile:
+              $ref: "#/components/schemas/Mobile"
+      example: { sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", mobile: { country: "61", number: "420696969" }, isPasswordUpdate: false }
+
+    Req_CodeChallenge_Email:
+      required:
+        - "sessionCode"
+        - "email"
+      allOf:
+        - $ref: "#/components/schemas/SessionCode"
+        - type: boolean
+          description: Inform backend if the code sending request is for email/mobile update or password update.
+        - type: object
+          properties:
+            email:
+              $ref: "#/components/schemas/Email"
+      example: { sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", email: "user@example.com", isPasswordUpdate: false }
+
+    Res_CodeSend_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200000, message: "Verification code sent! Please check your mobile/email." }
+
+    Res_CodeSendEmailUpdate_BadEmail:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400006, message: "Email has already been registered. Can NOT send to registered Email address!" }
+
+    Res_CodeSendPasswordUpdate_BadEmail:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400006, message: "Email has NOT been registered. Can NOT send to unregistered Email address!" }
+
+    Res_CodeSendMobileUpdate_BadMobile:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400006, message: "Mobile has already been registered. Can NOT send to registered mobile number!" }
+
+    Res_CodeSendPasswordUpdate_BadMobile:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400006, message: "Mobile has NOT been registered. Can NOT send to unregistered mobile number!" }
+
+    Req_CodeValidation:
+      required:
+        - "sessionCode"
+        - "code"
+      allOf:
+        - $ref: "#/components/schemas/SessionCode"
+        - type: object
+          properties:
+            code:
+              type: string
+              description: The verification code the user is now required to enter.
+      example: { sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", code: "123456" }
+
+    Res_CodeValidation_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200005, message: "You've successfully verified your mobile/email." }
+
+    Res_CodeValidation_Failure:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400005, message: "Sorry, the code you entered is invalid. Please double check or request a new code." }
+
+    Req_UpdateUserInfoBase:
+      required:
+        - "sessionCode"
+        - "code"
+      allOf:
+        - $ref: "#/components/schemas/SessionCode"
+        - type: object
+          properties:
+            username:
+              type: string
+              description: Optional username of the existing user. This parameter is `useless`, because backend uses the id in JWT to identify the user, `NOT` the username passed in this parameter.
+            code:
+              type: string
+              description: The user entered verification code
+
+    Req_UpdateUserEmail:
+      required:
+        - "email"
+      allOf:
+        - $ref: "#/components/schemas/Req_UpdateUserInfoBase"
+        - type: object
+          properties:
+            email:
+              $ref: "#/components/schemas/Email"
+      example: { sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", username: "data-reachable1", code: "123456", email: "example@datareachable.com" }
+
+    Req_UpdateUserMobile:
+      required:
+        - "mobile"
+      allOf:
+        - $ref: "#/components/schemas/Req_UpdateUserInfoBase"
+        - type: object
+          properties:
+            mobile:
+              $ref: "#/components/schemas/Mobile"
+      example:
+        { sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", username: "data-reachable1", code: "123456", mobile: { country: "61", number: "420666666" } }
+
+    Res_UpdateUserMobile_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200003, message: "Your mobile has been updated." }
+
+    Res_UpdateUserEmail_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200003, message: "Your email has been updated." }
+
+    Res_CodeNotValidated:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400003, message: "Please verify your mobile/email. Verify that the CAPTCHA has been entered correctly." }
+
+    Res_AccessDenied_SessionTimeOut:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 403001, message: "Session time out, access denied!" }
+
+    Res_AccessDenied_JWTNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT not found in the header, access denied!" }
+
+    Res_AccessDenied_JWTValidationFailure:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT validation failed, access denied!" }
+
+    Req_UpdateUserPassword:
+      required:
+        - "password"
+      allOf:
+        - $ref: "#/components/schemas/Req_UpdateUserInfoBase"
+        - type: object
+          properties:
+            password:
+              $ref: "#/components/schemas/Password"
+      example: { sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", username: "data-reachable1", code: "123456", password: "Pass@word!" }
+
+    Res_UpdateUserPassword_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200003, message: "Your password has been updated." }
+
+    Res_BadPassword:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400001, message: "Password must be 6-20 bytes in length and contain the following: ..." }
+
+    Req_UpdateUserAvatar:
+      properties:
+        file:
+          type: object
+          required:
+            - "name"
+            - "files"
+          description: >-
+            Frontend must upload `one and only one` file as the user avatar. Multiple file uploads are rejected by the backend.
+            <br/>
+            The input field needs to have a `name` tag.
+            <br/>
+            The size of the avatar is limited to `10MB` by the backend.
+          properties:
+            name:
+              type: string
+            files:
+              type: array
+              minimum: 1
+              maximum: 1
+              items:
+                type: string
+                format: binary
+
+    Res_UpdateUserAvatar_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200003, message: "Avatar has been uploaded.", data: { url: "https://xxxx.aws.com" } }
+
+    Res_UpdateUserAvatar_NoFileUploaded:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: No files were uploaded" }
+
+    Res_UpdateUserAvatar_FileNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: Target input file name XXX NOT found" }
+
+    Res_UpdateUserAvatar_MultipleFiles:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: Multiple files are uploaded under input file name XXX" }

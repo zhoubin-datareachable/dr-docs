@@ -1,0 +1,533 @@
+openapi: 3.0.3
+
+info:
+  version: 0.2.5
+  title: Signup APIs
+  description: >-
+    This document contains the RESTful APIs provided by the registration api servers.
+    <br/>
+    **Project GitHub Repos:**
+      - [Registration API repo](https://github.com/dataReachable/dr_Back_UserSystemSignup)
+  contact:
+    name: Backend Team
+    email: yang.gao@datareachable.com
+
+servers:
+  - url: "https://signup.dev.datareachable.net/api/v1"
+    description: Sydney Development Cluster
+paths:
+  /register/code/request:
+    post:
+      tags:
+        - Auth code request
+      summary: Request an authentication code
+      description: This API accepts a session code and an external identity such as email and mobile. Then sends the user a verification code for them to authenticate when signing up.
+      requestBody:
+        required: true
+        description: Client-generated session code (discriminator) and an external identity to send a verification code to.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/CodeChallengeRequestMobile"
+                - $ref: "#/components/schemas/CodeChallengeRequestEmail"
+      responses:
+        "200":
+          description: Code sent.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CodeSendSuccess"
+        "400":
+          description: >-
+            Bad request.
+
+
+            Please check the `.code` field for `400002`, it will be useful for triggering UI events if the email/mobile is already taken.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BadFields"
+                  - $ref: "#/components/schemas/TakenIdentity"
+        "429":
+          $ref: "#/components/responses/RateLimit"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericBackendError"
+    get:
+      tags:
+        - Auth code request
+      summary: Testing api, only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+                
+  /register/code/verify:
+    post:
+      tags:
+        - Auth code verification
+      summary: Responding with an authentication code.
+      description: This API accepts a session code and an external identity such as email and mobile. Then sends the user a verification code for them to authenticate when signing up.
+      requestBody:
+        required: true
+        description: Client-generated session code (discriminator) and a verification code from the specified external identity.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CodeVerifyRequest"
+      responses:
+        "200":
+          description: Code verified.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CodeVerifySuccess"
+        "400":
+          description: Failed to verify code.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BadFields"
+                  - $ref: "#/components/schemas/CodeVerifyFailure"
+        "429":
+          $ref: "#/components/responses/RateLimit"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericBackendError"
+    get:
+      tags:
+        - Auth code verification
+      summary: Testing api, only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /register/check_availability:
+    post:
+      tags:
+        - Credential availability checks
+      summary: Check if details used (username) already exist on our database
+      description: >-
+        This endpoint does not require a `sessionCode` field. Nonetheless, the field is tolerated by the backend.
+        The default ratelimit for this endpoint is 6 requests in a 60 second rolling [(sliding) window.](https://cloud.google.com/solutions/rate-limiting-strategies-techniques#techniques-enforcing-rate-limits)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/CheckAvailabilityUsername"
+      responses:
+        "200":
+          description: Check success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvailabilityCheckResult"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BadFields"
+                  - $ref: "#/components/schemas/TakenUsername"
+        "429":
+          $ref: "#/components/responses/RateLimit"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericBackendError"
+    get:
+      tags:
+        - Credential availability checks
+      summary: Testing api, only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /register:
+    post:
+      tags:
+        - Registration
+      summary: Registering a new account.
+      description: This API accepts a session code on top of all the user-provided fields. The session code should already be used to create a 2-factor authentication code with the request/verify endpoints.
+      requestBody:
+        required: true
+        description: Register with either a mobile or email to begin with.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/RegistrationRequestMobile"
+                - $ref: "#/components/schemas/RegistrationRequestEmail"
+      responses:
+        "200":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterSuccess"
+        "400":
+          description: Failed to register
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/BadFields"
+                  - $ref: "#/components/schemas/FailureBadPassword"
+                  - $ref: "#/components/schemas/FailureUsernameTaken"
+                  - $ref: "#/components/schemas/FailureIdentityTaken"
+                  - $ref: "#/components/schemas/FailureIdentityUnverified"
+        "429":
+          $ref: "#/components/responses/RateLimit"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericBackendError"
+    get:
+      tags:
+        - Registration
+      summary: Testing api, only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+components:
+  responses:
+    RateLimit:
+      description: >-
+        Too many requests.
+
+
+        The rate limit is controlled by a [sliding window](https://cloud.google.com/solutions/rate-limiting-strategies-techniques#techniques-enforcing-rate-limits) of 60 seconds. Each endpoint (or group thereof) defines separate request caps within these bounds.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RateLimit"
+  schemas:
+    SessionCodeAttachedRequest:
+      type: object
+      properties:
+        sessionCode:
+          type: string
+          description: >-
+            UUID of the client which requested the code.
+            This UUID is generated by the client, supposedly randomly.
+            It will only be used as a sharding/discriminating mechanism.
+            Duplications in UUID is not only tolerated, but expected by the backend.
+            Lower-case UUIDs that only use the `-` separator will be the only accepted variant.
+
+
+            The client is expected to keep the same `sessionCode` in any given usage flow that involves the authentication code subsystem.
+    GenericResponse:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit error code designated by the spreadsheet."
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+    Mobile:
+      type: object
+      description: Mobile which the user would like to validate against.
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        number:
+          type: string
+          description: >-
+            The actual mobile number of the user. When this is concatenated with `country`, the number should be an addressable international number.
+            Eg. for the Australian mobile number 0420 696 969, the country code would be 61, and the number would be "420 696 969".
+            When they're concatenated together, they form +61 420 696 969, which is the correct format of an international number.
+
+
+            Spaces will not be tolerated or normalized by the backend. Please remove any spaces in the numbers. eg. `0420 696 969` &rarr; `0420696969`
+    Email:
+      type: string
+      description: A valid email address that is at or under 128 characters in length, including any quotation marks.
+    CodeChallengeRequestMobile:
+      allOf:
+        - $ref: "#/components/schemas/SessionCodeAttachedRequest"
+        - type: object
+          properties:
+            mobile:
+              $ref: "#/components/schemas/Mobile"
+      example:
+        {
+          sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          mobile: {
+            country: "61",
+            number: "420 696 969"
+          }
+        }
+    CodeChallengeRequestEmail:
+      allOf:
+        - $ref: "#/components/schemas/SessionCodeAttachedRequest"
+        - type: object
+          properties:
+            email:
+              $ref: "#/components/schemas/Email"
+      example:
+        {
+          sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          email: "user@example.com"
+        }
+    CodeSendSuccess:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 200000,
+          message: "Verification code sent! Please check your mobile/email."
+        }
+    BadFields:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400001,
+          message: "The error of the fields will be described here.",
+        }
+    TakenIdentity:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400002,
+          message: "Your mobile/email is already taken."
+        }
+    WrongRequestMethodRes:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 405000,
+          message: "You're using the completely wrong HTTP method."
+        }
+    RateLimit:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 429000,
+          message: "You've made too many requests for new codes. Please wait a minute."
+        }
+    GenericBackendError:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 500000,
+          message: "A user-friendly description of the error."
+        }
+    CodeVerifyRequest:
+      allOf:
+        - $ref: "#/components/schemas/SessionCodeAttachedRequest"
+        - type: object
+          properties:
+            code:
+              type: string
+              description: The verification code the user is now required to enter.
+      example:
+        {
+          sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          code: "123456"
+        }
+    CodeVerifySuccess:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 200000,
+          message: "You've successfully verified your mobile/email. Please complete the other fields to register."
+        }
+    CodeVerifyFailure:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400002,
+          message: "Please double check the code you've entered is correct. Please request another code if it's still not working."
+        }
+    CodeVerifyEmailLink:
+      allOf:
+        - $ref: "#/components/schemas/SessionCodeAttachedRequest"
+        - type: object
+          properties:
+            verificationCode:
+              type: string
+              description: The confirmation code that the server requested.
+    CheckAvailabilityUsername:
+      type: object
+      properties:
+        username:
+          $ref: "#/components/schemas/Username"
+    AvailabilityCheckResultField:
+      type: boolean
+      description: >-
+        A `true` response means that the data sent in this field is **not** in our database, and therefore available for use.
+
+
+        The `false` response field has been remapped to code `400002`, please check the 400 response schemas.
+    AvailabilityCheckResult:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The returned fields correspond to the fields in the API request. If a field didn't exist in the API request, then it won't be in the response.
+              properties:
+                username:
+                  $ref: "#/components/schemas/AvailabilityCheckResultField"
+      example:
+        {
+          code: 200000,
+          message: "Checks succeeded"
+        }
+    TakenUsername:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400002,
+          message: "That username is already taken."
+        }
+    Username:
+      type: string
+      description: >-
+        A unique, immutable username that the client can choose to use for their account. Subject to the following limitations:
+          - Between 7 and 20 characters, inclusive of both.
+          - A username with a different stylization (eg. capitalization) doesn't already exist.
+          - Can only start with a letter
+          - Can contain the following characters
+            - Lowercase letters
+            - Capital letters
+            - Numbers
+            - Dots (`.`)
+            - Dashes (`-`)
+            - Underscores (`_`)
+
+        This RegEx is recommended: `^[A-Za-z][A-Za-z0-9._-]{6,19}$`
+    Password:
+      type: string
+      description: >-
+        A string that is between 8 and 32 characters in length, inclusive of both. Must contain all of the following
+          - Lowercase letters
+          - Uppercase letters
+          - Digits
+          - Special characters (anything that's not letters or digits)
+
+
+        The string SHOULD NOT be longer than 72 bytes in length when encoded in UTF-8 due to [security concerns](https://github.com/kelektiv/node.bcrypt.js#security-issues-and-concerns). However, the backend will not check for this.
+    RegistrationRequestBase:
+      allOf:
+        - $ref: "#/components/schemas/SessionCodeAttachedRequest"
+        - type: object
+          properties:
+            username:
+              $ref: "#/components/schemas/Username"
+            password:
+              $ref: "#/components/schemas/Password"
+    RegistrationRequestMobile:
+      allOf:
+        - $ref: "#/components/schemas/RegistrationRequestBase"
+        - type: object
+          properties:
+            mobile:
+              $ref: "#/components/schemas/Mobile"
+      example:
+        {
+          sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          mobile: {
+            country: "61",
+            number: "420 696 969"
+          },
+          username: "matthew",
+          password: "Password1!"
+        }
+    RegistrationRequestEmail:
+      allOf:
+        - $ref: "#/components/schemas/RegistrationRequestBase"
+        - type: object
+          properties:
+            email:
+              $ref: "#/components/schemas/Email"
+      example:
+        {
+          sessionCode: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          email: "user@example.com",
+          username: "matthew",
+          password: "Password1!"
+        }
+    RegisterSuccess:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 200000,
+          message: "You've successfully registered, welcome to dataReachable!"
+        }
+    FailureBadPassword:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400002,
+          message: "Password must be 8-32 bytes in length and contain the following: ..."
+        }
+    FailureUsernameTaken:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400003,
+          message: "Username is already taken."
+        }
+    FailureIdentityTaken:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400004,
+          message: "Mobile/email is already taken."
+        }
+    FailureIdentityUnverified:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example:
+        {
+          code: 400005,
+          message: "Please verify your mobile/email first."
+        }

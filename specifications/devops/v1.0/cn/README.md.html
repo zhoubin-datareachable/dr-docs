@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="datareachable-devops-规范">DataReachable DevOps 规范</h2>
+<p>此GitHub仓库列出了在DataReachable进行DevOps时应遵循的最佳实践。这个规范的目的是防止开发人员随意选择工具链，制定项目文件夹布局，配置等。设置规则和约定时，应充分考虑到未来的要求和灵活性，而不是为了满足一时的需要。随着DevOps行业的深入发展，此GitHub仓库会逐步完善和迭代，但是，更改和重构需要以增量的形式逐步推进，不建议做出重大变更。</p>
+<p><strong>注意：</strong> DevOps技术本身仍处于起步阶段，工具链等也存在重大变更的可能性，因此，在目前，此规范仍然仅仅是初步尝试。</p>
+<h2 id="主要的技术栈">主要的技术栈</h2>
+<ul>
+<li>核心架构: 微服务</li>
+<li>容器化工具: <a href="https://www.docker.com/">Docker</a></li>
+<li>辅助工具: 自动化集成和部署工具 (<a href="https://github.com/features/actions">Github Action</a>)</li>
+</ul>
+<h2 id="主要开发使用的工具链">主要开发使用的工具链</h2>
+<ul>
+<li>云计算服务使用: <a href="https://aws.amazon.com/">AWS</a></li>
+<li>容器编配工具: <a href="https://kubernetes.io/">Kubernetes</a></li>
+<li>基础设施即代码（IaC）工具: <a href="https://www.terraform.io/">Terraform</a> 和 <a href="https://terragrunt.gruntwork.io/">Terragrunt</a></li>
+</ul>
+<p>虽然主要的技术栈采用基于Docker的容器化方案，但是我们并不会不考虑其他的方案以保证DevOps的灵活性和满足未来发展需求。</p>
+<p><a href="https://terragrunt.gruntwork.io/">Terragrunt</a> 是Terraform工具的一个扩展工具，用来弥补Terraform在搭建项目中的一些不足（Terragrunt底层仍然是调用Terraform）。</p>
+<h2 id="基本工作流">基本工作流</h2>
+<p>对于代码的开发工作流定义如下：</p>
+<ul>
+<li>应用程序开发工作流</li>
+<li>基础设施代码开发工作流</li>
+</ul>
+<h2 id="重要">重要:</h2>
+<p>一旦开始使用Terraform和Terragrunt工具链，应该<strong>仅仅</strong>使用这两种工具来操控实际部署的基础设施。其他的操控方式应该被禁止以防止可能出现的不一致性，比如，手动在AWS控制台内（AWS的可视化资源操作网页）更改基础设施。</p>
+<h2 id="目录">目录</h2>
+<ol>
+<li><a href="./Workflows/README.md">基本工作流程</a></li>
+<li><a href="./Terraform/README.md">Terraform使用规范</a></li>
+<li><a href="./Kubernetes/README.md">Kubernetes项目规范</a></li>
+<li><a href="./GitOps/README.md">GitOps规范</a></li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

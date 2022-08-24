@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="front-end-specifications">Front End Specifications</h2>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">Front End Specifications</span>
+    </div>
+</div>
+
+<h2 id="description">Description</h2>
+<p>This is the Front End specifications, it will include project folder naming rule, class/id naming rule and code comments rule.</p>
+<h2 id="project-rules">Project Rules</h2>
+<h3 id="project-structure-overview">Project Structure Overview</h3>
+<pre><code>ProjectSample/ .................... Project Folder
+├─ package_backup/ ................ Package.json Backup Folder
+├─ public/ ........................ Public Static Files Root Folder
+│  ├─ favicon.ico ................. Project Favicon
+│  ├─ icon.png .................... Project Icon
+│  ├─ index.html .................. Project Production HTML File
+│  └─ indexDev.html ............... Project Development HTML File
+├─ src/ ........................... Project Root Folder
+│  ├─ global.d.ts ................. Typescript Third-party Package Declaration File
+│  ├─ index.tsx ................... Project Root File
+│  ├─ _test_ ...................... Project Testing Folder
+│  ├─ Assets/ ..................... Project Public Components Root Folder
+│  │  └─ images ................... Project Images Root Folder
+│  ├─ Api/ ........................ Api File Root Folder
+│  │  ├─ mainDomain.ts ............ Main Domain setting File
+│  │  ├─ redirectDomain.ts ........ Redirect Domain setting File
+│  │  └─ moduleA.ts ............... moduleA axiso encaplsulate File
+│  ├─ FormSchema/ ................. Page Form Validation Schema File
+│  ├─ Components/ ................. Project Public Components Root Folder
+│  │  ├─ index.ts ................. Unified Export Project Public Components File
+│  │  └─ PublicComponentA/ ........ Project Public Component A Folder
+│  │     ├─ index.tsx ............. Project Public Component A Entry File
+│  │     └─ style.scss ............ Project Public Component A Style File
+│  ├─ Util ........................ Project Util Folder
+│  ├─ DefaultData ................. Project Component Default Data Folder
+│  ├─ Constant/ ................... Project Resuable Style Root Folder
+│  │  └─ &#39;name&#39;.scss .............. Resuable Style File
+│  ├─ Locales/ .................... Project Multilingual Configuration Folder
+│  │  ├─ Translations ............. Resuable Style File
+│  │  │  ├─ en .................... English Translations Folder
+│  │  │  │  └─ translation.json ... English Translations file
+│  │  │  └─ cn .................... Chinese Translations Folder
+│  │  │     └─ translation.json ... Chinese Translations file
+│  │  └─ i18n.ts .................. Multilingual Configuration file
+│  ├─ PageLayouts/ ................ Project Page Layout Root Folder
+│  │  ├─ index.ts ................. Unified Export Project Layouts File
+│  │  └─ LayoutA/ ................. Project Layout A Folder
+│  │     ├─ index.tsx ............. Project Public Layout A Entry File
+│  │     └─ style.scss ............ Project Public Layout A Style File
+│  ├─ Pages/ ...................... Project Pages Root Folder
+│  │  ├─ index.ts ................. Unified Export Project Pages File
+│  │  └─ PageA/ ................... Project Page A Folder
+│  │     ├─ index.tsx ............. Project Page A Entry File
+│  │     ├─ style.scss ............ Project Page A style
+│  │     └─ Components/ ........... Project Page A Private Components Folder
+│  │        └─ PrivateComponentA/ . Project Page A Private Component A Folder
+│  │           ├─ index.tsx ....... Project Page A Private Component A Entry File
+│  │           └─ style.scss ...... Project Page A Private Component A Style File
+│  ├─ Route/ ...................... Route Root Folder
+│  │  └─ index.tsx ................ Route Management Entry File
+│  └─ Store/ ...................... Store Root Folder
+│     ├─ rootReducer.ts ........... Root Reducer To Combine All Module Reducer
+│     ├─ rootSaga.ts .............. Root Saga
+│     ├─ rootStore.ts ............. Root Store
+│     └─ moduleA/ ................. ModuleA Folder
+│        ├─ types.ts .............. ModuleA Action Types File
+│        ├─ actions.ts ............ ModuleA Actions File
+│        ├─ reducer.ts ............ ModuleA Reducer File
+│        └─ sagas.ts .............. ModuleA Asynchronous Request Function Management Saga File
+├─ webpackConfig/ ................. Webpack Root Folder
+│  ├─ webpack.common.js ........... Webpack General Configuration File
+│  ├─ webpack.dev.js .............. Webpack Development Environment Packaging Configuration File
+│  └─ webpack.prod.js ............. Webpack Production Environment Packaging Configuration File
+├─ .babelrc ....................... Configure Presets And Plugins File
+├─ .eslintignore .................. ESLint To Ignore Specific Files File
+├─ .eslintrc.js ................... Typescript Syntax Detection Rules File
+├─ .prettierrc.js ................. Code Formatting Style Rules File
+├─ package.json ................... Project Configuration Information File
+├─ postcss.config.js .............. Project Style Configuration File
+└─ tsconfig.json .................. Typescript Compilation Rules File
+
+</code></pre>
+<h3 id="project-folder-naming-rule">Project Folder Naming Rule</h3>
+<p>All folder naming methods in the project use big camel case naming method.</p>
+<h3 id="project-file-naming-convention">Project file naming convention</h3>
+<p>All files in the project are named in the camel case naming method. Only under special circumstances, the components need to be separated out of index.tsx separately. At this time, the file naming needs to start with a capital letter.</p>
+<h4 id="public-and-private-component-and-layout-naming-rule">Public and Private Component and Layout Naming Rule</h4>
+<p>components or layout will be used in multiple components, such as page layouts or pages. The general naming convention will be the first name according to the ui of the component or layout, and then the second name will be based on its function, and so on, for example, there is a <code>button</code> will <code>fetch</code> <code>userData</code> from database. we can name it as <code>ButtonFetchUserData</code>, At the same time, you need to make sure that the component folder and component name are the same.</p>
+<h3 id="css-class-and-id-naming-rule">CSS Class and ID Naming Rule</h3>
+<p>Generally, BEM naming convention will be used to name the project css class and Id. But because all the class and id names in the project have been hashed. We will use the following methods to name the class and id in the project</p>
+<p>The <code>firstname</code> of the class will be the name of the current component, then we need to add the <code>element</code> and <code>modifiers</code> for the class/id, We will connect <code>firstname</code> and <code>element</code> with a single underscore, we will connect <code>modifiers</code> with others with double underscore. For example:</p>
+<p>If we have a components and we want to change the header part of the component from active state to inactive state, we need to add one more class to this component when this component is at inactive state. So this class name will be <code>component_header__inactive</code>, at the same time, the names of class and id start with lowercase letters.</p>
+<h3 id="mandatory-use-of-rem-in-css">Mandatory use of rem in CSS</h3>
+<p>After the project is launched, we need to scale the front-end size according to different screen sizes. At this time, we need to adjust the font-size in the html to scale the scale. This zoom mechanism is achieved through rem , So in the development process <code>prohibit the use of px as the unit</code>, and always use <code>rem</code> as the size unit. The conversion unit of <code>rem</code> and <code>px</code> in the project is <code>1rem</code> which is equal to <code>10px</code>.</p>
+<h3 id="项目中图片命名规范">项目中图片命名规范</h3>
+<hr>
+<p>The pictures introduced in the project need to be named uniformly and placed under the folder <code>src/Assets/images</code>. The naming rule is <code>picture function category__picture name</code></p>
+<p>For example: icon_userAvata represents the user&#39;s avatar chart, logo_menu represents the logo icon used in the menu bar, and spr_blogCard represents the image used by the card element in the blog page.</p>
+<ul>
+<li><p>Picture function category</p>
+<table>
+<thead>
+<tr>
+<th align="left">Picture function category</th>
+<th align="left">Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">icon</td>
+<td align="left">icon not included in fontawesome in the project</td>
+</tr>
+<tr>
+<td align="left">logo</td>
+<td align="left">Logo image</td>
+</tr>
+<tr>
+<td align="left">bg</td>
+<td align="left">Can be tiled or large background image</td>
+</tr>
+<tr>
+<td align="left">btn</td>
+<td align="left">Button</td>
+</tr>
+<tr>
+<td align="left">spr</td>
+<td align="left">Named collection of various other pictures in a single page</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>Picture name
+The name of the picture needs to be named according to the scene in which the picture is used, such as user avatar: userAvatar, product list: productList, etc.</p>
+</li>
+</ul>
+<h3 id="const-let-class-and-function-naming-rule">const, let, Class and function naming rule</h3>
+<p>The naming of variables, constants, classes, and functions in the project is extremely important, which can quickly help members of your team understand the meaning of the code you write.</p>
+<ul>
+<li><p>let</p>
+<p>naming method：small camel case naming method。<br>naming rule：Prefix with noun</p>
+<pre><code class="language-javascript">let maxCount = 10;
+</code></pre>
+</li>
+<li><p>const
+naming method：small camel case naming method。<br>naming rule：Prefix with noun</p>
+<pre><code class="language-javascript">const maxCount = 10;
+</code></pre>
+</li>
+<li><p>function
+naming method：small camel case naming method。<br>naming rule：Prefix with verb
+suggestion prefix naming：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Verb</th>
+<th align="left">meaning</th>
+<th align="left">return value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">handle</td>
+<td align="left">Handling event events</td>
+<td align="left">no return or return any</td>
+</tr>
+<tr>
+<td align="left">is</td>
+<td align="left">Judge true or false</td>
+<td align="left">boolean</td>
+</tr>
+<tr>
+<td align="left">get</td>
+<td align="left">get value</td>
+<td align="left">no boolean</td>
+</tr>
+<tr>
+<td align="left">set</td>
+<td align="left">set value</td>
+<td align="left">no return</td>
+</tr>
+<tr>
+<td align="left">load</td>
+<td align="left">loading some data</td>
+<td align="left">no return or return the loading data</td>
+</tr>
+<tr>
+<td align="left">remove</td>
+<td align="left">remove style or remove parameter</td>
+<td align="left">no return or return any</td>
+</tr>
+<tr>
+<td align="left">add</td>
+<td align="left">add style or add parameter</td>
+<td align="left">no return or return any</td>
+</tr>
+<tr>
+<td align="left">change</td>
+<td align="left">modify style or modify parameter</td>
+<td align="left">no return or return any</td>
+</tr>
+<tr>
+<td align="left">watch</td>
+<td align="left">lister some event or function</td>
+<td align="left">no return or return any</td>
+</tr>
+<tr>
+<td align="left">dispatch</td>
+<td align="left">dispatch action</td>
+<td align="left">return object</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>class
+naming method：big camel case naming method。<br> naming rule：Prefix with the name of class</p>
+<pre><code class="language-javascript">class Person {
+public name: string;
+constructor(name) {
+  this.name = name;
+}
+}
+const person = new Person(&#39;Frank&#39;);
+</code></pre>
+</li>
+</ul>
+<h3 id="code-comments-rule">Code Comments Rule</h3>
+<h4 id="top-levelfile-comments">Top Level/File Comments</h4>
+<p>The top-level comment is used to tell readers who are not familiar with this code what is included in this file. The general content of the file, its author, dependencies and compatibility information should be provided.</p>
+<pre><code class="language-javascript">/**
+ * @file LsOrRwPreview
+ * @date 2020/06/25 13:11
+ * @author Administrator
+ * @lastModify Administrator 2020/06/25 14:11
+ */
+</code></pre>
+<h4 id="function-comments">Function Comments</h4>
+<p><code>@param</code> tag provides various descriptions of the parameters of a function, including the parameter name, parameter data type, and description. @param {variable type} Variable name-variable description<br>
+ex: <br>
+@params {string | Number}<br>
+@callback describes a callback function.<br>
+@returns describes the return value of a function. The syntax is similar to @param.</p>
+<pre><code class="language-javascript">/**
+ * Send a post Request
+ * @param {string} url - request url
+ * @param {string} method - request method
+ * @param {Object} body - request payload
+ * @callback successCallBack-requestSuccessCallBack - request success callback
+ * @callback errorCallBack-requestErrorCallBack - request failure callback
+ * @returns {Promise.&lt;*&gt;}
+ */
+const requestUrl = async (url, method, body, successCallBack, errorCallBack) =&gt; {
+    reurn new Promise...
+};
+</code></pre>
+<h4 id="variable-and-attribute-notes">Variable and Attribute Notes</h4>
+<p>@type is used to identify the type of value that an identifier may contain, or the type of value returned by a function.</p>
+<pre><code class="language-javascript">/**
+ * variable description
+ * @let
+ * @type {number)}
+ */
+let foo = 1;
+</code></pre>
+<h4 id="constant-comment">Constant Comment</h4>
+<pre><code class="language-javascript">/**
+ * const description
+ * @constant
+ * @type {string}
+ *
+ */
+const RED = &quot;FF0000&quot;;
+</code></pre>
+<h2 id="code-snippet-template">Code Snippet Template</h2>
+<h3 id="usage">Usage</h3>
+<p>Press command + shift + p, then search snippet in the search box. Copy and paste typescript react template to the typescriptreact.json file. Copy and paste scss template to the scss.json file.</p>
+<h3 id="typescript-react-template">typescript react template</h3>
+<p>In order to make the structure of each file of the project more agreeable, please be sure to use the following snippet as the starting template for each of your tsx files</p>
+<p>typescript.json snippet</p>
+<pre><code class="language-javascript">{
+  // Place your snippets for typescript here. Each snippet is defined under a snippet name and has a prefix, body and
+  // description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the
+  // same ids are connected.
+  // Example:
+  &quot;Print to console&quot;: {
+    &quot;prefix&quot;: &quot;log&quot;,
+    &quot;body&quot;: [&quot;console.log(&#39;$1&#39;);&quot;, &quot;$2&quot;],
+    &quot;description&quot;: &quot;Log output to console&quot;
+  },
+  &quot;common header part&quot;: {
+    &quot;prefix&quot;: &quot;ch&quot;,
+    &quot;body&quot;: [
+      &quot;/**&quot;,
+      &quot;* @file $1&quot;,
+      &quot;* @date $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;* @author $2&quot;,
+      &quot;* @lastModify $2 $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;*/&quot;
+    ],
+    &quot;description&quot;: &quot;project common header part&quot;
+  },
+  &quot;common body part&quot;: {
+    &quot;prefix&quot;: &quot;cb&quot;,
+    &quot;body&quot;: [&quot;/**&quot;, &quot;* $1&quot;, &quot;* @param {$2} $3&quot;, &quot;*/&quot;],
+    &quot;description&quot;: &quot;project common header part&quot;
+  },
+  &quot;common jsx divider part&quot;: {
+    &quot;prefix&quot;: &quot;cxd&quot;,
+    &quot;body&quot;: [
+      &quot;{/* &lt;------------------------------------ **** $1 START **** ------------------------------------ */}&quot;,
+      &quot;{/* &lt;------------------------------------ **** $1 END **** ------------------------------------ */}&quot;
+    ],
+    &quot;description&quot;: &quot;jsx common divider part&quot;
+  },
+  &quot;common divider part&quot;: {
+    &quot;prefix&quot;: &quot;cd&quot;,
+    &quot;body&quot;: [
+      &quot;/* &lt;------------------------------------ **** $1 START **** ------------------------------------ */&quot;,
+      &quot;/* &lt;------------------------------------ **** $1 END **** ------------------------------------ */&quot;
+    ],
+    &quot;description&quot;: &quot; common divider part&quot;
+  },
+  &quot;common divider short part&quot;: {
+    &quot;prefix&quot;: &quot;cds&quot;,
+    &quot;body&quot;: [
+      &quot;/* &lt;--------------------------- * $1 START * --------------------------- */&quot;,
+      &quot;/* --------------------------- * $1 END * --------------------------- */&quot;
+    ],
+    &quot;description&quot;: &quot; common divider part&quot;
+  },
+  &quot;common const&quot;: {
+    &quot;prefix&quot;: &quot;cc&quot;,
+    &quot;body&quot;: [&quot;/**&quot;, &quot;* $1&quot;, &quot;* @constant&quot;, &quot;* @type {$2}&quot;, &quot;*/&quot;],
+    &quot;description&quot;: &quot; const common&quot;
+  },
+  &quot;common let&quot;: {
+    &quot;prefix&quot;: &quot;ct&quot;,
+    &quot;body&quot;: [&quot;/**&quot;, &quot;* $1&quot;, &quot;* @let&quot;, &quot;* @type {$2}&quot;, &quot;*/&quot;],
+    &quot;description&quot;: &quot; const let&quot;
+  },
+  &quot;react jsx templete&quot;: {
+    &quot;prefix&quot;: &quot;rt&quot;,
+    &quot;body&quot;: [
+      &quot;/**&quot;,
+      &quot;* @file $2&quot;,
+      &quot;* @date $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;* @author $3&quot;,
+      &quot;* @lastModify $3 $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;*/&quot;,
+      &quot;/* &lt;------------------------------------ **** DEPENDENCE IMPORT START **** ------------------------------------ */&quot;,
+      &quot;/** This section will include all the necessary dependence for this tsx file */&quot;,
+      &quot;import React, { useState } from &#39;react&#39;;&quot;,
+      &quot;import { Row, Col } from &#39;antd&#39;;&quot;,
+      &quot;/* &lt;------------------------------------ **** DEPENDENCE IMPORT END **** ------------------------------------ */&quot;,
+
+      &quot;/* &lt;------------------------------------ **** INTERFACE START **** ------------------------------------ */&quot;,
+      &quot;/** This section will include all the interface for this tsx file */&quot;,
+
+      &quot;/* &lt;------------------------------------ **** INTERFACE END **** ------------------------------------ */&quot;,
+
+      &quot;/* &lt;------------------------------------ **** FUNCTION COMPONENT START **** ------------------------------------ */&quot;,
+      &quot;const $1 = (): JSX.Element =&gt; {&quot;,
+      &quot;/* &lt;------------------------------------ **** STATE START **** ------------------------------------ */&quot;,
+      &quot;/************* This section will include this component HOOK function *************/&quot;,
+
+      &quot;/* &lt;------------------------------------ **** STATE END **** ------------------------------------ */&quot;,
+
+      &quot;/* &lt;------------------------------------ **** PARAMETER START **** ------------------------------------ */&quot;,
+      &quot;/************* This section will include this component parameter *************/&quot;,
+
+      &quot;/* &lt;------------------------------------ **** PARAMETER END **** ------------------------------------ */&quot;,
+
+      &quot;/* &lt;------------------------------------ **** FUNCTION START **** ------------------------------------ */&quot;,
+      &quot;/************* This section will include this component general function *************/&quot;,
+
+      &quot;/* &lt;------------------------------------ **** FUNCTION END **** ------------------------------------ */&quot;,
+      &quot;return (&quot;,
+      &quot;&lt;Row&gt;&quot;,
+      &quot;&lt;/Row&gt;&quot;,
+      &quot;);&quot;,
+      &quot;};&quot;,
+      &quot;export default $1;&quot;,
+      &quot;/* &lt;------------------------------------ **** FUNCTION COMPONENT END **** ------------------------------------ */&quot;
+    ],
+    &quot;description&quot;: &quot;react JSX templete&quot;
+  }
+}
+</code></pre>
+<h3 id="scss-template">SCSS template</h3>
+<p>In order to make sure all the project are using the same scss template, please using the following snippet in the scss.json file.</p>
+<p>scss.json snippet</p>
+<pre><code class="language-javascript">{
+  // Place your snippets for typescript here. Each snippet is defined under a snippet name and has a prefix, body and
+  // description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the
+  // same ids are connected.
+  // Example:
+  &quot;Print to console&quot;: {
+    &quot;prefix&quot;: &quot;log&quot;,
+    &quot;body&quot;: [&quot;console.log(&#39;$1&#39;);&quot;, &quot;$2&quot;],
+    &quot;description&quot;: &quot;Log output to console&quot;
+  },
+  &quot;common header part&quot;: {
+    &quot;prefix&quot;: &quot;ch&quot;,
+    &quot;body&quot;: [
+      &quot;/**&quot;,
+      &quot;* @file $1&quot;,
+      &quot;* @date $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;* @author $2&quot;,
+      &quot;* @lastModify $2 $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;*/&quot;
+    ],
+    &quot;description&quot;: &quot;project common header part&quot;
+  },
+  &quot;common body part&quot;: {
+    &quot;prefix&quot;: &quot;cb&quot;,
+    &quot;body&quot;: [&quot;/**&quot;, &quot;* $1&quot;, &quot;* @param {$2} $3&quot;, &quot;*/&quot;],
+    &quot;description&quot;: &quot;project common header part&quot;
+  },
+  &quot;common jsx divider part&quot;: {
+    &quot;prefix&quot;: &quot;cxd&quot;,
+    &quot;body&quot;: [
+      &quot;{/* &lt;------------------------------------ **** $1 START **** ------------------------------------ */}&quot;,
+      &quot;{/* &lt;------------------------------------ **** $1 END **** ------------------------------------ */}&quot;
+    ],
+    &quot;description&quot;: &quot;jsx common divider part&quot;
+  },
+  &quot;common divider part&quot;: {
+    &quot;prefix&quot;: &quot;cd&quot;,
+    &quot;body&quot;: [
+      &quot;/* &lt;------------------------------------ **** $1 START **** ------------------------------------ */&quot;,
+      &quot;/* &lt;------------------------------------ **** $1 END **** ------------------------------------ */&quot;
+    ],
+    &quot;description&quot;: &quot; common divider part&quot;
+  },
+  &quot;common divider short part&quot;: {
+    &quot;prefix&quot;: &quot;cds&quot;,
+    &quot;body&quot;: [
+      &quot;/* &lt;--------------------------- * $1 START * --------------------------- */&quot;,
+      &quot;/* --------------------------- * $1 END * --------------------------- */&quot;
+    ],
+    &quot;description&quot;: &quot; common divider part&quot;
+  },
+  &quot;media queriy max&quot;: {
+    &quot;prefix&quot;: &quot;mm&quot;,
+    &quot;body&quot;: [&quot;@media screen and (max-width: $1) {&quot;, &quot;}&quot;],
+    &quot;description&quot;: &quot; media screen less than style&quot;
+  },
+  &quot;media queriy min&quot;: {
+    &quot;prefix&quot;: &quot;mi&quot;,
+    &quot;body&quot;: [&quot;@media screen and (min-width: $1) {&quot;, &quot;}&quot;],
+    &quot;description&quot;: &quot; media screen more than style&quot;
+  },
+  &quot;scss templete&quot;: {
+    &quot;prefix&quot;: &quot;st&quot;,
+    &quot;body&quot;: [
+      &quot;/**&quot;,
+      &quot;* @file $2&quot;,
+      &quot;* @date $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;* @author $3&quot;,
+      &quot;* @lastModify $3 $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE&quot;,
+      &quot;*/&quot;,
+      &quot;/* &lt;------------------------------------ **** CONSTANT IMPORT START **** ------------------------------------ */&quot;,
+      &quot;/** Import all the reference constant after this line */&quot;,
+      &quot;@import &#39;../../Constant/breakPoint.scss&#39;;&quot;,
+      &quot;@import &#39;../../Constant/font.scss&#39;;&quot;,
+      &quot;@import &#39;../../Constant/color.scss&#39;;&quot;,
+      &quot;/* &lt;------------------------------------ **** CONSTANT IMPORT END **** ------------------------------------ */&quot;,
+      &quot;/* &lt;------------------------------------ **** SECTION1 MIXIN START **** ------------------------------------ */&quot;,
+      &quot;/** The demo mixin is ..........*/&quot;,
+      &quot;@mixin demo {}&quot;,
+      &quot;/* &lt;------------------------------------ **** SECTION1 MIXIN END **** ------------------------------------ */&quot;,
+      &quot;/* &lt;--------------------------- * SECTION1 * --------------------------- */&quot;,
+      &quot;/* &lt;--------------------------- * SECTION1 * --------------------------- */&quot;
+    ],
+    &quot;description&quot;: &quot; media screen more than style&quot;
+  }
+}
+</code></pre>
+
+	</div>
+</body>
+</script>
+</html>

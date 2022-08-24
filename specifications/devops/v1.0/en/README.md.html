@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="datareachable-devops-specifications">DataReachable DevOps Specifications</h2>
+<p>This documentation sets out the best practices that should be followed when conducting DevOps at DataReachable. The purpose of this documentation is preventing ad hoc selection on tool chains, project folder layouts, configurations, etc. When setting up rules and conventions, future requirements and flexibility should be taken into consideration, instead of meeting temporary needs. However, evolution is essential for this documentation, subject to the advancement in the DevOps industry. Modifications and refactorizations should happen incrementally.</p>
+<p><strong>NOTE:</strong> DevOps is still in its infancy, so this documentation is an initial attempt at least for now.</p>
+<hr>
+<h2 id="main-tech-stack">Main Tech Stack</h2>
+<ul>
+<li>Architecture: Microservices</li>
+<li>Containerization: <a href="https://www.docker.com/">Docker</a></li>
+<li>Auxiliary: CI/CD Tools (<a href="https://github.com/features/actions">Github Action</a>)</li>
+</ul>
+<hr>
+<h2 id="main-deployment-tool-chain">Main Deployment Tool Chain</h2>
+<ul>
+<li>Cloud Computing Environment: <a href="https://aws.amazon.com/">AWS</a></li>
+<li>Container Orchestration: <a href="https://kubernetes.io/">Kubernetes</a></li>
+<li>Infrastructure as Code: <a href="https://www.terraform.io/">Terraform</a> and <a href="https://terragrunt.gruntwork.io/">Terragrunt</a></li>
+</ul>
+<p>Although the main tech stack adopts Docker-based containerizaton, for flexibility and future extension, we do not rule out conventional deployment options. Under such consideration, a uniform IaC tool is selected (Terraform). It is indeed an overkill for only Kubernetes, but we do not want to limit our future architectural choices.</p>
+<p><a href="https://terragrunt.gruntwork.io/">Terragrunt</a> is adopted to solve several Terraform issues with modularization.</p>
+<hr>
+<h2 id="workflows">Workflows</h2>
+<p>We set out two workflows from development to deployment for application and infrastructure code respectively:</p>
+<ul>
+<li>Application code workflow</li>
+<li>Infrastructure code workflow</li>
+</ul>
+<hr>
+<h2 id="important">Important:</h2>
+<p>Once Terraform and Terragrunt are adpoted, one should <strong>ONLY</strong> use them to manipulate real-world infrastructures. Other approaches are forbidden, e.g., manual operations through AWS console, to avoid inconsistency.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="./Workflows/README.md"><strong>Workflows</strong></a></li>
+<li><a href="./Terraform/README.md"><strong>Terraform</strong></a></li>
+<li><a href="./Kubernetes/README.md"><strong>Kubernetes</strong></a></li>
+<li><a href="./GitOps/README.md"><strong>GitOps</strong></a></li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

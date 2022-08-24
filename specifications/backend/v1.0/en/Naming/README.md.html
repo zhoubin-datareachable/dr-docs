@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="naming-conventions">Naming Conventions</h2>
+<p>Naming conventions are important to keep the codebase consistent and maintainable. Several naming conventions are enforced and checked by the ESLint rules, including:</p>
+<ul>
+<li>File name style</li>
+<li>Naming style in the TypeScript source code</li>
+</ul>
+<h2 id="naming-style-for-folders-and-files">Naming Style for Folders and Files</h2>
+<p>Folders and files should be named in <strong><font color=red>snake_case</font></strong> style, e.g. <code>ctr_sample_controller.ts</code>, <code>rte_sample_router.ts</code>, <code>sample_view.ejs</code>, <code>sample_style.css</code>. Other naming styles are <strong>NOT</strong> allowed.</p>
+<p>ESLint checks on the folder/file naming styles. Ill-styled folder and file names are reported as <strong>ERROR</strong>.</p>
+<h2 id="naming-style-in-source-code">Naming Style in Source Code</h2>
+<p>Names in the TypeScript language can be categorised as follows:</p>
+<ol>
+<li><code>variable</code> - matches any <code>var</code> / <code>let</code> / <code>const</code> variable name.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>const</code>, <code>destructured</code>, <code>global</code>, <code>exported</code>, <code>unused</code>.</li>
+<li>Allowed <code>types</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="2">
+<li><code>function</code> - matches any named function declaration or named function expression.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>global</code>, <code>exported</code>, <code>unused</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="3">
+<li><code>parameter</code> - matches any function parameter. Does not match parameter properties.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>destructured</code>, <code>unused</code>.</li>
+<li>Allowed <code>types</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="4">
+<li><code>classProperty</code> - matches any class property. Does not match properties that have direct function expression or arrow function expression values.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>abstract</code>, <code>private</code>, <code>protected</code>, <code>public</code>, <code>readonly</code>, <code>requiresQuotes</code>, <code>static</code>.</li>
+<li>Allowed <code>types</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="5">
+<li><code>objectLiteralProperty</code> - matches any object literal property. Does not match properties that have direct function expression or arrow function expression values.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>public</code>, <code>requiresQuotes</code>.</li>
+<li>Allowed <code>types</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="6">
+<li><code>typeProperty</code> - matches any object type property. Does not match properties that have direct function expression or arrow function expression values.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>public</code>, <code>readonly</code>, <code>requiresQuotes</code>.</li>
+<li>Allowed <code>types</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="7">
+<li><code>parameterProperty</code> - matches any parameter property.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>private</code>, <code>protected</code>, <code>public</code>, <code>readonly</code>.</li>
+<li>Allowed <code>types</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="8">
+<li><code>classMethod</code> - matches any class method. Also matches properties that have direct function expression or arrow function expression values. Does not match accessors.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>abstract</code>, <code>private</code>, <code>protected</code>, <code>public</code>, <code>requiresQuotes</code>, <code>static</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="9">
+<li><code>objectLiteralMethod</code> - matches any object literal method. Also matches properties that have direct function expression or arrow function expression values. Does not match accessors.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>public</code>, <code>requiresQuotes</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="10">
+<li><code>typeMethod</code> - matches any object type method. Also matches properties that have direct function expression or arrow function expression values. Does not match accessors.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>public</code>, <code>requiresQuotes</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="11">
+<li><code>accessor</code> - matches any accessor.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>abstract</code>, <code>private</code>, <code>protected</code>, <code>public</code>, <code>requiresQuotes</code>, <code>static</code>.</li>
+<li>Allowed <code>types</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="12">
+<li><code>enumMember</code> - matches any enum member.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>requiresQuotes</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="13">
+<li><code>class</code> - matches any class declaration.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>abstract</code>, <code>exported</code>, <code>unused</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="14">
+<li><code>interface</code> - matches any interface declaration.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>exported</code>, <code>unused</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="15">
+<li><code>typeAlias</code> - matches any type alias declaration.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>exported</code>, <code>unused</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="16">
+<li><code>enum</code> - matches any enum declaration.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>exported</code>, <code>unused</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<ol start="17">
+<li><code>typeParameter</code> - matches any generic type parameter declaration.</li>
+</ol>
+<ul>
+<li>Allowed <code>modifiers</code>: <code>unused</code>.</li>
+<li>Allowed <code>types</code>: none.</li>
+</ul>
+<hr>
+<p>Summary of allowed formats in the source code:</p>
+<ul>
+<li><code>strictCamelCase</code> - standard <code>camelCase</code> format - no underscores are allowed between characters, but consecutive capitals are not allowed (i.e. <code>myId</code> is valid, but <code>myID</code> is not).</li>
+<li><code>StrictPascalCase</code> - same as <code>strictCamelCase</code>, except the first character must be upper-case.</li>
+<li><code>snake_case</code> - standard snake_case format - all characters must be lower-case, and underscores are allowed.</li>
+<li><code>UPPER_CASE</code> - same as <code>snake_case</code>, except all characters must be upper-case.</li>
+</ul>
+<hr>
+<p>We adopt the following naming conventions for the different categorised elements in the source code:</p>
+<table>
+<thead>
+<tr>
+<th align="center">Format</th>
+<th align="center">Allow Leading Underscore?</th>
+<th align="center">Allow Trailing Underscore?</th>
+<th align="center">Elements</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>strictCamelCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>function</code>, <code>classMethod</code>, <code>typeMethod</code>, <code>accessor</code></td>
+</tr>
+<tr>
+<td align="center"><code>strictCamelCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>variable</code> with &quot;function&quot; type, e.g. arrow functions assigned to a variable</td>
+</tr>
+<tr>
+<td align="center"><code>UPPER_CASE</code>, <code>snake_case</code></td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center"><code>variable</code> with &quot;const&quot; modifier</td>
+</tr>
+<tr>
+<td align="center"><code>snake_case</code></td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center"><code>variable</code>, <code>parameter</code>, <code>classProperty</code>, <code>parameterProperty</code>, <code>typeProperty</code></td>
+</tr>
+<tr>
+<td align="center"><code>StrictPascalCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>class</code>, <code>interface</code>, <code>typeAlias</code>, <code>enum</code>, <code>typeParameter</code></td>
+</tr>
+<tr>
+<td align="center"><code>UPPER_CASE</code>, <code>StrictPascalCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>enumMember</code></td>
+</tr>
+</tbody></table>
+<p><code>objectLiteralProperty</code> and <code>objectLiteralMethod</code> have been excluded from the above rules.</p>
+
+	</div>
+</body>
+</script>
+</html>

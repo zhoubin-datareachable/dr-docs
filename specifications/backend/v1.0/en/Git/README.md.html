@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="git-specifications---part-1-single-version-repo">Git specifications - Part 1 (Single version repo)</h2>
+<h2 id="description">Description</h2>
+<p>This file will describe how to use git command for backend projects. It will included the general explaination of the role for different branches, how to name a new branch and how to write a commit message.</p>
+<h2 id="the-role-of-different-branches">The Role Of Different Branches</h2>
+<p>In order to standardise the development, keep the code submission record and the git branch structure clear to facilitate subsequent maintenance, and now standardize the relevant operations of git.</p>
+<ul>
+<li><h3 id="main-release-branch">Main (Release) Branch</h3>
+<p>The main branch is used to formally release code and should be kept as the most recent stable version. The main branch can be <strong>ONLY</strong> merged from the feature branches, and pull requests with code reviews are enforced. Appropriate testing should be passed before merging into the main branch.</p>
+<p><strong>Branch Naming Rule:</strong> main</p>
+<p><strong>Deletion Rule:</strong> main branch should <strong>NEVER</strong> be deleted</p>
+<p><strong>Tagging Rule:</strong> tagged with formal version numbers only, e.g. <code>v0.1.2</code>.</p>
+</li>
+<li><h3 id="main-development-branch">Main Development Branch</h3>
+<p>The main development branch is used to merge feature branches into a single production-ready branch. The main development branch is based on the main branch.</p>
+<p><strong>Branch Naming Rule:</strong> The name of the branch is exactly <code>development</code> and should <strong>NOT</strong> be changed.</p>
+<p><strong>Deletion Rule:</strong> Once the main development branch is stablized, well-tested and merged into the main branch, it can be safely deleted. All feature branches based on this branch are deleted at the same time. Deletion of the main development branch requires Admin privileges.</p>
+<p><strong>Tagging Rule:</strong> freely tagged by admin</p>
+</li>
+<li><h3 id="feature-branch">Feature Branch</h3>
+<p>When developing new features, create a feature branch from the main development branch.</p>
+<p><strong>Branch Naming Rule:</strong> The name of the branch starts with the keyword <em>feature</em>, and connects with / followed by the feature&#39;s name, such as <code>feature/register_api</code>, <code>feature/data_saving_api</code>, or simply <code>feature/requirement_0011223344</code>, etc.</p>
+<p><strong>Deletion Rule:</strong> Once a feature is stablized, well-tested and merged into the main development branch, it can be safely deleted. All development branches based on the feature branch are deleted at the same time. Deletion of a feature branch requires approval from the feature owner.</p>
+<p><strong>Tagging Rule:</strong> freely tagged by developers responsible for a particular feature.</p>
+</li>
+<li><h3 id="development-branch">Development Branch</h3>
+<p>Development branch is ad hoc branches on the feature branches and is the main working branch. When multiple programmers collaborate on a single feature, development branches should be created <em>onto</em> the feature branch and can <strong>ONLY</strong> be merged into feature branch. Never merge a development branch into the main branch.</p>
+<p><strong>Branch Naming Rule:</strong> The name of the branch starts with the keyword <em>dev</em>, and connects with / followed by the feature name combined with the developer name, such as <code>dev/register_api_john</code>, <code>dev/data_saving_api_marry</code>, etc.</p>
+<p><strong>Deleteion Rule:</strong> The programmers can freely decide if his/her own branch should be deleted. No special privileges are required on this branch.</p>
+<p><strong>Tagging Rule:</strong> freely tagged by developers</p>
+</li>
+<li><h3 id="hotfix-branch">Hotfix Branch</h3>
+<p>When an urgent problem occurs online, it needs to be repaired in time. A hotfix branch is created directly on the main branch, but it is merged into the main branch via pull requests so that mandatory testing and code reviews are conducted before merging.</p>
+<p><strong>Branch Naming Rule:</strong> The name of the branch starts with hotfix, and connect the hotfix with / and follow with the hotfix&#39;s name, such as <code>hotfix/data_storage_error</code>, <code>hotfix/user_login_error</code>.</p>
+<p><strong>Deletion Rule:</strong> The hotfix branch can be freely deleted.</p>
+<p><strong>Tagging Rule:</strong> freely tagged by developers</p>
+</li>
+</ul>
+<h3 id="branch-summary">Branch Summary</h3>
+<table>
+<thead>
+<tr>
+<th align="center">Branch</th>
+<th align="center">Naming Convention</th>
+<th align="center">Base branch</th>
+<th align="center">Merging Rule</th>
+<th align="center">Deletion Rule</th>
+<th align="center">Tagging Rule</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Main</td>
+<td align="center">main</td>
+<td align="center">N/A</td>
+<td align="center">Into: N/A<br/>From: Feature</td>
+<td align="center">Never deleted</td>
+<td align="center">Formal versions</td>
+</tr>
+<tr>
+<td align="center">Main Development</td>
+<td align="center">development</td>
+<td align="center">Main</td>
+<td align="center">Into: Main via pull request<br/>From: Feature</td>
+<td align="center">Delete by Admin Only</td>
+<td align="center">Tagged by admin</td>
+</tr>
+<tr>
+<td align="center">Feature</td>
+<td align="center">feature/<feature_name></td>
+<td align="center">Development</td>
+<td align="center">Into: Main Development via pull request<br/>From: Development</td>
+<td align="center">Delete freely by feature admin</td>
+<td align="center">Freely tagged</td>
+</tr>
+<tr>
+<td align="center">Development</td>
+<td align="center">dev/<feature_name>_<developer_name></td>
+<td align="center">Feature</td>
+<td align="center">Into: Feature via merge<br/>From: N/A</td>
+<td align="center">Delete freely</td>
+<td align="center">Freely tagged</td>
+</tr>
+<tr>
+<td align="center">Hotfix</td>
+<td align="center">hotfix/<bug_name></td>
+<td align="center">Main</td>
+<td align="center">Into: Main via pull request<br/>From: N/A</td>
+<td align="center">Delete freely</td>
+<td align="center">Freely tagged</td>
+</tr>
+</tbody></table>
+<hr>
+<div align="center">
+  <img src="../../images/Backend_Git_Branch_Relationship.png" />
+</div>
+
+<p><strong>Tips</strong>: Use <code>git rebase</code> to reconcile the branches.</p>
+<h2 id="commit-message-rules">Commit Message Rules</h2>
+<p>All commit messages should be committed as such:</p>
+<pre><code class="language-bash">:gitmoji: [&lt;Commit Date&gt;] &lt;Your Commit Message&gt;
+</code></pre>
+<p><a href="https://gitmoji.dev/"><code>:gitmoji</code></a> is used to clearly show the purpose of current commit. Please carefully search in the above link to locate the most appropriate GitMoji. For ad hoc commits, use <code>:construction:</code> to represent the work is still under development and has not reached a milestone.</p>
+<p>To pin the above format as a command, one can define a git commit command alias in the shell. For example, under Unix/Linux environment, using <code>bash</code>, one can add the following line to the <code>$HOME/.bashrc</code> file:</p>
+<pre><code class="language-bash">export git-commit() {
+  git commit -m &quot;$1 [$(date +&quot;%d-%b-%Y&quot;)] $2&quot;
+}
+</code></pre>
+<p>Then, use command <code>git-commit &quot;:gitmoji:&quot; &quot;Your Message&quot;</code> to perform the commit operation. This generates a commit message like <code>:bug: [06-Jun-2020] Fix Bugs</code>.</p>
+<p><strong>Useful Tool</strong>: <a href="https://github.com/carloscuesta/gitmoji-cli">Gitmoji CLI</a> can save your time in searching for GitMojis. To combine this tool with the above script, simply run <code>gitmoji -i</code> to hook in the <code>git commit</code> command and remove the emoji argument <code>git commit -m &quot;[$(date +&quot;%d-%b-%Y&quot;)] $1&quot;</code>. It should work.</p>
+<hr>
+<h2 id="git-specifications---part-2-multi-version-repo">Git specifications - Part 2 (Multi-version repo)</h2>
+<h2 id="description-1">Description</h2>
+<p>Use the form of Monorepo, where each repo holds all the codes for different versions.</p>
+<p>The default branch is the <strong>main branch</strong>, the only branch that should NEVER be deleted. Other branches(might be named by version, or any other name) all possess certain lifecycles, and can be deleted. Other branches can be merged into the main branch at any time to consolidate the code.</p>
+<p>Release is conducted by CD which is triggered by attaching tags on each version branch.</p>
+<h2 id="the-role-of-different-branches-1">The Role Of Different Branches</h2>
+<ul>
+<li><h3 id="main-branchthe-default-branch">Main Branch(The default branch)</h3>
+</li>
+</ul>
+<p>The main branch is only for code aggregation, recording all the code from all branches.</p>
+<p>To avoid conflicts when merging different version branches into the main branch, the main branch adopts a directory tree to isolate different versions into separate directories. If necessary, the depth of this directory tree can be extended, as follows:</p>
+<div align="center">
+  <img src="../../images/MainBranchDirTree.png" />
+</div>
+
+<p>Under each directory, it is a complete project that contains all the code.</p>
+<p>A deeper directory example:</p>
+<div align="center">
+  <img src="../../images/MainBranchDirDeeperTree.png" />
+</div>
+
+<ul>
+<li><h3 id="version-branches">Version Branches</h3>
+</li>
+</ul>
+<p>Each version should create a corresponding directory under the root. Then, create the corresponding branches. The naming of the branches are as follows:</p>
+<table>
+<thead>
+<tr>
+<th align="center">Main Version</th>
+<th align="center">Branch Name</th>
+<th align="center">Corresponding Directory</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">v1</td>
+<td align="center">v1-dev</td>
+<td align="center">v1</td>
+<td align="left">v1 version under development env</td>
+</tr>
+<tr>
+<td align="center">v1</td>
+<td align="center">v1-test</td>
+<td align="center">v1</td>
+<td align="left">v1 version under test env</td>
+</tr>
+<tr>
+<td align="center">v1</td>
+<td align="center">v1-prod</td>
+<td align="center">v1</td>
+<td align="left">v1 version under production env</td>
+</tr>
+<tr>
+<td align="center">v1</td>
+<td align="center">v1/*</td>
+<td align="center">v1</td>
+<td align="left">v1 version working branches for developers</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2-dev</td>
+<td align="center">v2</td>
+<td align="left">v2 version under development env</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2-test</td>
+<td align="center">v2</td>
+<td align="left">v2 version under test env</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2-prod</td>
+<td align="center">v2</td>
+<td align="left">v2 version under production env</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2/*</td>
+<td align="center">v2</td>
+<td align="left">v2 version working branches for developers</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3-dev</td>
+<td align="center">v3</td>
+<td align="left">v3 version under development env</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3-test</td>
+<td align="center">v3</td>
+<td align="left">v3 version under test env</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3-prod</td>
+<td align="center">v3</td>
+<td align="left">v3 version under production env</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3/*</td>
+<td align="center">v3</td>
+<td align="left">v3 version working branches for developers</td>
+</tr>
+</tbody></table>
+<p><strong>Note:</strong> After creating a new branch based on the main branch, that new branch still contains the code of all other branches, but, on that branch, the developer should only work inside the corresponding directory to avoid conflicts when merging back into the main branch.</p>
+<p>In this way, every branch contains all the code from all versions. To avoid conflicts, and reduce the number of branches a local repo has to track, we adopt <code>sparse checkout</code> to manage local repositories.</p>
+<p>After merging back into the main branch, other branches are free to be deleted. New version branches can be recreated based on the main branch.</p>
+<div align="center">
+  <img src="../../images/BranchingExample.png" />
+</div>
+
+<ul>
+<li><h3 id="other-branches">Other Branches</h3>
+</li>
+</ul>
+<p>Apart from controlling versions, branches can also be created for other purposes, such as bug fix, experiments.</p>
+<p>Feature branches and bug fix branches can cross any number of versions, fix bugs in all versions and merge back to the main branch.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Main Version</th>
+<th align="center">Branch Name</th>
+<th align="center">Corresponding Directory</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">any</td>
+<td align="center">feature-*</td>
+<td align="center">any</td>
+<td align="left">feature branch that is created on any branches</td>
+</tr>
+<tr>
+<td align="center">any</td>
+<td align="center">feature/*</td>
+<td align="center">any</td>
+<td align="left">feature working branch that is created on a feature branch for developers to work on</td>
+</tr>
+<tr>
+<td align="center">any</td>
+<td align="center">patch-*</td>
+<td align="center">any</td>
+<td align="left">bug fix(patch) branch that is created on any branches</td>
+</tr>
+<tr>
+<td align="center">any</td>
+<td align="center">patch/*</td>
+<td align="center">any</td>
+<td align="left">bug fix(patch) working branch that is created on any bug fix(patch) branches for developers to work on</td>
+</tr>
+<tr>
+<td align="center">experiment</td>
+<td align="center">experiment-*</td>
+<td align="center">experiment</td>
+<td align="left">experiment branch</td>
+</tr>
+<tr>
+<td align="center">temp</td>
+<td align="center">temp-*</td>
+<td align="center">temp</td>
+<td align="left">temporary branch</td>
+</tr>
+</tbody></table>
+<h2 id="remote-repo-directory-organisation">Remote Repo Directory Organisation</h2>
+<p>Remote repo directory should comply with the directory tree described in the second section, including all the code in all versions.</p>
+<h2 id="local-repo-directory-organisation">Local Repo Directory Organisation</h2>
+<pre><code class="language-bash">git sparse checkout:
+</code></pre>
+<p><a href="https://www.git-scm.com/docs/git-sparse-checkout">https://www.git-scm.com/docs/git-sparse-checkout</a></p>
+<p><a href="https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/">https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/</a></p>
+<p>To avoid chaos, local repo directories should be a portion of the remote repo, so that there is no need to clone the entire remote repo.
+In other words, each local repo only contains a part of the code in the remote repo, and only synchronise a part of the remote repo branches (Note: except for directories, branches should also be tracked partly). The following diagram is a possible organisation(the names of directories are chosen by the developers and can be different from the repo name or version names):</p>
+<div align="center">
+  <img src="../../images/LocalAndRemoteDir.png" />
+</div>
+
+<p>In the above diagram, the local directory can be chosen freely by the developers themselves. Those directories tagged by &quot;remote directory&quot; should have the same name as the remote repo&#39;s.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Local Directory Name</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">xxx_service</td>
+<td align="left">The root directory for a specific service/project. Under this directory, there is no <code>.git</code> folder. This is only used for organisation, not associated with the remote repo.</td>
+</tr>
+<tr>
+<td align="center">version_1</td>
+<td align="left">A part of the remote repo, there is a <code>.git</code> folder under this directory, associated with the remote repo. This local directory only pulls the code under the <code>v1</code> folder in the remote repo and tracks branches: <code>v1-dev</code>, <code>v1-test</code>, <code>v1-prod</code>, <code>v1/*</code>.</td>
+</tr>
+<tr>
+<td align="center">version_2</td>
+<td align="left">A part of the remote repo, there is a <code>.git</code> folder under this directory, associated with the remote repo. This local directory only pulls the code under the <code>v2</code> folder in the remote repo and tracks branches: <code>v2-dev</code>, <code>v2-test</code>, <code>v2-prod</code>, <code>v2/*</code>.</td>
+</tr>
+<tr>
+<td align="center">expt</td>
+<td align="left">A part of the remote repo, there is a <code>.git</code> folder under this directory, associated with the remote repo. This local directory only pulls the code under the <code>experiment</code> folder in the remote repo and tracks branches: <code>v2-dev</code>, <code>v2-test</code>, <code>v2-prod</code>, <code>v2/*</code>, <code>experiment-*</code>.</td>
+</tr>
+</tbody></table>
+<p>According to the above organisation of local directories, we can avoid having too many unrelated code and branches locally and mistakenly touching other version code.</p>
+<p>The workflow of constructing the above local directories.</p>
+<div align="center">
+  <img src="../../images/WorkflowBuildingLocalDirs.png" />
+</div>
+
+<p>After the initial clone of the remote repo, under each local directory, the developers can create/delete branches, push, pull and attach tags, etc.</p>
+<p>Unless necessary, one should avoid using the command <code>git sparse-checkout set &lt;xxx&gt; &lt;yyy&gt;</code> to reset the sparse checkout directory settings, so that the local repo is not contaminated by accumulative false settings.</p>
+<h2 id="tag-usage-instructions">Tag Usage Instructions</h2>
+<ul>
+<li><p>Tags on the main branch</p>
+<p>The tag on the main branch is for releasing the entire repo, affecting all the branches and directories within the repo.
+Tag format: v[0-9]+.[0-9]+.[0-9]+, e.g., v1.2.3, v3.7.8
+Generally, v1.x.x should correspond to the release of all directories related to branches like <code>v1-*</code>, v2.x.x should correspond to the release of all the directories related to branches like <code>v2-*</code>.</p>
+</li>
+<li><p>Tags on version-related branches</p>
+<p>The tags on each version-related branch is used to trigger CI/CD actions.
+Tag format: v[0-9]+.[0-9]+.[0-9]+-dev, v[0-9]+.[0-9]+.[0-9]+-test, v[0-9]+.[0-9]+.[0-9]+-prod, e.g. v1.2.3-dev triggers CD action on the latest commit on branch <code>v1-dev</code>, v1.2.3-test triggers CD action on the latest commit on branch <code>v2-test</code>.</p>
+<p>Docker image tags triggered CD builds:
+For a specific docker image, the tag should be in the form of <code>v1.2.3-dev</code>;
+For the latest docker image under the development environment, a <code>v1-dev</code> tag is also added to this image;
+For the latest docker image under the test environment, a <code>v1-test</code> tag is also added to this image;</p>
+<p>Note: in each CI/CD pipeline, git sparse-checkout is also used.</p>
+</li>
+<li><p>Tags on other branches
+No current plans.</p>
+</li>
+</ul>
+<h2 id="cicd-related">CI/CD Related</h2>
+<table>
+<thead>
+<tr>
+<th align="center">Branches</th>
+<th align="center">Triggered Actions</th>
+<th align="center">CI</th>
+<th align="center">CD</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">v1-dev, v1-test, v1-prod, v2-dev, v2-test, v2-prod</td>
+<td align="center">Submit pull requests towards the above branches</td>
+<td align="center">On the merged commit of some branch and one of the above branches, under a specific directory, run basic checking/testing.</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">v1-dev, v1-test, v1-prod, v2-dev, v2-test, v2-prod</td>
+<td align="center">Attach tags on the above branches (e.g. v1.2.3-dev, v2.6.8-prod)</td>
+<td align="center"></td>
+<td align="center">Build a docker image and then upload it to github container repo, and update the online deployment</td>
+</tr>
+<tr>
+<td align="center">main</td>
+<td align="center">Submit pull requests towards the main branch</td>
+<td align="center">Analyse each specific directory. If there are any file changes within this directory, then run basic checking/testing under this directory.</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">main</td>
+<td align="center">Attach tags on the main branch (e.g. v1.2.5, v2.6.8)</td>
+<td align="center"></td>
+<td align="center">Create a release for the entire github repo.</td>
+</tr>
+<tr>
+<td align="center">Others</td>
+<td align="center">Accordingly</td>
+<td align="center">Accordingly</td>
+<td align="center">Accordingly</td>
+</tr>
+</tbody></table>
+
+	</div>
+</body>
+</script>
+</html>

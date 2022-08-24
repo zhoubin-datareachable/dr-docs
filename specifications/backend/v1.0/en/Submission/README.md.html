@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="submission-specifications">Submission Specifications</h2>
+<p>Backend application developers should follow the <a href="../../../../devops/v1.0/en/GitOps/README.md">GitOps</a> workflow to collaborate with DevOps team. Briefly, the final submission should include the following items:</p>
+<ol>
+<li>(<strong>Required</strong>) Docker image built and published to <a href="https://github.com/features/packages">GitHub Packages(ghcr.io)</a></li>
+<li>(<strong>Required</strong>) A submission README.md documentation attached with the docker image (On ghcr.io, this documentation is the same as the github repo&#39;s root README.md). This documentation should include instructions on how to run and configure the docker image, e.g. necessary environment variables</li>
+<li>(<strong>Required</strong>) GitHub repo&#39;s root README.md file. Refer to <a href="../../../../miscellaneous/github/v1.0/en/Readme/README.md">Readme writing</a> for the specifications</li>
+<li>(<strong>If Required</strong>) Live demo or presentation</li>
+<li>(<strong>If Applicable</strong>) OpenAPI formatted RESTFul API doc in documentation server. Restful API response code should be described here. The corresponding <code>index.html</code> and <code>swagger.yaml</code> files should be uploaded into the GitHub repo under <code>api_doc</code> folder. (You don&#39;t need to worry about the deployment of your documentation)</li>
+<li>(<strong>If Applicable</strong>) Library API doc in documentation server</li>
+<li>(<strong>If Applicable</strong>) Design docs (e.g. UML class,sequence,workflow,dataflow diagrams) in relevant MS Office OneNote under project&#39;s SharePoint site</li>
+<li>(<strong>If Applicable</strong>) Other docs (e.g. useful tips,resources,advices) in documentation server</li>
+</ol>
+<p><strong>Notes:</strong>
+Point 1,2,3 are normally <strong>required</strong> in each development task. For Restful API development task, point 5 is <strong>required</strong>.</p>
+<h2 id="docker-image-building-specifications">Docker Image Building Specifications</h2>
+<ol>
+<li><p>The submitted docker image should <strong>ONLY</strong> contain the minimum dependencies to reduce the image size. Specifically, for NodeJS app, use <code>npm install --only=prod</code> to install only the production <code>dependencies</code> from <code>package.json</code></p>
+</li>
+<li><p>The base docker image we suggest is <code>node:lts-slim</code></p>
+</li>
+<li><p>The production code should be transpiled by <code>babel</code> to support the node version if necessary and minify the production code</p>
+</li>
+<li><p>Multi-stage docker image building is suggested to minimise the final docker image size</p>
+</li>
+<li><p>Use <code>ENTRYPOINT</code> to start the application and <code>CMD</code> to specify additional arguments. Note that directly using <code>node</code> to run the application instead of <code>npm</code>, and all logs should be directed to stdout.</p>
+</li>
+</ol>
+<h2 id="detailed-submission-examples">Detailed Submission Examples</h2>
+<ol>
+<li><p>Source code on github, README.md on the GitHub project and docker image in github container registry</p>
+<p> You need to follow the <a href="../CodeReview/README.md">code review process</a> when submitting your code for reviews by your manager</p>
+ <div align="center">
+   <img width="80%" src="../../images/Submission_Github.png" />
+ </div></li>
+<li><p>Docker image uploaded to ghcr.io with instructions on docker image usage (submission file)</p>
+ <div align="center">
+   <img width="80%" src="../../images/Submission_Package.png" />
+ </div></li>
+<li><p>Environment variable description (submission file)</p>
+ <div align="center">
+   <img width="90%" src="../../images/Submission_Envars.png" />
+ </div></li>
+<li><p>Live demo can be a video, gif or presentation in a meeting</p>
+ <div align="center">
+   <img width="90%" src="../../images/Submission_Live_Demo.gif" />
+ </div></li>
+<li><p>Project general documentation location (SharePoint)</p>
+<p> This OneNote notebook contains the UI/UX designs, use cases, database schema design, UML diagrams and other design documents of a specific project. This OneNote notebook normally contains a <code>Backend</code> section to store the design documents in the backend part of the project and other internal discussion materials.</p>
+ <div align="center">
+   <img width="90%" src="../../images/Submission_Sharepoint_Location.png" />
+ </div></li>
+<li><p>OpenAPI-formatted Restful API documentation</p>
+<p> As the documentation server is maintained by priviledged admins, the developers are required to complete the following tasks:</p>
+<ul>
+<li>Submit OpenAPI-formatted files (an <code>index.html</code> and a <code>swagger.yaml</code>) in the project github repo</li>
+<li>Notify your direct manager about the completion of the OpenAPI documents (If your manager is not available, please contact <a href="mailto:frank.su@datareachable.com">frank.su@datareachable.com</a> for help)</li>
+<li>Once you&#39;ve notified your direct manager about the documentation completion, please wait until the your manager return you the URL to the OpenAPI documentation</li>
+<li>After you receive this URL, you&#39;re <font color="red">required</font> to attach each API URL to the API requirement documentation</li>
+</ul>
+<p> Project-specific response code and its detailed descriptions should be recorded in the OpenAPI document. Refer to <a href="../NodeJS/README.md">response format</a> for details.</p>
+ <div align="center">
+   <img src="../../images/Submission_OpenAPI_Docs.png" />
+   <div>OpenAPI doc submission location in the GitHub repo</div>
+ </div>
+
+ <div align="center">
+   <img src="../../images/Submission_OpenAPI_Docs_Link.png" />
+   <div>Attached OpenAPI doc links to the RESTful API requirement spreadsheet</div>
+ </div>
+
+<p> An OpenAPI example is given <a href="https://datareachable.sharepoint.com/:f:/s/DevBackendTeamCN/EpXORwVPURRIlwtEZX56oloBFZ9AWMX_DZg2P_ncy8bSgA?e=g3h6fU">here</a>.</p>
+<p> To view the formatted API document, there are several options (use any one of them):</p>
+<ul>
+<li>Paste your YAML file into the <a href="https://editor.swagger.io/">swagger editor</a></li>
+<li>Install <a href="https://github.com/Redocly/redoc/blob/master/cli/README.md"><code>redoc-cli</code></a> and start a local server to serve the OpenAPI specification files</li>
+<li>Bundle the specification file into zero-dependency HTML file via <a href="https://github.com/Redocly/redoc/blob/master/cli/README.md"><code>redoc-cli</code></a>, and open the bundled file using your local web browser</li>
+</ul>
+<p> Note: Accessing the <code>index.html</code> file in your local browser is <strong>NOT</strong> working due to <code>ReDoc</code> <a href="https://github.com/Redocly/redoc/issues/149">issues</a></p>
+<p> For additional OpenAPI related tools, e.g. GUI editors, refer to <a href="https://openapi.tools/">tools</a>.</p>
+</li>
+<li><p>Design docs should be uploaded in project OneNote</p>
+ <div align="center">
+   <img width="90%" src="../../images/Submission_Design_Docs.png" />
+ </div>
+
+<p> Several design diagram examples can be found <a href="https://datareachable.sharepoint.com/:f:/s/shuzDevelopmentCN/EnxlFh4JNWpBhJ8EpgosHscBnTdxnD4dtm2n7v1zLjcj_w?e=q4Mgf1">here</a>.</p>
+</li>
+<li><p>Other docs are also uploaded in the project OneNote or SharePoint</p>
+</li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

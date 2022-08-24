@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="datareachable-backend-development-specifications">DataReachable Backend Development Specifications</h2>
+<p>This documentation sets out the best practices that should be followed when developing backend applications at DataReachable. The purpose of this documentation is preventing ad hoc project folder layouts, naming styles, configurations, etc. This is a comprehensive backend development specification including all tech stacks that are currently used at DataReachable.</p>
+<h2 id="development-environment-requirements">Development Environment Requirements</h2>
+<p><font color=red>IMPORTANT:</font> For backend development, we <font color=red><strong>enforce</strong></font> the operating system used in development to be <strong>Ubuntu LTS version</strong> (currently 20.04), or <strong>MacOS</strong>. Windows is <strong>forbidden</strong>.</p>
+<p>For developing IDE, you can choose from VSCode (not an IDE strictly) and JetBrains (e.g. Webstorm, IntelliJ etc.). We recommend using VSCode to be consistent with the team members, but using JetBrains is also alright as long as you comply with the specifications.</p>
+<hr>
+<h2 id="current-tech-stacks">Current Tech Stack(s)</h2>
+<p>For the first development stage, the primary tech stack used at DataReachable is <a href="https://nodejs.org/en/">NodeJS</a> with the <a href="https://expressjs.com/">ExpressJs</a> as the development framework and <a href="https://github.com/Microsoft/TypeScript">TypeScript</a> as the programming language. In the future, this tech stack is subject to change and other tech stacks might be included.</p>
+<ul>
+<li><a href="https://nodejs.org/en/">NodeJS</a>: Use the current LTS version (v14.x) for both new features and stability.</li>
+<li><a href="https://expressjs.com/">ExpressJs</a>: Use the current stable version (v4.x).</li>
+<li><a href="https://github.com/Microsoft/TypeScript">TypeScript</a>: Use the current stabel version (v4.x)</li>
+<li><a href="https://redis.io/">Redis</a>: Use version v6.0.10.</li>
+<li><a href="https://www.mongodb.com/">MongoDB</a>: Use version v4.4.x.</li>
+</ul>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="./NodeJS/README.md"><strong>NodeJS TypeScript Project Structure Specifications</strong></a></li>
+<li><a href="./Naming/README.md"><strong>Naming Conventions</strong></a></li>
+<li><a href="./Comments/README.md"><strong>Source Code Comment Specifications</strong></a></li>
+<li><a href="./Git/README.md"><strong>Git Usage Specifications</strong></a></li>
+<li><a href="./Submission/README.md"><strong>Submission Specifications</strong></a></li>
+<li><a href="./CodeReview/README.md"><strong>Code Review Process</strong></a></li>
+<li><a href="./Redis/README.md"><strong>Redis Specifications</strong></a></li>
+<li><a href="./MongoDB/README.md"><strong>MongoDB Specifications</strong></a></li>
+<li><a href="./Libs/README.md"><strong>Lib Usage Specifications</strong></a></li>
+<li><a href="./Testing/README.md"><strong>Testing Specifications</strong></a></li>
+<li><a href="./Lint/README.md"><strong>Linter Specifications</strong></a></li>
+</ol>
+<hr>
+<h2 id="sample-project-template">Sample Project Template</h2>
+<p>A NodeJS Express Project template in TypeScript is provided at: <a href="https://github.com/dataReachable/dr_nodejs_project_template">template</a>.</p>
+<p>🔔 This project template is updated to reflect the lastest changes, including dependency versions, configurations etc. New projects should <strong>always</strong> start from the template project.</p>
+
+	</div>
+</body>
+</script>
+</html>

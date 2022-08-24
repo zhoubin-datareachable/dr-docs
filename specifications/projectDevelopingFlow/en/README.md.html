@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="project-development-process-specification">Project development process specification</h2>
+<p>In the process of project development, the assignment of tasks, the arrangement of tasks and the reading of documents related to tasks will be involved. In this document, the development process is explained mainly in the form of a flowchart. Please read this document carefully. If you have any questions, please contact.</p>
+<ul>
+<li>Travis (BackEnd/Devops): <code>travis.yuan@datareachable.com</code></li>
+<li>Frank (FrontEnd): <code>frank.su@datareachable.com</code></li>
+</ul>
+<h2 id="development-flow-chart">Development flow chart</h2>
+<p>The following development flowchart mainly describes a series of steps in the development process</p>
+<img src="../images/developmentWorkFlowEn.jpg" />
+
+<h2 id="detailed-development-flow-chart">Detailed development flow chart</h2>
+<ul>
+<li>Step 1： PM will get the new requirements</li>
+<li>Step 2： PM will analyze whether the currently requirements are pure ui development, or whether there are a lot of user interactions in the current requirements, and determine whether to write useCase based on the analysis</li>
+</ul>
+<hr>
+<ul>
+<li>Step 3.1.1： The current requirement is pure ui development, no useCase is required</li>
+<li>Step 3.1.2： PM will arrange the requirements in the form of tasks into the project corresponding to asana</li>
+<li>Step 3.1.3： Develop according to the assigned tasks and in accordance with the design style in figma</li>
+<li>Step 3.1.4： After the development is completed, the QA and testing phase will be carried out</li>
+</ul>
+<hr>
+<ul>
+<li>Step 3.2.1： There are a large number of user interactions currently required</li>
+<li>Step 3.2.2： PM analyzes whether the current demand requires a back-end API</li>
+</ul>
+<hr>
+<ul>
+<li>Step 3.2.2.1.1： Although there are a lot of interactions in current requirements, these interactions are pure front-end business logic and no back-end api is required</li>
+<li>Step 3.2.2.1.2： PM write useCase and upload it to the directory corresponding to oneNote</li>
+<li>Step 3.1.2.1.3： PM will arrange the requirements in the form of tasks into the project corresponding to asana</li>
+<li>Step 3.1.2.1.4： Develop according to the assigned tasks and compare the design style in figma and the business logic in useCase</li>
+<li>Step 3.1.2.1.5： QA and testing phase after development</li>
+</ul>
+<hr>
+<ul>
+<li>Step 3.2.2.2.1： There are a lot of user interactions, and a back-end api is required</li>
+<li>Step 3.2.2.2.2： PM write useCase and upload it to the directory for oneNote</li>
+<li>Step 3.2.2.2.3.1.1/3.2.2.2.3.2.1： The front-end/back-end PM will arrange the requirements in the form of tasks to the project corresponding to asana</li>
+<li>Step 3.2.2.2.3.1.2/3.2.2.2.3.2.2： Develop according to the assigned tasks and compare the design style in figma and the business logic in useCase</li>
+<li>Step 3.2.2.2.3.1.3/3.2.2.2.3.2.3： QA and testing phase after development</li>
+</ul>
+<h2 id="asana-detailed-task-arrangement">asana Detailed task arrangement</h2>
+<h3 id="detailed-explanation-of-front-end-asana-tasks">Detailed explanation of front-end asana tasks</h3>
+<p>In front-end development, the tasks received by each development should be as shown in the figure below</p>
+<img src="../images/FEtask1.jpg" />
+<img src="../images/FEtask2.jpg" />
+
+<p>Each task is mainly composed of the following parts (<code>prefix</code>)-(<code>specific gitHub repo</code>)-(<code>useCase ID</code>)-(<code>useCase/UI doc path</code>)</p>
+<ul>
+<li>Prefix: The prefix mainly explains the task types of the current requirement, including four types of <code>UI</code>, <code>useCase</code>, <code>Bug</code> and <code>Task</code> (may be added according to task requirements in the future)</li>
+<li>Specific gitHub repo: If there is only one github repo in the project, this option is empty. This option will only exist when there are multiple repo in the party project</li>
+<li>useCase ID: This option is the ID of useCase, developers only need to find the useCase corresponding to the ID in oneNote according to the <code>useCase/UI doc path</code></li>
+<li>The directory corresponding to useCase/UI: When the prefix is <code>UI</code>, the developer only needs to find the design of the corresponding directory in figma for development. If the prefix is <code>useCase</code>, the developer needs to find the corresponding useCase in oneNote and find the design of the same path in figma</li>
+</ul>
+<p>Example:</p>
+<img src="../images/FEtask1.jpg" />
+
+<ol>
+<li>Analyze the current task, you can know that the current task is of useCase</li>
+<li>Open oneNote, find the corresponding note according to the path of <code>profile/main page</code>, and find the useCase whose ID is <code>20210118003</code><img src="../images/useCaseSampleEn.jpg" /></li>
+<li>Open figma, find the corresponding design style according to the <code>profile/main page</code> path, and find the design with ID <code>20210118003</code><img src="../images/figamSampleEn.png" /></li>
+<li>Develop according to the obtained useCase document and figma design</li>
+</ol>
+<h2 id="backend-task-workflow">BackEnd task workflow</h2>
+<h3 id="general-description">General description</h3>
+<p>The general backend task workflow is as follows:</p>
+<div align="center">
+  <img width="85%" src="../images/backendDevWorkflow_EN.png" />
+  <div>Backend Development Workflow</div>
+</div>
+
+<p><font color="red"><strong>Notes:</strong></font></p>
+<ul>
+<li>Code review is one of the task quality checking contents. The process should follow the instructions <a href="../../backend/v1.0/en/CodeReview/README.md">here</a>.</li>
+<li>On task completion, assignees should submit relevant materials specified in <a href="../../backend/v1.0/en/Submission/README.md">backend submission requirements</a>. This might include the following materials: Source code and README.md in GitHub, Docker Image in GitHub container registry and usage instruction doc(s), OpenAPI doc(s), API-UseCase matching doc(s), other design diagrams or doc(s) if applicable, and live demo/presentation if required, etc.;</li>
+<li>All tasks are <font color="red"><strong>immutable</strong></font>, except for minor changes. This means that once you complete a task, you should <font color="red"><strong>NEVER</strong></font> reopen and modify it again. Further feedback and follow-up tasks are created as new tasks with new task numbers. The quality of your original task is fixed and recorded into your performance review. You can only compensate it by the new task.</li>
+</ul>
+<hr>
+<h3 id="backend-workflow-example">Backend workflow example</h3>
+<ul>
+<li><p><strong>Step 1</strong></p>
+<p>Once a backend developer is involved in a project, he/she is invited to join a specific asana project. The project is managed by team leaders and members only have limited priviledges to avoid task modification by non-admin members.</p>
+</li>
+<li><p><strong>Step 2</strong></p>
+<p>Tasks are assigned in asana projects.</p>
+<div align="center">
+  <img width="80%" src="../images/backendAsanaProject.png" />
+  <div>Asana Project Examples</div>
+</div></li>
+<li><p><strong>Step 3</strong></p>
+<p>Task details are described in the corresponding Asana tasks.</p>
+<p>When a RESTful API task is involved, currently RESTful API requests are given as Asana tasks from the frontend team. Team leaders are responsible for organisation of the API requests and distribute them to the team members (developers). Normally, such API requests are organised as a shared online spreadsheet.</p>
+<p>To understand the details of RESTful API request, refer to the following section <em>Backend API requirement example</em> for detailed explanation on RESTful API task request.</p>
+<div align="center">
+  <img width="90%" src="../images/backendAsanaTasks_List.png" />
+  <div>Asana Task Examples (List View)</div>
+</div>
+
+<div align="center">
+  <img width="80%" src="../images/backendAsanaTasks_Details.png" />
+  <div>Asana Task Details 1</div>
+</div>
+
+<div align="center">
+  <img width="80%" src="../images/backendAsanaTasks_Attachment.png" />
+  <div>Asana Task Details 2</div>
+</div></li>
+<li><p><strong>Step 4</strong>:</p>
+<p>Once completed, mark the asana task as completed and submit relevant materials. Refer to <a href="../../backend/v1.0/en/Submission/README.md">submission</a> for examples.</p>
+</li>
+</ul>
+<hr>
+<h3 id="backend-api-requirement-example">Backend API requirement example</h3>
+<p>This section gives examples on how RESTful API tasks are handed out via Asana.</p>
+<ul>
+<li><p><strong>Asana Task Example</strong></p>
+<div align="center">
+  <img width="80%" src="../images/backendAsanaTask_API.png" />
+  <div>Asana Task (RESTful API Requirement)</div>
+</div></li>
+<li><p><strong>API Description Example</strong></p>
+<p>The RESTful API requirement details are given as an online Excel spreadsheet via Tencent file sharing tool (to allow easy access in mainland China).</p>
+<div align="center">
+  <img src="../images/backendAsanaTask_API_Doc.png" />
+  <div>RESTful API Detailed Descriptions (in Excel Spreadsheet)</div>
+</div></li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

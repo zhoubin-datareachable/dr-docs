@@ -1,0 +1,1024 @@
+openapi: 3.0.3
+
+info:
+  version: 0.1.1
+  title: dr_Back_SurveyProjectManager
+  description: >-
+    这个文档主要展示了project关联的delivable相关操作的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://spm.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [SurveyProjectManager API Server](https://github.com/dataReachable/dr_Back_SurveyProjectManager)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://spm.dev.datareachable.net/"
+
+
+paths:
+  /api/v1/proj_deliv/delivs:
+    get:
+      summary: 获取项目的deliv列表
+      description: 根据组织dri，项目dri，获取项目的deliv列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_DelivListInfo_Success"
+        "400":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_UserNotBelongOrg"
+                  - $ref: "#/components/schemas/Res_InvalidProject"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/proj_deliv/deliv/permis:
+    get:
+      summary: 获取项目deliv的permission列表
+      description: 根据组织dri，项目dri，获取项目的deliv的permission列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: deliveralbe_dri
+          in: query
+          required: true
+          description: delivable的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Deliv_PermisInfo_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/proj_deliv/deliv:
+    post:
+      summary: 创建项目的deliverable
+      description: 项目的delivable可能有很多种，指定app_ins_type用来确定deliverable的类型
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Create_Deliv'
+      responses:
+        "200":
+          description: 创建survey成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Create_Deliv"
+        "400":
+          description: 请求失败
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Req_ParamSurveyInvalid"
+                  - $ref: "#/components/schemas/Req_ParamProjectInvalid"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/proj_deliv/proj_roles:
+    get:
+      summary: 获取项目甲方成员的角色列表
+      description: 获取项目甲方成员的角色列表，只有甲方的成员可以看角色列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ProRoleListInfo_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    put:
+      summary: 更新项目甲方成员的角色
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/Req_Body_Update_Pro_Role'
+      responses:
+        "200":
+          description: 获取用户加入的所有组织成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+  /api/v1/proj_deliv/deliv/name:
+    put:
+      summary: PJ-00003 rename deliverable
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - deliv_dri
+                - deliv_name
+              properties:
+                project_dri:
+                  type: string
+                  description: 要修改的 deliverable 所在项目的 dri
+                deliv_dri:
+                  type: string
+                  description: 要修改的 deliverable 的 dri
+                deliv_name:
+                  type: string
+                  description: 要修改的 deliverable 的名称（不能有特殊字符和连续空格）
+              example:
+                project_dri: dri:spm::proj/GC0wwumWwIibZ7Pr
+                deliv_dri: dri:qed::output/5xsk-amZUf2f26g_nLPcJb
+                deliv_name: abc
+      responses:
+        '200':
+          description: deliverable 名称修改成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+                example:
+                  code: 200001
+                  message: The deliverable name has been modified successfully
+        '400':
+          description: 操作失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Unable to get data:
+                  value:
+                    code: 400001
+                    message: Unable to get the corresponding deliverable
+                Duplicate name:
+                  value:
+                    code: 400002
+                    message: Duplicate deliverable name
+                Data modification failed:
+                  value:
+                    code: 400003
+                    message: Failed to modify deliverable name
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while renaming the deliverable
+                data:
+                  error: details
+  /api/v1/proj_deliv/deliv/unfrez_contr_permis:
+    get:
+      summary: PJ-00004-1 获取deliverable下所有未冻结的contract permission列表
+      description: 只有甲方的项目admin有权访问
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: deliverable_dri
+          in: query
+          required: true
+          description: deliverable的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_UnfrezContrPermi_ListInfo_Success"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+  /api/v1/proj_deliv/deliv/binding:
+    put:
+      summary: PJ-00004-2 绑定与解绑（即修改deliverable与项目的绑定状态）
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - deliv_dri
+                - bind_status
+              properties:
+                project_dri:
+                  type: string
+                  description: 要修改的 deliverable 所在项目的 dri
+                deliv_dri:
+                  type: string
+                  description: 要修改的 deliverable 的 dri
+                bind_status:
+                  type: boolean
+                  description: 绑定状态。true(绑定)，false(解绑)
+              example:
+                project_dri: dri:spm::proj/GC0wwumWwIibZ7Pr
+                deliv_dri: dri:qed::output/5xsk-amZUf2f26g_nLPcJb
+                bind_status: true
+      responses:
+        '200':
+          description: 绑定状态修改成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+                example:
+                  code: 200001
+                  message: update deliverable binding status successfully
+        '400':
+          description: 操作失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                can not unbind:
+                  value:
+                    code: 400001
+                    message: the deliverable has unfreezed contract permission, can not unbind
+                can not bind:
+                  value:
+                    code: 400002
+                    message: the deliverable has bind to other project, can not bind
+                deliv_dri invalid:
+                  value:
+                    code: 400003
+                    message: the deliverable dri is invalid
+                status_not_change:
+                  value:
+                    code: 400004
+                    message: the deliverable bind status is same as specify by input, will ignore this operation
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while renaming the deliverable
+                data:
+                  error: details
+  /api/v1/proj_deliv/unbind_app_ins:
+    get:
+      summary: PDO0008 根据app 类型获取组织下所有未绑定的app instance
+      description: 根据app 类型获取组织下所有未绑定的app instance
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: app_type
+          in: query
+          required: true
+          description: app instance 类型。默认值：qed
+          schema:
+            type: string
+            enum:
+              - "qed"
+              - "distr"
+        - name: app_name
+          in: query
+          description: 可选，app instance 名称，支持模糊查询。
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          description: 可选，页码，默认值：1。
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          description: 可选，每页大小，默认值：5。
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取列表信息成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          count:
+                            type: number
+                            description: 总数
+                            example: 54
+                          list:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                app_ins_name:
+                                  type: string
+                                  description: app instance 名称
+                                  example: "sdfdsfdfsdf"
+                                app_ins_dri:
+                                  type: string
+                                  description: app instance dri
+                                  example: "dri:qed::output/cTvvHKHocnMR9F6wj7bmxO"
+                                app_type:
+                                  type: string
+                                  description: app instance 类型
+                                  example: "qed"
+                                last_project_name:
+                                  type: string
+                                  description: app instance 最近的一个解绑前所绑定的项目名称，从未绑定过的返回null
+                                  example: "project test"
+        "400":
+          description: 请求失败
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_UserNotBelongOrg"
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /api/v1/proj_deliv/deliv/building:
+    post:
+      summary: PDO0009 将当前选中的unbind的application instance绑定到当前项目上
+      description: 将当前选中的unbind的application instance绑定到当前项目上
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - org_dri
+                - project_dri
+                - app_type
+                - app_ins_dri
+              properties:
+                org_dri:
+                  type: string
+                  description: 组织 dri
+                project_dri:
+                  type: string
+                  description: 项目的 dri
+                app_type:
+                  type: string
+                  description: app instance 类型
+                app_ins_dri:
+                  type: string
+                  description: app instance dri
+              example: {"org_dri":"dri:acs::org/CnLMdcYMiHfHE9brbT","project_dri":"dri:spm::proj/AeB4S5oqX2IL6JjZ","app_type":"qed","app_ins_dri":"dri:qed::output/cTvvHKHocnMR9F6wj7bmxO"}
+      responses:
+        '200':
+          description: 绑定成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deliv_dri:
+                            type: string
+                            description: 绑定成功后生成的deliverable dri
+                            example: "dri:spm::deliv:qed/6ZaNbPqnBm3nmd9f/ks50erPqisH-9bod5XZ2tb"
+                
+        '400':
+          description: 操作失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                user not belong to organization:
+                  value:
+                    code: 400001
+                    message: the current user does not belong to the current organization
+                app_ins_dri not exist:
+                  value:
+                    code: 400002
+                    message: the app_ins_dri is not exist
+                app_ins_dri has been bound:
+                  value:
+                    code: 400003
+                    message: the app_ins_dri has been bound to the project, can not bind
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while renaming the deliverable
+                data:
+                  error: details
+  /api/v1/proj_deliv/unbind_delivs:
+    get:
+      summary: PDO0010 获取与指定项目解绑了的deliverable列表
+      description: 获取与指定项目解绑了的deliverable列表
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+        - name: project_dri
+          in: query
+          required: true
+          description: 项目的dri(统一定位符)
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: app_name
+          in: query
+          required: false
+          description: 可选。 deliv名称，支持模糊查询
+          schema:
+            type: string
+        - name: unbind_deliv_type
+          in: query
+          required: true
+          description: 有效值：1(与当前项目解绑了还未绑定其他项目的deliv)， 2(与当前项目解绑了且已绑定其他项目的deliv),3(当前项目所包含的deliverable列表)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 绑定成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          list:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                dri:
+                                  type: string
+                                  description: deliverable dri
+                                  example: "dri:spm::deliv:qed/6ZaNbPqnBm3nmd9f/ks50erPqisH-9bod5XZ2tb"
+                                name:
+                                  type: string
+                                  description: deliverable 名称
+                                  example: "test"
+                                app_type:
+                                  type: string
+                                  description: deliverable 类型
+                                  example: "qed"
+                                created_at:
+                                  type: string
+                                  description: deliverable 创建时间
+                                  example: ""
+                                updated_at:
+                                  type: string
+                                  description: deliverable 更新时间
+                                  example: ""
+                                last_project_name:
+                                  type: string
+                                  description: 最后关联的项目
+                                  example: "test project"
+                                app_output_dri:
+                                  type: string
+                                  description: deliverable 对应app instance dri
+                                  example: "dri:qed::survey/ks50erPqisH-9bod5XZ2tb"
+                
+        '400':
+          description: 操作失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                user not belong to organization:
+                  value:
+                    code: 400001
+                    message: the current user does not belong to the current organization
+                app_ins_dri not exist:
+                  value:
+                    code: 400002
+                    message: the app_ins_dri is not exist
+                app_ins_dri has been bound:
+                  value:
+                    code: 400003
+                    message: the app_ins_dri has been bound to the project, can not bind
+        "401":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        '500':
+          description: 服务端发生未知错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while renaming the deliverable
+                data:
+                  error: details
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200001
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "successfully"
+
+    Res_AuthenticationFailed:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT验证失败，未授权的访问！" }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: {
+        code: 500001,
+        message: "[Get User Information Controller]: Unexpected error",
+        data: { error: "Details of the error goes here"}
+      }
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 405000, message: "You're using the completely wrong HTTP method!" }
+
+    Req_ParamSurveyInvalid:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400001, message: "\"app_ins_name\" length must be at least 6 characters long" }
+
+    Res_UserNotBelongOrg:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400002, message: "cuurent user ${user_dri} not belong to organization ${org_dri}" }
+
+    Res_InvalidProject:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400003, message: "invalid project_dri:${project_dri}" }
+
+    Req_ParamProjectInvalid:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400002, message: "Invalid project_dri or the project_dri belongs to an organization that is not consistent with the organization that was passed in" }
+
+    Req_Body_Update_Pro_Role:
+      type: object
+      required:
+        - "org_dri"
+        - "project_dri"
+        - "user_dri"
+        - "role_name"
+      properties:
+        org_dri:
+          type: string
+          description: 组织dri
+          example: "dri:acs::org/rjdpPoSsTEoGiJySASkEq"
+        project_dri:
+          type: string
+          description: 项目dri
+          example: "dri:spm::proj/rjdpbdSsTEoGiJySASkEq"
+        bulk_update:
+          type: array
+          items:
+            type: object
+            properties:
+              user_dri:
+                type: string
+                description: 待修改的成员的dri
+                example: "dri:acs::user/rjdpPoSsTEoGiJySASkEq"
+              role_name:
+                type: string
+                description: 待修改的项目角色名称
+                enum:
+                  - "admin"
+                  - "non-admin"
+                example: "non-admin"
+    Req_Body_Create_Deliv:
+      type: object
+      required:
+        - "organization_dri"
+        - "project_dri"
+        - "app_ins_name"
+        - "app_ins_type"
+      properties:
+        organization_dri:
+          type: string
+          description: 组织dri
+          example: "dri:acs::org/rjdpPoSsTEoGiJySASkEq"
+        project_dri:
+          type: string
+          description: 项目dri
+          example: "dri:spm::proj/rjdpbdSsTEoGiJySASkEq"
+        app_ins_name:
+          type: string
+          description: application instance 名称
+          example: "survey name"
+        app_ins_type:
+          type: string
+          enum:
+            - "qed"
+          description: app instance 类型
+          example: "qed"
+
+    Res_ProRoleListInfo_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  member_dri:
+                    type: string
+                    description: 组织成员的dri
+                    example: "dri:acs::user/<user-uuid-21>"
+                  member_name:
+                    type: string
+                    description: 组织成员的名称
+                    example: "track"
+                  member_email:
+                    type: string
+                    description: 组织成员的邮箱地址
+                    example: "test@datareachable.com"
+                  member_avatar:
+                    type: string
+                    description: 组织成员的头像链接
+                    example: "https:/xxx.xxx/xx/xxx"
+                  member_role:
+                    type: string
+                    description: 组织成员在当前项目的角色
+                    example: "non-admin"
+    Res_UnfrezContrPermi_ListInfo_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  contract_dri:
+                    type: string
+                    description: 合同dri
+                    example: "xxxx"
+                  contract_name:
+                    type: string
+                    description: 合同名称
+                    example: "合同01"
+                  contr_permis:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        contr_permi_dri:
+                          type: string
+                          description: contract permission dri
+                          example: "xxxx"
+                        name:
+                          type: string
+                          description: 权限名称
+                          example: "writer"
+    Res_Deliv_PermisInfo_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                    description: permission的dri
+                    example: "dri:spm::proj_deliv/ueXAoEp0uPWrRAn1qvWPplQp"
+                  project_dri:
+                    type: string
+                    description: 项目dri
+                    example: "dri:spm::proj/<proj-uuid-16>"
+                  deliverable_dri:
+                    type: string
+                    description: devliable的dri
+                    example: "dri:qed::deliv/<app-output-uuid-22>"
+                  permission_name:
+                    type: string
+                    description: 权限名称
+                    example: ""
+                  permission_scope:
+                    type: string
+                    description: 权限范围
+                    example: ""
+                  enabled:
+                    type: boolean
+                    description: 是否启用
+                    example: true
+    Res_DelivListInfo_Success:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                deliverable_list:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      deliverable_dri:
+                        type: string
+                        description: the deliverable's unique dri
+                        example: "dri:spm::deliv:qed/<proj-uuid-16>/<app-output-uuid-22>"
+                      deliverable_type:
+                        type: string
+                        description: the type of application instance binds to the deliverable.
+                        example: "qed"
+                      deliverable_name:
+                        type: string
+                        description: the name of application instance binds to the deliverable
+                        example: "survey name"
+                      created_at:
+                        type: string
+                        format: date
+                        description: the date created the deliverable
+                        example: "2021-05-31T16:00:21:Z"
+
+    Res_Create_Deliv:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "successfully",
+            "data": {
+                "project_name": "test-project",
+                "deliverable_dri": "dri:spm::deliv:qed/6ZaNbPqnBm3nmd9f/at63DmqHa3b6BHyNpPzp4y",
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                project_name:
+                  type: string
+                  description: survey 所属的 project 的 name
+                deliverable_dri:
+                  type: string
+                  description: survey 与 project 绑定后形成的delivable 的 dri

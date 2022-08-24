@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="nodejs-and-expressjs-backend-development-specifications">NodeJS and ExpressJS Backend Development Specifications</h2>
+<p>The ExpressJS is a lightweight NodeJS-based backend development framework. Unfortunately, it is NOT a full-fledged MVC framework and very flexible in usage. This causes numerous project layouts and naming conventions, which generates a great number of conflicts when team collaboration is involved. This documentation sets out these specifications for developing ExpressJS backend applications at DataReachable.</p>
+<hr>
+<h2 id="developing-language">Developing Language</h2>
+<p><strong><a href="https://www.typescriptlang.org/">TypeScript</a> ONLY</strong></p>
+<p>TypeScript extends JavaScript by adding types. Using TypeScript <strong>ONLY</strong> at development stage makes the program scalable, less error-prone and easy to maintain.</p>
+<hr>
+<h2 id="the-project-structure">The Project Structure</h2>
+<p>We refer to some other full-fledged backend frameworks, e.g. <a href="https://spring.io/projects/spring-boot">Spring Boot</a> and <a href="https://eggjs.org/en/index.html">Egg.js</a> and form the following project layouts:</p>
+<ol>
+<li>Overall Structure</li>
+<li>Source Folder Structure <code>src</code></li>
+</ol>
+<hr>
+<h2 id="project-overall-structure">Project Overall Structure</h2>
+<p>The overall structure contains the files and folders under the root folder. Some unimportant files/folders are omitted.</p>
+<!-- DIRSTRUCTURE_START_MARKER -->
+<pre>
+sample_project/
+├─ README.md ...................(<font color=red>Required</font>)Readme.md File
+├─ package.json ................(<font color=red>Required</font>)NPM Global Configurations
+├─ tsconfig.json ...............(<font color=red>Required</font>)TypeScript Compiler and TypeDoc Configurations
+├─ babel.config.json ...........(<font color=red>Required</font>)Babel Configurations
+├─ .eslintrc.json ..............(<font color=red>Required</font>)ESLint Configurations
+├─ .eslintignore ...............(<font color=red>Required</font>)ESLing Ignored Folders/Files
+├─ Dockerfile ..................(<font color=red>Required</font>)Docker Image Building File
+├─ .dockerignore ...............(<font color=red>Required</font>)Docker Ignored Folders/Files
+├─ .github/
+│  └─ workflow/ ................(<font color=cyan>Optional</font>)GitHub Actions
+├─ node_modules/ ...............(<font color=red>Required</font>)Installed NPM Packages
+├─ logs/ .......................(<font color=yellow>Auto</font>)Logs
+├─ config/ .....................(<font color=red>Required</font>)Configurations For the Project
+│  ├─ envars/ ..................(<font color=red>Required</font>)Environment Variables
+│  ├─ pm2/ .....................(<font color=cyan>Optional</font>)PM2 Configurations
+│  └─ testing/ .................(<font color=red>Required</font>)Testing Configurations
+├─ outputs/ ....................(<font color=yellow>Auto</font>)Outputs
+│  ├─ docs/ ....................TypeDoc Outputs
+│  ├─ eslint/ ..................ESLint Reports
+│  └─ jest/ ....................Jest Reports (e.g. Code Coverage Report)
+├─ build/ ......................(<font color=red>Required</font>)Transipled (Built) JavaScript Code
+├─ test/ .......................(<font color=red>Required</font>)Testing Code Folder
+│  └─ controller/ ..............Test on controllers
+│     └─ ctr_sample.test.js ....Test on a specific controller
+└─ src/ ........................(<font color=red>Required</font>)Source Code Folder
+</pre>
+<!-- DIRSTRUCTURE_END_MARKER -->
+
+<hr>
+<h2 id="structure-of-the-source-folder-src">Structure of the source folder <code>src</code></h2>
+<p>The source code folder structure contains the details in the source folder. This structure complies with the MVC convention.</p>
+<!-- DIRSTRUCTURE_START_MARKER -->
+<pre>
+sample_project/
+└─ src/ .............................The source code of the app
+   ├─ bin/ ..........................(<font color=red>Required</font>)Execution code
+   │  └─ www.ts .....................(<font color=red>Required</font>)Entrypoint of the entire app (start http sever)
+   ├─ init/ .........................(<font color=red>Required</font>)Application initializers (create objects, connect to databases, open resources, etc.)
+   │  ├─ init_dbs.ts ................(<font color=cyan>Optional</font>)Database connection initialization
+   │  ├─ init_errorhandler.ts .......(<font color=red>Required</font>)Global error handler during initialization (to cleanup already opened resources if something bad happens)
+   │  ├─ init_sample_service.ts .....(<font color=cyan>Optional</font>)Initialize data service objects (to provide database operations)
+   │  └─ init_server.ts .............(<font color=red>Required</font>)Application global initialization (create controller objects and inject controller/service objects into appropriate routers)
+   ├─ controller/ ...................(<font color=red>Required</font>)Controllers in the MVC framework
+   │  ├─ ctr_error_handler.ts .......Error Handlers
+   │  └─ ctr_sample_controller.ts ...A Sample Controller
+   ├─ middleware/ ...................(<font color=cyan>Optional</font>)Middleware (Usually needed)
+   │  ├─ mdw_body_parser.ts .........Body Parser Middleware
+   │  ├─ mdw_cors.ts ................CORS Middleware
+   │  ├─ mdw_logger.ts ..............Logger Middleware
+   │  └─ mdw_security.ts ............Security Middleware
+   ├─ model/ ........................(<font color=cyan>Optional</font>)Data models in the MVC framework
+   │  ├─ schema/ ....................(<font color=red>Required</font>)Data Schemas
+   │  │  └─ sch_sample_schema.ts ....A Sample Data Schema
+   │  └─ service/ ...................(<font color=red>Required</font>)Data Layer Services (Database CRUD operations are defined here)
+   │     └─ svc_sample_service.ts ...A Sample Service
+   ├─ router/ .......................(<font color=red>Required</font>)Routers
+   │  └─ rte_sample_router.ts .......A Sample Router
+   ├─ public/ .......................(<font color=cyan>Optional</font>)Public static assets
+   │  ├─ folder_1/ ..................(<font color=cyan>Optional</font>)Assets for a specific section (e.g. a certain view)
+   │  │  ├─ sample_folder_1.png
+   │  │  └─ sample_folder_1.css
+   │  └─ folder_2/
+   │     ├─ sample_folder_2.html
+   │     └─ sample_folder_2.svg
+   ├─ view/ .........................(<font color=cyan>Optional</font>)View in the MVC framework
+   │  └─ vw_sample.ts
+   └─ utils/ ........................(<font color=cyan>Optional</font>)Utilities
+      ├─ utl_helpers.ts .............Helper Library
+      ├─ db_adapter/ ................Database Adapters
+      │  └─ utl_mongodb.ts ..........A Sample Mongodb Adapter
+      └─ start_server/ ..............Server Starters
+         └─ utl_server_starter.ts ...HTTP Server Starter
+</pre>
+<!-- DIRSTRUCTURE_END_MARKER -->
+
+<hr>
+<h2 id="project-structure-descriptions">Project Structure Descriptions</h2>
+<ol>
+<li><code>root</code>: The root folder contains standard folders and files required for the project. We have the following folders:</li>
+</ol>
+<ul>
+<li><code>config</code> folder for all configurations of the backend app
+It may contain the environment variables needed by the app, the PM2 ecosystem configuration, the Jest testing framework configuration, etc.</li>
+<li><code>logs</code> folder for saving logs in development (This folder is automatically generated)</li>
+<li><code>node_modules</code> folder for local NPM packages</li>
+<li><code>test</code> folder for testing
+It may include unit testing code for controllers, end-to-end testing etc.</li>
+<li><code>src</code> folder for all the source code in TypeScript</li>
+<li><code>outputs</code> folder for generated contents in the program (This folder is automatically generated)
+It may contain TypeDoc generated documentation, ESLint reports, Jest testing reports.</li>
+<li><code>build</code> folder for the transpiled code for either development or production.
+It should has exactly same folder structure as the <code>src</code> folder.</li>
+</ul>
+<p>  The files in the root folder includes: npm config, TypeScript config, Babel config, ESLint config, Docker config.</p>
+<ol start="2">
+<li><code>src</code>: The backend app source code folder. It includes the whole <strong>MVC</strong> setup, middleware, helper functions, etc.</li>
+</ol>
+<ul>
+<li><code>bin</code> is <strong>REQUIRED</strong> for executable code (<strong>Name is fixed to <code>bin</code></strong>)<ul>
+<li><code>www.ts</code> is <strong>REQUIRED</strong> and it&#39;s the entry point of the whole app, call the root initializer and start the HTTP server (<strong>Name is fixed to <code>www.ts</code></strong>)</li>
+</ul>
+</li>
+<li><code>init</code> is <strong>REQUIRED</strong> and contains multiple initializers for various parts in the appication.<ul>
+<li><code>init_server.ts</code> is <strong>REQUIRED</strong> as the root initializer to wire created objects together. It&#39;s directly called by <code>www.ts</code>.</li>
+<li><code>init_errorhandler.ts</code> is <strong>REQUIRED</strong> as the global error handler to conduct cleaning tasks if the server fails to start.</li>
+<li><code>init_dbs.ts</code> is <strong>OPTIONAL</strong> for connecting to databases.</li>
+<li><code>init_sample_service.ts</code> is <strong>OPTIONAL</strong> for creating a particular data service object.</li>
+</ul>
+</li>
+<li><code>config</code>  is <strong>REQUIRED</strong> and contains the configurations of the app</li>
+<li><code>controller</code>  is <strong>REQUIRED</strong> with the request handlers and error handlers which are subsequently used by the routers at a higher level. Controllers may call data services to complete the request processing</li>
+<li><code>middleware</code>  is <strong>OPTIONAL</strong>, but usually required, with either third-party middlewares or user-defined ones. For example, the body-parser middleware and the logger middleware are usually adopted</li>
+<li><code>model</code>  is <strong>OPTIONAL</strong> with database operation services. It has two <strong>REQUIRED</strong> folders: <code>schema</code> and <code>service</code>.<pre><code>- `schema`  defines the low-level data schemas, equivalent to the `data access object` or `DAO` layer in other MVC frameworks
+- `service`  is a wrapper over the raw data objects (or schemas) and provides functions of database operations
+</code></pre>
+<ul>
+<li><code>router</code>  is <strong>REQUIRED</strong> and defines the top-level request routers. The routers send a request to an appropriate controller according to the request information.</li>
+<li><code>view</code>  is <strong>OPTIONAL</strong> with server-side rendered page templates.</li>
+<li><code>public</code>  is <strong>OPTIONAL</strong> with public asset files the <code>view</code> folder may require.
+Sub folders can be created according to your needs.</li>
+<li><code>utils</code>  is <strong>OPTIONAL</strong> with helper functions and other facilities needed in the app. For example, the <code>db_adapter</code> folder defines database connection pool managers, wrapper classes over the underneath database connections. <code>db_adapter</code> can have multiple types of databases and for each database, it can have multiple connections.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="restful-api-response-body-schema">Restful API Response Body Schema</h2>
+<p>We unify the response schema returned from every Restful API as follows:</p>
+<p>(Reason: Frontend team requires to fix the response schema so that they can expect the same response schema in all applications)</p>
+<ol>
+<li><p>The response always returns the most appropriate HTTP status code.</p>
+</li>
+<li><p>For success responses, i.e. HTTP status code within range 1xx to 3xx, the response body must contain the following contents:</p>
+</li>
+</ol>
+<pre><code class="language-jsonc">  {
+    // Detailed response code
+    &quot;code&quot;: 200010,
+    // Response message (a summarised description)
+    &quot;message&quot;: &quot;&lt;general message&gt;&quot;,
+    // Data payload in key-value format
+    &quot;data&quot;: {
+      &quot;&lt;key-value data payload&gt;&quot;
+    },
+  }
+</code></pre>
+<p><strong>Must-have fields:</strong> <code>code</code> and <code>message</code>.</p>
+<ol start="3">
+<li>For error responses, i.e., HTTP status code within range 4xx to 5xx, the response body must contain the following contents:</li>
+</ol>
+<pre><code class="language-jsonc">  {
+    // Detailed response code
+    &quot;code&quot;: 400103,
+    // General error message (a summarised description)
+    &quot;message&quot;: &quot;&lt;generic error message&gt;&quot;,
+    &quot;data&quot;: {
+      // Detailed error message
+      &quot;error&quot;: &quot;&lt;detailed error message&gt;&quot;
+    },
+  }
+</code></pre>
+<p><strong>Must-have fields:</strong> <code>code</code>, <code>message</code>, and <code>data.error</code>.</p>
+<ol start="4">
+<li><p>The <code>code</code> field at the top level should be recorded and described in details by the corresponding OpenAPI documentation. The frontend team will <strong>ONLY</strong> refer to the corresponding OpenAPI documentation for everything related to a RESTful API.
+(The previous method of using an Excel spreadsheet to record the <code>code</code> field is <font color="red"><strong>deprecated</strong></font>.)</p>
+</li>
+<li><p><font color="red">Do NOT add extra fields in the top level of the schema</font></p>
+</li>
+</ol>
+<hr>
+<h2 id="module-styles">Module Styles</h2>
+<p>In development environment, we only allow the <strong>ES Module syntax</strong> for modules in TypeScript, i.e. <code>import/export</code> syntax. The <code>require</code> syntax is <strong>forbidden</strong>.</p>
+<p>In production environment, however, we only allow <strong>CommonJS Module syntax</strong> to avoid compatibility issues. ES Module system still has some limitations with TypeScript, e.g. <a href="https://github.com/microsoft/TypeScript/issues/16577">this issue</a>.</p>
+<hr>
+<h2 id="process-management">Process Management</h2>
+<p>We recommend using <a href="https://www.npmjs.com/package/pm2">PM2</a> as the node application process manager when developing locally. Note that PM2 should <strong>ONLY</strong> be used in development environment.</p>
+<p>We do NOT enforce PM2 in development. You can freely choose your favourite approach to run the code locally in development.</p>
+<hr>
+<h2 id="naming-conventions">Naming Conventions</h2>
+<p>The name of the required folders should <strong>NOT</strong> be changed. For naming of files, variables, functions, classes, interfaces, types etc., refer to <a href="../Naming/README.md">Naming Conventions</a> for details.</p>
+<hr>
+<h2 id="linting">Linting</h2>
+<p>We use ESLint with TypeScript related plugins to avoid error-prone usage, regularise the coding style, and enforce best practices. Refer to <a href="../Lint/README.md">Linter Specs</a> for details.</p>
+<hr>
+<h2 id="error-handling">Error Handling</h2>
+<p>We require developers to use ExpressJS error handler chain to properly deal with server internal errors. <strong>At least</strong> one error handler is required for each controller and customised middleware in your program to response with user friendly messages to the client and make it easier to identify where the error occurs. You are free to add finer error handlers at lower levels, e.g. the service layer.</p>
+<p>Refer to the <a href="https://expressjs.com/en/guide/error-handling.html">official document</a> to learn error handling in ExpressJS.</p>
+<p>Just throw out errors that occur in a function.</p>
+<p>For errors occur above the controller/middleware level, e.g. routers, terminate the server by throwing out errors, because there&#39;s no need to recover from the error if it occurs during the server startup process.</p>
+<hr>
+<h2 id="middleware">Middleware</h2>
+<p>You should consider writing customised ExpressJS middleware for reusable code.</p>
+<hr>
+<h2 id="deployment-ready-requirement">Deployment Ready Requirement</h2>
+<p>When deployed into Kubernetes cluster, it requires to provide a health checking route for the Kubernetes liveness probe. If Kubernetes determines the container no longer responses normally, it tries to restart it.</p>
+<p>The route to the liveness probe is <code>/healthz</code>. Returning HTTP status 200 is enough for this route. Don&#39;t return a JSON body.</p>
+
+	</div>
+</body>
+</script>
+</html>

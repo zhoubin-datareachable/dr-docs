@@ -1,0 +1,2936 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: dr_Back_SurveyDistribution
+  description: >-
+    这个文档主要展示了与相关相关操作的的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://dist.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [SurveyDistribution API Server](https://github.com/dataReachable/dr_Back_SurveyDistribution)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://dist.dev.datareachable.net/"
+
+paths:
+  /_distribution:
+    post:
+      summary: create distribution
+      description: create distribution (intranet)
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - org_dri
+                - name
+              properties:
+                org_dri:
+                  type: string
+                  description: organization dri
+                name:
+                  type: string
+                  description: distribution name
+                user_dri:
+                  type: string
+                  description: user dri
+              example:
+                {
+                  org_dri: "dri:acs::org/dFZsOgSLGLiHxdG9j4",
+                  name: "qwerty",
+                  user_dri: "user:dri",
+                }
+      responses:
+        "200":
+          description: 创建 distribution 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 200001,
+                  message: "Successfully created survey distribution",
+                  data: { dri: "dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR" },
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                duplicated name:
+                  value:
+                    {
+                      code: 400002,
+                      message: "The name is duplicated in the organization",
+                    }
+                creation failed:
+                  value:
+                    {
+                      code: 400001,
+                      message: "Failed to create survey distribution",
+                    }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while renaming the deliverable
+                data:
+                  error: details
+  /org/tg:
+    get:
+      summary: (SD-00003) get talent group
+      description: 在survey distribution的dashboard中,获取当前organization在client或supplier选项的拥有distribution权限tanlen group
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: organization dri
+          schema:
+            type: string
+            example: dri:acs::org/dFZsOgSLGLiHxdG9j4
+        - name: type
+          in: query
+          required: true
+          description: 当前用户是甲方还是乙方
+          schema:
+            type: string
+            enum:
+              - client
+              - supplier
+            example: supplier
+      responses:
+        "200":
+          description: 获取 talent group 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Tg_Group"
+              example:
+                {
+                  "code": 200002,
+                  "message": "Successfully obtained the talent group",
+                  "data":
+                    [
+                      {
+                        "dri": "dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L",
+                        "name": "default-group",
+                      },
+                    ],
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please make sure you are in this organization",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while renaming the deliverable
+                data:
+                  error: details
+  /distribution/list:
+    get:
+      summary: (SD-00004/SD-00006/SD-00007/SD-00009/SD-00010) get distribution list
+      description: >-
+        SD-00004: 仅传递 org_dri | type | tg_dri 三个参数 <br/>
+        SD-00006: 包含 prohect_dri 参数 <br/>
+        SD-00007: 包含 starred 参数 <br/>
+        SD-00009: 包含 is_search | name 参数 <br/>
+        SD-00010: 包含 is_search | start 或 end 参数
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: organization dri
+          schema:
+            type: string
+            example: dri:acs::org/dFZsOgSLGLiHxdG9j4
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: type
+          in: query
+          required: true
+          description: 当前用户是甲方还是乙方
+          schema:
+            type: string
+            enum:
+              - client
+              - supplier
+            example: client
+        - name: page_number
+          in: query
+          required: false
+          description: 页码
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          description: 页面大小
+          schema:
+            type: integer
+        - name: project_dri
+          in: query
+          required: false
+          description: project dri
+          schema:
+            type: string
+        - name: starred
+          in: query
+          required: false
+          description: 是否仅列出标星的
+          schema:
+            type: boolean
+        - name: is_search
+          in: query
+          required: false
+          description: 是否搜索
+          schema:
+            type: boolean
+        - name: name
+          in: query
+          required: false
+          description: distribution name
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          description: distribution 创建时间
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          required: false
+          description: distribution 创建时间
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: 获取 project 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Distribution"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully get the distribution list",
+                  "data":
+                    {
+                      "total_item": 1,
+                      "distributions":
+                        [
+                          {
+                            "dri": "dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR",
+                            "name": "asdfgh",
+                            "creator_dri": "dri:acs::user/57x9jeut8Sia1b01nMYHE",
+                            "creator_name": "isaac.liao",
+                            "deliverable_tags": ["123", "321"],
+                            "starred": false,
+                            "org_dri": "dri:acs::org/dFZsOgSLGLiHxdG9j4",
+                            "org_name": "isaac.liao",
+                            "project_dri": "dri:spm::proj/2t1JvQcXc-LyzL9w",
+                            "project_name": "distribution test",
+                            "updated_at": "2021-10-25T08:28:01.449Z",
+                            "created_at": "2021-10-25T01:46:12.762Z",
+                          },
+                        ],
+                    },
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example: { code: 400001, message: "Please enter search criteria" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while obtaining the survey distribution list
+                data:
+                  error: details
+  /project/:
+    get:
+      summary: (SD-00005) get project
+      description: 在survey distribution的dashboard中,根据当前所选条件,即:client/supplier 和 talent_group, 来获取对应的project list, 用于在project-related进行project的切换
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: organization dri
+          schema:
+            type: string
+            example: dri:acs::org/dFZsOgSLGLiHxdG9j4
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: type
+          in: query
+          required: true
+          description: 当前用户是甲方还是乙方
+          schema:
+            type: string
+            enum:
+              - client
+              - supplier
+            example: supplier
+      responses:
+        "200":
+          description: 获取 project 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Project"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully get project",
+                  "data":
+                    [
+                      {
+                        "project_dri": "dri:spm::proj/2t1JvQcXc-LyzL9w",
+                        "project_name": "distribution test",
+                        "org_dri": "dri:acs::org/dFZsOgSLGLiHxdG9j4",
+                        "org_name": "isaac.liao",
+                        "org_logo": "https://dr-avatars-user-dev.s3-ap-southeast-2.amazonaws.com/profile-default-avatar-logo/I",
+                      },
+                    ],
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400002,
+                  message: "Please make sure that the talent group has been given permissions",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred when get project
+                data:
+                  error: details
+  /distribution/list/not_bound:
+    get:
+      summary: (SD-00008) get unbind distribution
+      description: 在survey distribution的dashboard中,根据当前所选条件,即:client和talent_group, 来获取对应的survey distribution NOT BOUND列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: organization dri
+          schema:
+            type: string
+            example: dri:acs::org/dFZsOgSLGLiHxdG9j4
+        - name: name
+          in: query
+          required: false
+          description: distribution name
+          schema:
+            type: string
+            example: "123"
+        - name: start
+          in: query
+          required: false
+          description: distribution 创建时间
+          schema:
+            type: string
+            format: date
+            example: "2021-10-30T06:25:26.469Z"
+        - name: end
+          in: query
+          required: false
+          description: distribution 创建时间
+          schema:
+            type: string
+            format: date
+            example: "2021-10-31T06:25:26.469Z"
+        - name: page_number
+          in: query
+          required: false
+          description: 页码
+          schema:
+            type: integer
+            example: 1
+        - name: page_size
+          in: query
+          required: false
+          description: 页面大小
+          schema:
+            type: integer
+            example: 20
+      responses:
+        "200":
+          description: 获取 project 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Distribution"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully get the distribution of the unbound list",
+                  "data":
+                    {
+                      "total_item": 1,
+                      "distributions":
+                        [
+                          {
+                            "dri": "dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR",
+                            "name": "asdfgh",
+                            "creator_dri": "dri:acs::user/57x9jeut8Sia1b01nMYHE",
+                            "creator_name": "isaac.liao",
+                            "deliverable_tags": ["123", "321"],
+                            "starred": false,
+                            "org_dri": "dri:acs::org/dFZsOgSLGLiHxdG9j4",
+                            "org_name": "isaac.liao",
+                            "project_dri": "dri:spm::proj/2t1JvQcXc-LyzL9w",
+                            "project_name": "distribution test",
+                            "updated_at": "2021-10-25T08:28:01.449Z",
+                            "created_at": "2021-10-25T01:46:12.762Z",
+                          },
+                        ],
+                    },
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please make sure you are in this organization",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while obtaining an unbound survey distribution list
+                data:
+                  error: details
+  /distribution/starred:
+    put:
+      summary: (SD-00011) 标/取消标星 distribution
+      description: 在survey distribution的dashboard中,对当前distribution进行标星或者取消标星
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distribution_dri
+                - starred
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution dri
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                starred:
+                  type: boolean
+                  description: 是否标星
+                  example: false
+      responses:
+        "200":
+          description: 标/取消标星 distribution 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "update project star successfully",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { code: 400001, message: "Project star failed to update" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred when creating starred
+                data:
+                  error: details
+  /distribution/keyword:
+    put:
+      summary: (SD-00012) update keywords
+      description: 在survey distribution的dashboard中,对当前distribution的keywords进行修改
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distribution_dri
+                - keywords
+                - project_dri
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution dri
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                keywords:
+                  type: array
+                  items:
+                    type: string
+                  example: ["123", "321"]
+      responses:
+        "200":
+          description: 更新 keywords 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { "code": 200001, "message": "Update keywords successfully" }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example: { code: 400001, message: "Failed to update keywords" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred when update keyword
+                data:
+                  error: details
+  /distribution/survey_version:
+    get:
+      summary: (SD-00013) get survey version
+      description: 获取与当前distribution绑定的survey信息及版本号
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distribution_dri
+          in: query
+          required: true
+          description: distribution dri
+          schema:
+            type: string
+            example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+      responses:
+        "200":
+          description: 获得 survey version 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Survey_Version"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully obtained survey version",
+                  "data":
+                    [
+                      {
+                        "dri": "dri:qed::output/jWPiogv7QsoukdLnwlEKeK",
+                        "name": "963852741",
+                        "version": [1],
+                      },
+                    ],
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while obtaining the survey version
+                data:
+                  error: details
+  /distribution/search:
+    get:
+      summary: (SD-00014) 通过 name 来查找对应的 distribution 列表信息
+      description: 通过name来查找对应的distribution列表信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: true
+          description: distribution
+          schema:
+            type: string
+            example: asd
+      responses:
+        "200":
+          description: 成功获得查询结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Distribution_sample"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully obtained search results",
+                  "data":
+                    [
+                      {
+                        "dri": "dri:distr::output/RdjrJ8IT3XAFEV4oN9OzMJ",
+                        "name": "distribution4",
+                        "organization_dri": "dri:acs::org/-OY_Zhmy5hc_TSWKus",
+                        "organization_name": "zb123456",
+                        "project_dri": "dri:spm::proj/OwwUzLcpEbvdT5FA",
+                        "project_name": "projectSelf",
+                      },
+                    ],
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while fetching search results
+                data:
+                  error: details
+  /distribution/competence:
+    get:
+      summary: (SD-00015) 获取权限信息成功
+      description: 在survey distribution的dashboard中,对当前distribution的keywords进行修改
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distribution_dri
+          in: query
+          required: true
+          description: distribution dri
+          schema:
+            type: string
+            example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+        - name: project_dri
+          in: query
+          required: false
+          description: project dri
+          schema:
+            type: string
+            example: dri:spm::proj/2t1JvQcXc-LyzL9w
+      responses:
+        "200":
+          description: 获取权限信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Perm"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Succeeded in obtaining permission information",
+                  data: ["commenter", "task_giver"],
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please confirm whether the talent group is correct",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while obtaining competence
+                data:
+                  error: details
+  /distribution/survey:
+    get:
+      summary: (SD-00016) 获得 distribution 的 survey info
+      description: 获取survey distribution详情页中所有的surveys数据
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distribution_dri
+          in: query
+          required: true
+          description: distribution dri
+          schema:
+            type: string
+            example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+      responses:
+        "200":
+          description: 获取 survey 信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Survey_Sample"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully obtained survey information",
+                  "data":
+                    [
+                      {
+                        "dri": "dri:qed::output/jWPiogv7QsoukdLnwlEKeK",
+                        "name": "963852741",
+                        "freeze": false,
+                      },
+                    ],
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please confirm that the distribution exists",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while obtaining the survey
+                data:
+                  error: details
+  /distribution/recruitment:
+    get:
+      summary: (SD-00017) 获得 distribution 的 Recruitment Requirement
+      description: 获取survey distribution详情页中所需的Recruitment Requirement数据
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distribution_dri
+          in: query
+          required: true
+          description: distribution dri
+          schema:
+            type: string
+            example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+      responses:
+        "200":
+          description: 获取 Recruitment Requirement 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Recruitment"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Succeed in obtaining recruitment information",
+                  "data": { "recruitment": "fhiusdhfj", "attachments": [] },
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please confirm that the distribution is correct",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while obtaining recruitment requirement
+                data:
+                  error: details
+    put:
+      summary: (SD-00020) 更新 distribution 的 Recruitment Requirement
+      description: 修改当前survey distribution的 recruitment info
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distribution_dri
+                - recruitment
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution dri
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                recruitment:
+                  type: string
+                  example: 1234564sdaf
+      responses:
+        "200":
+          description: distribution 的 Recruitment Requirement 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully updated recruitment requirements",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Failed to update recruitment request",
+                }
+        "500":
+          description: An unknown error occurred while updating the recruitment requirements
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while binding the survey questionnaire
+                data:
+                  error: details
+  /distribution/unbound:
+    get:
+      summary: (SD-00018) 获得 distribution 同一 project 下未和 distribution 绑定的 survey
+      description: 在将survey distribution与survey进行绑定的之前, 获取当前project中所有的未绑定的survey列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distribution_dri
+          in: query
+          required: true
+          description: distribution dri
+          schema:
+            type: string
+            example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+        - name: project_dri
+          in: query
+          required: false
+          description: project dri
+          schema:
+            type: string
+            example: dri:spm::proj/2t1JvQcXc-LyzL9w
+      responses:
+        "200":
+          description: 获取未和 distribution 绑定的 survey 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          dri:
+                            type: string
+                          name:
+                            type: string
+
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully get surveys that are not bound to the distribution",
+                  "data":
+                    [
+                      {
+                        "dri": "dri:qed::output/jWPiogv7QsoukdLnwlEKeK",
+                        "name": "afdsf",
+                      },
+                    ],
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please confirm that the project and distribution have been bound",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred when get unbound survey
+                data:
+                  error: details
+  /distribution/bind:
+    put:
+      summary: (SD-00019) survey distribution 与 questionnaire 绑定
+      description: 将survey distribution与questionnaire进行绑定
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distribution_dri
+                - surveys
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution dri
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                surveys:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: distribution 绑定 survey 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "The distribution and survey are successfully bound",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please confirm that the parameters are correct",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while binding the survey questionnaire
+                data:
+                  error: details
+  /distribution/survey/freeze:
+    put:
+      summary: (SD-00022) freeze/unfreeze survey
+      description: 在当前survey distribution中冻结或解冻一个survey
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distribution_dri
+                - survey_dri
+                - freeze
+                - message
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution dri
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                survey_dri:
+                  type: string
+                  description: survey dri
+                  example: dri:qed::output/vyM0loqhGpNpYNe6hmz2Rx
+                freeze:
+                  type: boolean
+                  description: 是否冻结
+                  example: true
+                message:
+                  type: string
+                  description: 提示消息
+                  example: message
+      responses:
+        "200":
+          description: distribution 绑定 survey 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Freeze:
+                  value: { "code": 200001, "message": "Freeze survey success" }
+                Unfreeze:
+                  value:
+                    { "code": 200001, "message": "Unfreeze survey success" }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Freeze:
+                  value: { code: 400001, message: "Freeze survey failed" }
+                Unfreeze:
+                  value: { code: 400001, message: "Unfreeze survey failed" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred in the freeze/unfreeze survey
+                data:
+                  error: details
+  /distributor/list:
+    get:
+      summary: (SD-00023) get distributor list
+      description: 根据survey_dri获取所有未归档的distributors信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: survey_dri
+          in: query
+          required: true
+          description: survey dri
+          schema:
+            type: string
+            example: dri:qed::output/jWPiogv7QsoukdLnwlEKeK
+      responses:
+        "200":
+          description: 获取未和 distribution 绑定的 survey 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_DistributorList"
+                example:
+                  {
+                    "code": 200001,
+                    "message": "Get distributor information successfully",
+                    "data":
+                      [
+                        {
+                          "dri": "dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-",
+                          "type": "email",
+                          "survey_version":
+                            { "dri": "dri:qed::basev/hgSIg1-aJvt228nzyeiHfT" },
+                          "name": "45641385sdf",
+                          "archived": false,
+                          "created_at": "2021-11-02T01:46:38.449Z",
+                          "creator_org_dri": "dri:acs::org/Ts-p_OfdhDBxHTVuyy",
+                          "creator_org_name": "changyu.liao",
+                          "test_link": "",
+                          "link_status":
+                            {
+                              "open_link_status": "open",
+                              "test_link_status": "open",
+                              "manual_link_status": "open",
+                            },
+                        },
+                      ],
+                  }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { code: 400001, message: "Unable to get survey information" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while getting distributor list
+                data:
+                  error: details
+  /survey/version:
+    get:
+      summary: (SD-00029) get survey version
+      description: 根据survey_dri获取survey所有的版本信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distribution_dri
+          in: query
+          required: true
+          description: distribution dri
+          schema:
+            type: string
+            example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+        - name: survey_dri
+          in: query
+          required: true
+          description: survey dri
+          schema:
+            type: string
+            example: dri:qed::output/vyM0loqhGpNpYNe6hmz2Rx
+      responses:
+        "200":
+          description: 获取 survey version 信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_SruveyVersion"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully obtained the survey version",
+                  "data":
+                    [
+                      {
+                        "dri": "dri:qed::basev/hgSIg1-aJvt228nzyeiHfT",
+                        "version": 1,
+                      },
+                      {
+                        "dri": "dri:qed::basev/16K971F2ud0YVQAl2ysOxX",
+                        "version": 2,
+                      },
+                    ],
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please confirm that the distribution is selected correctly",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while getting survey version
+                data:
+                  error: details
+  /distributor:
+    post:
+      summary: (SD-00030) create distributor
+      description: 根据survey_dri,survey_vesion_dri,distributor_type创建一个distributor
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distribution_dri
+                - distributor_type
+                - distributor_name
+                - survey_dri
+                - survey_version_dri
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution dri
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                distributor_type:
+                  type: string
+                  enum:
+                    - weblink
+                    - email
+                    - social_media
+                  description: distributor type
+                distributor_name:
+                  type: string
+                  description: distributor name
+                survey_dri:
+                  type: string
+                  description: survey dri
+                  example: dri:qed::output/vyM0loqhGpNpYNe6hmz2Rx
+                survey_version_dri:
+                  type: string
+                  description: survey version dri
+                  example: dri:qed::basev/hgSIg1-aJvt228nzyeiHfT
+      responses:
+        "200":
+          description: 创建 distributor 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          dri:
+                            type: string
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully created distributor",
+                  "data":
+                    { "dri": "dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-" },
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { code: 400001, message: "Failed to create distributor." }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while creating the distributor
+                data:
+                  error: details
+    get:
+      summary: (SD-00031) get distributor info
+      description: 获取 distributor 信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distributor_dri
+          in: query
+          required: true
+          description: distributor dri
+          schema:
+            type: string
+            example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+      responses:
+        "200":
+          description: 获取 distributor 信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_SruveyVersion"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully obtained distributor information",
+                  "data":
+                    {
+                      "dri": "dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-",
+                      "type": "email",
+                      "survey_name": "distr_test_survey",
+                      "survey_version":
+                        {
+                          "dri": "dri:qed::basev/hgSIg1-aJvt228nzyeiHfT",
+                          "version": 1,
+                        },
+                      "name": "741852",
+                      "archived": false,
+                      "created_at": "2021-11-02T01:46:38.449Z",
+                      "creator_org_dri": "dri:acs::org/Ts-p_OfdhDBxHTVuyy",
+                      "creator_org_name": "changyu.liao",
+                    },
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please choose the correct distributor",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while getting distributor
+                data:
+                  error: details
+  /distributor/name:
+    put:
+      summary: (SD-00024) update distributor name
+      description: 修改distributor name
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distributor_dri
+                - distributor_name
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distributor_dri:
+                  type: string
+                  description: distributor dri
+                  example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+                distributor_name:
+                  type: string
+                  description: 新的 distributor 名称
+                  example: 741852
+      responses:
+        "200":
+          description: distribution 绑定 survey 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully updated distributor name",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example: { code: 400001, message: "Duplicate name" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while updating the distributor name
+                data:
+                  error: details
+  /distributor/archived:
+    post:
+      summary: (SD-00025/SD-00028) archived distributor
+      description: 根据distributor_dri将distributor进行archived
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distributor_dri
+                - archived
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distributor_dri:
+                  type: string
+                  description: distributor dri
+                  example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+                archived:
+                  type: boolean
+                  description: 是否 archive distributor
+                  example: true
+      responses:
+        "200":
+          description: distributor archive/unarchived 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Archive:
+                  value: { "code": 200001, "message": "Archive successfully" }
+                Unarchived:
+                  value:
+                    { "code": 200001, "message": "Unarchived successfully" }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                Archive:
+                  value: { code: 400001, message: "Failed to Archive" }
+                Unarchived:
+                  value: { code: 400001, message: "Failed to Unarchived" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while archiving
+                data:
+                  error: details
+    get:
+      summary: (SD-00026/SD-00027) get archived distributor list
+      description: 根据distribution_dri获取所有Archived列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: >-
+            用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+            updated_at 和 name 不同时传递
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: updated_at
+          in: query
+          description: distributor update date
+          schema:
+            type: string
+            format: date
+            example: 2021-11-02T03:48:25.200Z
+        - name: name
+          in: query
+          description: distributor name
+          schema:
+            type: string
+            example: dsa
+      responses:
+        "200":
+          description: 获取 archived 的 distributor list 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_DistributorArcivedList"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Get the Archived list successfully",
+                  "data":
+                    {
+                      "total_item": 1,
+                      "distributors":
+                        [
+                          {
+                            "dri": "dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-",
+                            "type": "email",
+                            "survey_dri": "dri:qed::output/vyM0loqhGpNpYNe6hmz2Rx",
+                            "survey_name": "distr_test_survey",
+                            "survey_version":
+                              {
+                                "dri": "dri:qed::basev/hgSIg1-aJvt228nzyeiHfT",
+                                "version": 1,
+                              },
+                            "name": "741852",
+                            "archived": true,
+                            "updated_at": "2021-11-02T08:00:35.916Z",
+                          },
+                        ],
+                    },
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while getting the archived list
+                data:
+                  error: details
+  /distributor/link:
+    get:
+      summary: (SD-00032) get distributor link info
+      description: 通过distributor_dri和link_type获取link信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distributor_dri
+          in: query
+          required: true
+          description: distributor dri
+          schema:
+            type: string
+            example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+        - name: link_type
+          in: query
+          required: true
+          description: link dri
+          schema:
+            type: string
+            enum:
+              - open
+              - test
+            example: open
+      responses:
+        "200":
+          description: 获取 distributor link 信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_distributorLink"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Get link successfully",
+                  "data":
+                    {
+                      "link": "",
+                      "setting": {},
+                      "is_redirect": false,
+                      "quotafull": { "link": "", "quote": {}, "manifest": {} },
+                      "complete": { "link": "", "quote": {}, "manifest": {} },
+                      "incomplete": { "link": "", "quote": {}, "manifest": {} },
+                    },
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please choose the correct distributor",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while getting the link list
+                data:
+                  error: details
+  /distributor/link/setting:
+    put:
+      summary: (SD-00033) distributor link setting
+      description: 设置当前link的访问条件
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distributor_dri
+                - link_type
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distributor_dri:
+                  type: string
+                  description: distributor dri
+                  example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+                link_type:
+                  type: string
+                  enum:
+                    - open
+                    - test
+                  description: link type
+                  example: open
+                start_date:
+                  type: string
+                  format: date
+                  example: "2021-11-02T08:51:36.953Z"
+                end_date:
+                  type: string
+                  format: date
+                  example: "2022-01-01T00:00:00.000Z"
+                access_number:
+                  type: integer
+                  example: 10000
+                err_message:
+                  type: string
+                  example: message
+      responses:
+        "200":
+          description: link 访问限制设置成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { "code": 200001, "message": "Update link is set successfully" }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { code: 400002, message: "Failed to update link settings" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while updating the link settings
+                data:
+                  error: details
+  /distributor/link/customize:
+    put:
+      summary: (SD-00034) setting customize link
+      description: 设置自定义链接参数
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distributor_dri
+                - link_type
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distributor_dri:
+                  type: string
+                  description: distributor dri
+                  example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+                link_type:
+                  type: string
+                  enum:
+                    - open
+                    - test
+                  description: link type
+                  example: open
+                supplier:
+                  type: string
+                  example: supplier
+                respondent:
+                  type: string
+                  example: respondent
+                arguments:
+                  type: array
+                  items:
+                    type: string
+                  example: ["asdf", "ikj"]
+      responses:
+        "200":
+          description: link 自定义链接参数设置成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully updated the custom link",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400003,
+                  message: "Link parameters are not allowed to be repeated",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while updating custom link settings
+                data:
+                  error: details
+  /distributor/link/redirect_status:
+    put:
+      summary: (SD-00035) setting redirect status
+      description: 设置重定向状态
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distributor_dri
+                - link_type
+                - status
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distributor_dri:
+                  type: string
+                  description: distributor dri
+                  example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+                link_type:
+                  type: string
+                  enum:
+                    - open
+                    - test
+                  description: link type
+                  example: open
+                status:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: 设置重定向状态设置成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully updated the redirect link",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please choose the correct distributor",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while updating custom link settings
+                data:
+                  error: details
+  /distributor/link/customize_arg:
+    get:
+      summary: (SD-00036) get customize link parameter
+      description: 获得自定义链接的参数
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: tg_dri
+          in: query
+          required: true
+          description: talent group dri
+          schema:
+            type: string
+            example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        - name: distributor_dri
+          in: query
+          schema:
+            type: string
+            description: distributor dri
+            example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+        - name: link_type
+          in: query
+          required: true
+          description: link dri
+          schema:
+            type: string
+            enum:
+              - open
+              - test
+            example: open
+      responses:
+        "200":
+          description: 获得链接的自定义链接参数成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: string
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully obtained custom link parameters",
+                  "data": ["message", "asf"],
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { code: 400002, message: "Unable to get link information" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while getting custom link parameters
+                data:
+                  error: details
+  /distributor/link/redirect:
+    put:
+      summary: (SD-00037) setting redirect link
+      description: 设置重定向链接
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distributor_dri
+                - link_type
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distributor_dri:
+                  type: string
+                  description: distributor dri
+                  example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+                link_type:
+                  type: string
+                  enum:
+                    - open
+                    - test
+                  description: link type
+                  example: open
+                quotafull:
+                  type: string
+                  format: url
+                  example: https://google.com/
+                complete:
+                  type: string
+                  format: url
+                  example: https://google.com/
+                incomplete:
+                  type: string
+                  format: url
+                  example: https://google.com/
+      responses:
+        "200":
+          description: 设置重定向链接
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully updated the redirect link",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  code: 400001,
+                  message: "Please choose the correct distributor",
+                }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while setting up a redirect link
+                data:
+                  error: details
+  /distributor/link/redirect_arg:
+    put:
+      summary: (SD-00038) setting redirect link parameter
+      description: 设置重定向链接的参数
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tg_dri
+                - distributor_dri
+                - link_type
+                - redirect_type
+                - manifest
+                - quote
+              properties:
+                tg_dri:
+                  type: string
+                  description: talent group dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distributor_dri:
+                  type: string
+                  description: distributor dri
+                  example: dri:distr::distributor/youiN0Hq20BWBpQv8P9zbf/-2_ZG2SZa7o5lMS-
+                link_type:
+                  type: string
+                  enum:
+                    - open
+                    - test
+                  description: link type
+                  example: open
+                redirect_type:
+                  type: string
+                  enum:
+                    - quotafull
+                    - complete
+                    - incomplete
+                  example: quotafull
+                manifest:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example: { uid: "123456" }
+                quote:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example: { asb: "bca" }
+      responses:
+        "200":
+          description: 设置重定向链接的参数成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Successfully updated custom parameters",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { code: 400001, message: "key is not allowed to be repeated" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while getting redirect link parameters
+                data:
+                  error: details
+  /attachment/distribution:
+    post:
+      summary: (SD-00021) upload distribution attachment
+      description: 为当前survey distribution上传附件
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - org_dri
+                - distribution_dri
+                - distribution_attachment
+              properties:
+                org_dri:
+                  type: string
+                  description: organization dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution name
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                distribution_attachment:
+                  type: array
+                  description: 上传的文件
+                  items:
+                    type: string
+                    format: binary
+                  example:
+                    - "文件_1"
+                    - "文件_2"
+      responses:
+        "200":
+          description: 文件上传成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example: { code: 200001, message: "File uploaded successfully" }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                valid files :
+                  value: { code: 400001, message: "No valid files" }
+                upload failed:
+                  value:
+                    {
+                      code: 400002,
+                      message: "Failed to upload file",
+                    }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while uploading the attachment
+                data:
+                  error: details
+    delete:
+      summary: (SD-00039) delete distribution arrachment
+      description: 删除附件
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - org_dri
+                - distribution_dri
+                - attachment_dri
+              properties:
+                org_dri:
+                  type: string
+                  description: organization dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                distribution_dri:
+                  type: string
+                  description: distribution name
+                  example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+                attachment_dri:
+                  type: array
+                  description: 文件的 dri
+                  items:
+                    type: string
+                    example: dri:spm::attachment/5NcjnlOCvhGjukIwwCFI
+      responses:
+        "200":
+          description: 文件上传成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                { code: 200001, message: "Attachment deleted successfully" }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example: { code: 400001, message: "Failed to delete attachment" }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred while deleting the attachment
+                data:
+                  error: details
+  /distributor/link/status:
+    post:
+      summary: (SD-00040) update distributor link status
+      description: 开关链接
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - org_dri
+                - distributor_dri
+                - link_type
+                - status
+              properties:
+                org_dri:
+                  type: string
+                  description: organization dri
+                  example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+                link_type:
+                  type: string
+                  enum:
+                    - open
+                    - test
+                    - manual
+                  description: link type
+                  example: open
+                status:
+                  type: boolean
+                  description: 是否开启
+                  example: true
+      responses:
+        "200":
+          description: link 状态修改成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              example:
+                {
+                  "code": 200001,
+                  "message": "Link status updated successfully",
+                }
+        "400":
+          description: client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                duplicated name:
+                  value: { code: 400002, message: "No valid files" }
+                creation failed:
+                  value:
+                    {
+                      code: 400001,
+                      message: "Link status update failed",
+                    }
+        "500":
+          description: An unknown error occurred on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+              example:
+                code: 500001
+                message: An unknown error occurred when modifying the link status
+                data:
+                  error: details
+
+components:
+  schemas:
+    Base_aith:
+      type: object
+      required:
+        - tg_dri
+        - distribution_dri
+      properties:
+        tg_dri:
+          type: string
+          description: talent group dri
+          example: dri:acs::org:tg/dFZsOgSLGLiHxdG9j4-duinxO3L
+        distribution_dri:
+          type: string
+          description: distribution dri
+          example: dri:distr::output/A9UInQ8_OL8nxeZ1X0cjVR
+
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200001
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "successfully"
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example:
+        {
+          code: 405000,
+          message: "You're using the completely wrong HTTP method!",
+        }
+
+    Res_Tg_Group:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                    description: talent group dri
+                  name:
+                    type: string
+                    description: talent group name
+
+    Res_Distribution:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                total_item:
+                  type: integer
+                  example: 1
+                distributions:
+                  type: object
+                  properties:
+                    dri:
+                      type: string
+                    name:
+                      type: string
+                    creator_dri:
+                      type: string
+                    creator_name:
+                      type: string
+                    deliverable_tags:
+                      type: array
+                      items:
+                        type: string
+                    starred:
+                      type: boolean
+                    org_dri:
+                      type: string
+                    org_name:
+                      type: string
+                    project_dri:
+                      type: string
+                    project_name:
+                      type: string
+                    updated_at:
+                      type: string
+                      format: date
+                    created_at:
+                      type: string
+                      format: date
+    Res_Project:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  prohect_dri:
+                    type: string
+                  project_name:
+                    type: string
+                  org_dri:
+                    type: string
+                  org_name:
+                    type: string
+                  org_logo:
+                    type: string
+
+    Res_Survey_Version:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                  name:
+                    type: string
+                  version:
+                    type: array
+                    items:
+                      type: integer
+    Res_Distribution_sample:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                  name:
+                    type: string
+                  organization_dri:
+                    type: string
+                  organization_name:
+                    type: string
+                  project_dri:
+                    type: string
+                  project_name:
+                    type: string
+    Res_Perm:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: string
+                enum:
+                  - commenter
+                  - task_giver
+                  - writer
+    Res_Survey_Sample:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                  name:
+                    type: string
+                  freeze:
+                    type: boolean
+    Res_Recruitment:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                recruitment:
+                  type: string
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                      type:
+                        type: string
+                      name:
+                        type: string
+                      link:
+                        type: string
+                      file_size:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date
+                      updated_at:
+                        type: string
+                        format: date
+    Res_DistributorList:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                  type:
+                    type: string
+                    enum:
+                      - email
+                      - social_media
+                      - weblink
+                  survey_version:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                      version:
+                        type: integer
+                  name:
+                    type: string
+                  archived:
+                    type: boolean
+                  created_at:
+                    type: string
+                    format: date
+                  creator_org_dri:
+                    type: string
+                  creator_org_name:
+                    type: string
+                  test_link:
+                    type: string
+                  link_status:
+                    type: object
+                    properties:
+                      open_link_status:
+                        type: string
+                        enum:
+                          - close
+                          - open
+                      test_link_status:
+                        type: string
+                        enum:
+                          - close
+                          - open
+                      manual_link_status:
+                        type: string
+                        enum:
+                          - close
+                          - open
+    Res_SruveyVersion:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  dri:
+                    type: string
+                  version:
+                    type: integer
+    Res_DistributorArcivedList:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                total_item:
+                  type: integer
+                distributors:
+                  type: object
+                  properties:
+                    dri:
+                      type: string
+                    type:
+                      type: string
+                      enum:
+                        - email
+                        - social_media
+                        - weblink
+                    survey_dri:
+                      type: string
+                    survey_name:
+                      type: string
+                    survey_version:
+                      type: object
+                      properties:
+                        dri:
+                          type: string
+                        version:
+                          type: integer
+                    name:
+                      type: string
+                    archived:
+                      type: boolean
+                    updated_at:
+                      type: string
+                      format: date
+    Res_distributorLink:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                link:
+                  type: string
+                  format: url
+                setting:
+                  type: object
+                  properties:
+                    access_count:
+                      type: string
+                    start_date:
+                      type: string
+                      format: date
+                    end_date:
+                      type: string
+                      format: date
+                    err_message:
+                      type: string
+                is_redirect:
+                  type: boolean
+                redirect_uid:
+                  type: string
+                quotafull:
+                  type: object
+                  properties:
+                    link:
+                      type: string
+                      format: url
+                    quote:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    manifest:
+                      type: object
+                      additionalProperties:
+                        type: string
+                complete:
+                  type: object
+                  properties:
+                    link:
+                      type: string
+                      format: url
+                    quote:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    manifest:
+                      type: object
+                      additionalProperties:
+                        type: string
+                incomplete:
+                  type: object
+                  properties:
+                    link:
+                      type: string
+                      format: url
+                    quote:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    manifest:
+                      type: object
+                      additionalProperties:
+                        type: string

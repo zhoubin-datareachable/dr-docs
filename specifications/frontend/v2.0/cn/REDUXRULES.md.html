@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="redux-书写规范">REDUX 书写规范</h1>
+<h1 id="描述">描述</h1>
+<p>该文档主要描述了和 redux 相关的三个文档的书写规范，这三个文档包括 type.ts, action,ts 和 reducer.ts。 同时，相关的注释和使用方法写在该文档中进行了描述，每一个 reducer 文件都会在不同的文件夹中被创建，并且每个文件夹都会包含 type.ts，action.ts 和 reducer.ts 三个文件。rootReducer 文件将会被定义在<code>Store</code>文件夹中。</p>
+<h1 id="注释写法">注释写法</h1>
+<p>所有的代码都要书写注释，来确保不同开发者之间都能快速的理解对方的代码用途。</p>
+<h2 id="顶层文件注释">顶层/文件注释</h2>
+<p>顶级注释用于告诉不熟悉此代码的读者此文件中包含的内容。 应提供文件的一般内容，其作者，依赖关系和其他相关信息。</p>
+<pre><code class="language-javascript">/**
+ * @file 文件的描述
+ * @date 2020/06/25 13:11
+ * @author 作者的名字
+ * @lastModify 作者的名字 2020/06/25 14:11
+ */
+</code></pre>
+<h2 id="接口注释">接口注释</h2>
+<p>下面的代码描述来如何书写接口的注释，首先需要写出接口的描述，和其参数的类型和具体用处。</p>
+<pre><code class="language-js">/**
+ * 这里是接口的描述
+ * @param {type} 参数 参数的含义
+ * /
+</code></pre>
+<h1 id="typets-文件">type.ts 文件</h1>
+<p>type.ts 文件中包含来所有的接口类型，reducers, actions, constants 和所有 actions 的联合类型。</p>
+<h2 id="接口类型">接口类型</h2>
+<p>接口可能会在别的文件中被引用，在该文件中的接口类型需要有完整的注释来帮助理解。这种接口主要是 reducer.ts 文件中状态的一部分，或者是 action.ts 文件中有效负载的类型。所以所有的接口都需要以<code>xxxType</code>来进行命名。<br>例子：</p>
+<pre><code class="language-js">/**
+ * 该接口描述了该数据在数据库中的数据结构
+ * @param {string} id 数据的id,需要时独一无二的
+ * @param {string} name 数据的名字
+ * @param {string} pid 数据的父亲数据
+ * @param {Array&lt;FolderListType&gt;} children 数据的子数据
+ */
+interface FolderListType {
+  id: string;
+  name: string;
+  pid: string;
+  children: Array&lt;FolderListType&gt;;
+}
+</code></pre>
+<p>在所有的接口都被定义了对于的接口类型，则所有的接口都需要以下面的方式被 export 出去。</p>
+<pre><code class="language-js">export { FolderListType };
+</code></pre>
+<h2 id="reducer-接口">Reducer 接口</h2>
+<p>这一类型的接口用于描述 state 并且需要被 export 出去，它可能是由多个单独的接口组成。每个 type.ts 文件只能有一个该类型的接口。 所以所有的接口都被命名为<code>xxxReducer</code>。<br>例子：</p>
+<pre><code class="language-js">/**
+ * 该文件是dashbaord reducer文件
+ * @param {FolderListType} folderList folders的结构
+ * @param {FolderDataType} folderData folder中的所有数据结构
+ */
+export interface DashboardReducer {
+  folderList: FolderListType;
+  folderData: FolderDataType;
+}
+</code></pre>
+<h2 id="constants">Constants</h2>
+<p>所有的 constant 都需要在该文件中被定义，每一个 constant 的命名都需要用大写字母开头并且每一个字段之间都应该用<code>_</code>进行连接。每一个字段的都应该是其含义的字符串，这一段不需要注释，但是其英文单词的含义必须被描述清楚。<br>例子：</p>
+<pre><code class="language-JS">enum ACTION_TYPE{ CREATE_NEW_FOLDER = &#39;CREATE_NEW_FOLDER&#39;}
+</code></pre>
+<p>在定义了所有的 constants 以后，需要把他们全部 export 出去，准备被别的文件使用。</p>
+<pre><code class="language-js">export enum ACTION_TYPE { CREATE_NEW_FOLDER = &#39;CREATE_NEW_FOLDER&#39;}
+</code></pre>
+<h2 id="action-接口">Action 接口</h2>
+<p>所有的 actions 几口需要在该文件中被定义，每一个 action 的接口都应该包含他的 type 和 payload，其命名方式应该按照<code>xxxAction</code>的方式，每个 action 的接口都应该只包含两个成员--type 和 paylaod. <br>例子：</p>
+<pre><code class="language-js">/**
+ * This action will create a new folder and will change the folder list
+ * @param {FolderListType} payload.folderList new folder list
+ */
+interface CreateNewFolderAction {
+  type: typeof ACTION_TYPE.CREATE_NEW_FOLDER;
+  payload: {
+    folderList: FolderListType,
+  };
+}
+</code></pre>
+<p>在定义所有的 actions 后所有的 constans 需要以联合类型的方式被导出，并且被命名为<code>xxxActionTypes</code>。</p>
+<pre><code class="language-js">export type DashboardActionTypes = CreateNewFolderAction | DeleteFolderAction;
+</code></pre>
+<h1 id="actionsts-文件">actions.ts 文件</h1>
+<p>该文件包含了所有的 dicpatch actions 的函数，请通过下列方式来引入所有的的 types.</p>
+<pre><code class="language-js">import * as types from &quot;./types&quot;;
+</code></pre>
+<p>所有被定义的函数都需要书写注释，同时其类型需要和在 type.ts 文件中定义的类型相同。</p>
+<pre><code class="language-js">/**
+ * create an create new folder action
+ * @param folderList
+ */
+const createNewFolderAction = (
+  folderList: types.FolderListType
+): types.DashboardActionTypes =&gt; ({
+  type: types.CREATE_NEW_FOLDER,
+  payload: {
+    folderList,
+  },
+});
+</code></pre>
+<p>同时被定义的函数在命名时需要根据不同的场景来定义与 action 接口相关的名称，同时命名方式为<code>小驼峰</code>命名法。<br>在定义来所有的 actions 后需要把他们全都 export 出去。</p>
+<pre><code class="language-js">export { createNewFolderAction, deleteFolderAction };
+</code></pre>
+<h1 id="reducerts-file">reducer.ts file</h1>
+<p>该文件包含了 reducer 的初始 state 和 reducer 根据接收的 action 对 initial state 作出的修改。</p>
+<p>引入类型</p>
+<pre><code class="language-js">import * as types from &quot;./types&quot;;
+</code></pre>
+<p>定义初始 state</p>
+<pre><code class="language-js">const initialState: types.DashboardReducer={
+  folderList: {
+    id: &#39;f_0&#39;,
+    name: &#39;Demo&#39;,
+    pid: &#39;f_-1&#39;,
+    children: [],
+}
+</code></pre>
+<p>将 reducer 函数 export 出去。</p>
+<pre><code class="language-js">export default (
+  state = initState,
+  action: types.DashboardActionTypes
+): types.DashboardReducer =&gt; {
+  switch (action.type) {
+    case types.CREATE_NEW_FOLDER:
+      return {
+        ...state,
+        folderList: action.payload.folderList,
+      };
+    default:
+      return state;
+  }
+</code></pre>
+<h1 id="reducer-使用方法">Reducer 使用方法</h1>
+<h2 id="定义-rootreducer">定义 rootReducer</h2>
+<p>在一个项目中可能含有多个 reducers。在 rootReducer.ts 文件中使用 combineReducers 来将所有 reducer 组合在一起。</p>
+<pre><code class="language-js">import DashboardReducer from &quot;./Dashboard/reducer&quot;;
+
+const rootReducer = combineReducers({
+  dashboardReducer: DashboardReducer,
+});
+
+export type RootState = ReturnType&lt;typeof rootReducer&gt;;
+export default rootReducer;
+</code></pre>
+<h2 id="开始使用">开始使用</h2>
+<p>使用<code>useSelector</code>来获取 state 并且使用<code>useDispatch</code>来 dispatch actions.</p>
+<pre><code class="language-js">import { useSelector, useDispatch } from &quot;react-redux&quot;;
+import { RootState } from &quot;../../Store/rootReducer&quot;;
+import * as types from &quot;../../Store/Dashboard/types&quot;;
+import * as actions from &quot;../../Store/Dashboard/actions&quot;;
+
+const dashboardState = useSelector(
+  (state: RootState) =&gt; state.dashboardReducer
+);
+const dispatch = useDispatch();
+dispatch(actions.createNewFolderAction(folderList));
+</code></pre>
+
+	</div>
+</body>
+</script>
+</html>

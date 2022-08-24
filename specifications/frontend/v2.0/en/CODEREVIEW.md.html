@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="front-end-code-review-rules">Front End Code Review Rules</h2>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">Front End Code Review Rules</span>
+    </div>
+</div>
+
+<h2 id="description">Description</h2>
+<p>This file mainly include the code review rules, it&#39;s about how to do the code review between different team members.</p>
+<h2 id="why-code-review">Why Code Review</h2>
+<p>Code review is a self-inspection and peer review in the process of software development. Its purpose is to find errors that occur in the process of software development, ensure the quality of software development, and improve the level of developers.</p>
+<h2 id="code-review-standard">Code review standard</h2>
+<ul>
+<li><p>Is there an Eslint error<br>In the project, we have configured eslint for basic error elimination, so the first thing to check in the code review process is whether there is an eslint error or warning</p>
+</li>
+<li><p>Whether the naming of css meet the requirements of the specification<br> Check whether the naming of class and id in the project conform to the specification, so as to ensure that other developers can quickly understand other people&#39;s projects.</p>
+</li>
+<li><p>Whether the developer abuses the id in css, whether the developer chooses the appropriate css selector<br> Check whether there are too many ids used in the project, whether certain ids must exist, whether they can be replaced by classes, whether they can use child selection to replace excessive classes based on existing classes, etc.</p>
+</li>
+<li><p>Whether the developer using the correct HTML tags<br> Check whether the developer using the correct HTML tags, for example, in a paragraph, the developer is using div to wrapper the content, in this case, it will not pass the code review.</p>
+</li>
+<li><p>Does the developer complete the comments for the code<br> Check whether the developer write corrent comments according to the project comment rules and make sure that the comments are sufficiently complete .</p>
+</li>
+<li><p>Does the developer give the correct name to the function, const, let and class<br>Check whether the developer give correct name to the function, const, let and class according to the project naming rules.</p>
+</li>
+<li><p>Check whether the components in the project are readable<br>Checking whether the components in the project are readable means whether the components are too complex, whether they can be split, etc.</p>
+</li>
+<li><p>Check whether there is duplicate code in the code of the project<br>Check whether there are duplicate codes in the code in the project, and ensure that the duplicate codes can be extracted.</p>
+</li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

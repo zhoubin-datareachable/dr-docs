@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="github-actions上的最佳实践">GitHub Actions上的最佳实践</h2>
+<p>本文档规定了书写定义GitHub Actions的yaml文件的约定。</p>
+<h2 id="yaml文件的命名规范">yaml文件的命名规范</h2>
+<p>GitHub Actions的yaml文件的命名应该使用如下格式：</p>
+<pre><code class="language-txt">&lt;projectName&gt;.&lt;functionality&gt;.&lt;environment&gt;.yaml
+</code></pre>
+<ul>
+<li><code>&lt;projectName&gt;</code> 是项目的名称，比如，Kubernetes应用的名称；</li>
+<li><code>&lt;functionality&gt;</code> 是此GitHub Action所指定的功能，比如，<code>部署</code>(<code>deploy</code>)，<code>规划</code>(<code>plan</code>)等；</li>
+<li><code>&lt;environment&gt;</code> 是所关联的基础设施的环境，比如，<code>开发环境</code>(<code>dev</code>)，<code>stage环境</code>(<code>stage</code>)，<code>生产环境</code>(<code>prod</code>)等；</li>
+</ul>
+<p>文件命名样例：<code>app1.validate.dev.yaml</code>, <code>app1.deploy.prod.yaml</code> 等。</p>
+<p>如此，一个GitHub Action对应一个独立的功能，避免了将一个代码仓库中的所有要执行的自动化操作放到一个Action中。</p>
+<h2 id="自定义的github-action">自定义的GitHub Action</h2>
+<p>参考<a href="https://github.com/possie-engine/gha-terragrunt">这个动作</a>。该动作集成了下面各节描述的必要的Terragrunt命令。可以直接使用该动作，避免从头写冗长的GitHub Actions。</p>
+<h2 id="terraform项目中的github-actions约定">Terraform项目中的GitHub Actions约定</h2>
+<p>对于每一个terraform IaC项目，应该至少包含<strong>两个</strong>独立的定义GitHub Actions的yaml文件。这些文件放置在<code>.github/workflows</code>文件夹下。</p>
+<ol>
+<li>一个action用于验证terraform代码的正确性和输出、查看部署计划，命名为<code>app1.plan.dev.yaml</code>；</li>
+<li>一个action用于部署、更新、或者销毁资源，触发对实际资源的操作（因此要十分小心），命名为<code>app1.deploy.dev.yaml</code>；</li>
+</ol>
+<p>(以上名称均假设在开发环境下)</p>
+<p>每种环境下，包含部署操作的GitHub Actions，都应该仅仅针对主分支以避免冲突。其他的不含部署操作的GitHub Actions可以用于任何分支。</p>
+<h2 id="github-actions的一些必要的代码片段和示例">GitHub Actions的一些必要的代码片段和示例</h2>
+<p>本小节中，假设在一个Terraform项目中包含两个GitHub Actions。一个用于Terraform代码的验证和部署规划，另一个用于更改实际的云端资源，比如，新建、更新和销毁操作。</p>
+<p>我们还假设，有两个分支。主分支(<code>main</code>)用于发布，而且必须时刻反映真实世界中的基础设施的部署状态。主分支是唯一应该包含部署操作的分支。开发分支(<code>dev</code>)用于开发，可以包含剔除了部署操作的任何GitHub Actions。</p>
+<p>这里，我们给出几个书写这些GitHub Actions的有用的代码片段。对于有关命名的具体约定，参考<a href="./GitConventions.md">GitConventions</a>。</p>
+<h3 id="1-github-actions中用到的基本代码片段">1. GitHub Actions中用到的基本代码片段</h3>
+<p>本小节列出一些在Terrafrom项目中可能用到的代码样例。但是，请注意，不需要完全遵守这些样例，它们仅仅是建议的做法。</p>
+<ul>
+<li><p><strong>设置默认工作目录</strong></p>
+<p>一个GitHub代码仓库可能是一个整合的大项目，其中，可能包含多级目录(文件夹)，不同的目录下可能涉及完全不同的子项目。因此，需要首先确保一个GitHub Actions在其目标子目录下工作。设置全局的默认工作目录通常是必须的。</p>
+<pre><code class="language-yaml">defaults:
+  run:
+    shell: bash
+    working-directory: path/to/your/working/directory
+</code></pre>
+</li>
+<li><p><strong>设置访问远程资源的相关凭证</strong></p>
+<p>在真实世界里进行实际部署通常需要提供相关的凭证来操作远程资源(云端资源，远程计算集群等)。这些凭证可能是用户名、密码、配置信息等。比如，在数及公司，我们使用AWS云服务，在AWS EKS上支撑的Kubernetes集群，GitHub等。有很多种方法向GitHub Actions传递这些凭证。这里，建议采取的方法是，让云端运行GitHub Actions的环境与本地计算机上的环境一致。这样可以保证本地的代码不需要改动可以直接在云端环境运行。具体的来说，把凭证文件里面的内容直接拷贝到云端运行环境内相应的文件(夹)内，这些文件在云端环境下的路径应该和本地的路径相一致。下面，以访问AWS和Kubernetes集群为例，给出GitHub Actions相关代码片段。</p>
+<p>设置环境变量，</p>
+<pre><code class="language-yaml">env:
+  AWS_CREDENTIALS: ${{ secrets.your_aws_credentials }}
+  AWS_CONFIG: ${{ secrets.your_aws_configration }}
+  KUBE_CONFIG_DATA: ${{ secrets.your_k8s_configuration }}
+</code></pre>
+<p>把存储在环境变量内的凭证信息拷贝到云端运行环境下的相应文件内，</p>
+<pre><code class="language-yaml">- id: setup-secret
+  name: Copy Credential Files into Runner
+  run: |
+    mkdir -p ~/.kube
+    echo &quot;${KUBE_CONFIG_DATA}&quot; &gt; ~/.kube/config
+    mkdir -p ~/.aws
+    echo &quot;${AWS_CREDENTIALS}&quot; &gt; ~/.aws/credentials
+    echo &quot;${AWS_CONFIG}&quot; &gt; ~/.aws/config
+</code></pre>
+<p><strong>注意：</strong> 对于Unix/Linux和MacOS操作系统，Kubernetes集群配置信息和API Server访问凭证默认存储在<code>$HOME/.kube/config</code>内，AWS的相关凭证默认存储在<code>$HOME/.aws/credentials</code>和<code>$HOME/.aws/config</code>下。</p>
+</li>
+<li><p><strong>设置Terragrunt</strong></p>
+<p>GitHub Actions应该首先在其运行环境中设置Terragrunt。这里建议直接下载Terragrunt官方发布的最新版本(或者某一特定版本)。GitHub Actions在其自己的应用市场中有少数的Terragrunt Actions，但是，大部分都已经过时，禁止使用这些封装好的Actions。</p>
+<p>获取Terragrunt的最新版本号，将其存储在一个全局变量中，并且定义安装Terragrunt二进制文件的路径(文件夹)。</p>
+<pre><code class="language-yaml">- id: get-terragrunt-latest-version
+  name: Obtain the Latest Version of Terragrunt
+  run: |
+    VERSION=$(curl --silent https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | grep &#39;&quot;tag_name&quot;:&#39; | sed -E &#39;s/.*&quot;([^&quot;]+)&quot;.*/\1/&#39;)
+    DIR=/opt/terragrunt/$VERSION/x64
+    echo &quot;TG_VERSION=${VERSION}&quot; &gt;&gt; $GITHUB_ENV
+    echo &quot;TG_DIR=${DIR}&quot; &gt;&gt; $GITHUB_ENV
+</code></pre>
+<p>设置针对Terragrunt二进制文件的缓存，以此避免不必要的重复下载。</p>
+<pre><code class="language-yaml">- id: cache-terragrunt-binary
+  name: Cache the Binary Program of a Specific Terragrunt Version
+  uses: actions/cache@v2
+  with:
+    path: ${{ env.TG_DIR }}
+    key: ${{ runner.os }}-Terragrunt-${{ env.TG_VERSION }}-x64
+    restore-keys: |
+      ${{ runner.os }}-Terragrunt-${{ env.TG_VERSION }}
+      Terragrunt-${{ env.TG_VERSION }}-x64
+      Terragrunt-${{ env.TG_VERSION }}
+</code></pre>
+<p>你可以更改缓存键(key)和备用缓存键(restore-keys)的名称，这里仅仅给出一个示例名称。</p>
+<p>下载最新版本的Terragrunt二进制文件。</p>
+<pre><code class="language-yaml">- id: tg-install
+  name: Install Terragrunt Binary
+  if: steps.cache-terragrunt-binary.outputs.cache-hit != &#39;true&#39;
+  run: |
+    sudo mkdir -p ${{ env.TG_DIR }}
+    sudo curl -L https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64 -o ${{ env.TG_DIR }}/terragrunt
+</code></pre>
+<p>这里，如果缓存命中，那么显式地跳过这一个步骤，因为，如果不显式地通过<code>if</code>跳过这步，<code>curl</code>命令仍然会被运行，Terragrunt的二进制文件仍会被下载，并且覆盖缓存中的文件。这是没有必要的，因为缓存中的文件跟<code>curl</code>下载的文件是一模一样的。</p>
+<p>配置Terragrunt二进制文件，设置其为可执行的文件，并且把该文件所在的路径加入到环境全局搜索路径中。</p>
+<pre><code class="language-yaml">- id: tg-setup
+  name: Add Terragrunt Program in PATH
+  run: |
+    sudo chmod +x ${{ env.TG_DIR }}/terragrunt
+    echo ${{ env.TG_DIR }} &gt;&gt; $GITHUB_PATH
+</code></pre>
+</li>
+<li><p><strong>设置Kubectl</strong></p>
+<p>类似设置Terragrunt，我们建议直接下载<code>kubectl</code>的最新官方发布版本（或者某一个特定版本）。然后，设置其为可以执行的文件，并加入全局搜索路径。</p>
+<p>获取<code>kubectl</code>的最新版本,</p>
+<pre><code class="language-yaml">- id: get-latest-kubectl-version
+  name: Obtain the Latest Version of kubectl
+  run: |
+    VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+    DIR=/opt/kubectl/$VERSION/x64
+    echo &quot;KUBECTL_VERSION=${VERSION}&quot; &gt;&gt; $GITHUB_ENV
+    echo &quot;KUBECTL_DIR=${DIR}&quot; &gt;&gt; $GITHUB_ENV
+</code></pre>
+<p>缓存<code>kubectl</code>的二进制文件,</p>
+<pre><code class="language-yaml">- id: cache-kubectl-binary
+  name: Cache the Binary Program of a Specific kubectl Version
+  uses: actions/cache@v2
+  with:
+    path: ${{ env.KUBECTL_DIR }}
+    key: ${{ runner.os }}-Kubectl-${{ env.KUBECTL_VERSION }}-x64
+    restore-keys: |
+      ${{ runner.os }}-Kubectl-${{ env.KUBECTL_VERSION }}
+      Kubectl-${{ env.KUBECTL_VERSION }}-x64
+      Kubectl-${{ env.KUBECTL_VERSION }}
+</code></pre>
+<p>下载<code>kubectl</code>的二进制文件,</p>
+<pre><code class="language-yaml">- id: kubectl-install
+  if: steps.cache-kubectl-binary.outputs.cache-hit != &#39;true&#39;
+  name: Install kubectl on the Runner
+  run: |
+    sudo mkdir -p ${{ env.KUBECTL_DIR }}
+    sudo curl -L https://storage.googleapis.com/kubernetes-release/release/${{ env.KUBECTL_VERSION }}/bin/linux/amd64/kubectl -o ${{ env.KUBECTL_DIR }}/kubectl
+</code></pre>
+<p>配置<code>kubectl</code>的二进制文件,</p>
+<pre><code class="language-yaml">- id: kubectl-setup
+  name: Add kubectl binary to PATH
+  run: |
+    sudo chmod +x ${{ env.KUBECTL_DIR }}/kubectl
+    echo ${{ env.KUBECTL_DIR }} &gt;&gt; $GITHUB_PATH
+</code></pre>
+</li>
+<li><p><strong>Terragrunt初始化</strong></p>
+<p>在目标工作目录中初始化Terragrunt，</p>
+<pre><code class="language-yaml">- id: tg-init
+  name: Terragrunt Initialization
+  run: terragrunt init
+</code></pre>
+<h3 id="2-terragrunt用于校验规划的github-action">2. Terragrunt用于校验/规划的GitHub Action</h3>
+</li>
+</ul>
+<p>在实际部署操作前，必须进行如下两个步骤：校验terraform/terragrunt编写的文件(<code>terragrunt validate-all</code>)，并且通过<code>terragrunt plan-all</code>命令来查看、审阅即将要发生的更改。这两个步骤必须在非主分支上运行。虽然主分支<strong>并不</strong>运行着两个步骤，但是在非主分支上必须保证这两个步骤无错误。</p>
+<pre><code class="language-yaml">- id: tg-validate
+  name: Terragrunt File Validation
+  run: terragrunt validate-all
+- id: tg-plan
+  if: endsWith(github.ref , &#39;-skip&#39;) == false
+  name: Terragrunt Planning (skip via tagging when needed)
+  run: terragrunt plan-all
+- id: clean-tag
+  name: Delete the tag
+  run: git push --delete origin ${{ github.ref }}
+</code></pre>
+<p><strong><em>重要:</em></strong> 当存在模块间的输入输出依赖，并且在terraform state文件中没有这些模块的状态（因为这些模块还没有被实际部署过）的时候，Terragrunt会在<code>validate</code>和<code>plan</code>命令中抛出错误退出，从而引起相应的GitHub Action出错退出。为了处理这种情况，在Terragrunt的<a href="https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#dependency">依赖块</a>中，设置<code>mock_outputs</code> 和 <code>mock_outputs_allowed_terraform_commands</code>选项。这两个步骤<strong>必须</strong>在合并到<code>main</code>分支之前无错误结束。如果不能做到<strong>无错误结束</strong>，那么，合并到主分支是被禁止的。（虽然使用上述的模拟模块输出数据会让<code>terragrunt plan-all</code>命令输出没有实际用处的计划，我们仍能够从输出的计划中看出将要部署的资源的结构）</p>
+<pre><code class="language-bash">dependency &quot;service_account&quot; {
+  config_path = &quot;${get_parent_terragrunt_dir()}/service_account&quot;
+  # Configure mock outputs for the `validate` and `plan` command that are returned when there are no outputs available (e.g the
+  # module hasn&#39;t been applied yet.
+  mock_outputs_allowed_terraform_commands = [&quot;validate&quot;, &quot;plan&quot;]
+  mock_outputs = {
+    resource_name = &quot;mock-sevice-account&quot;
+  }
+}
+</code></pre>
+<p>有的时候，某些资源需要<strong>真实</strong>的值才能够在<code>terragrunt plan-all</code>命令中无错误退出。在这种情况下，可以使用已经部署了的其他类似资源的<strong>真实资源值</strong>，或者通过标记<code>*-skip</code>来跳过这一步。当使用标记来跳过时，需要保证，action是用tag来触发的。如果是仅仅通过push分支来触发，github actions将无法把tag信息传递给action。为了避免太多的标记，可以在action的最后一步添加删除tag的操作(这里仅仅删除了远端repo的tag，本地的tag还没有删除，<strong>必须</strong>同时删除本地的tag，否则，再下一次push的时候，本地的tag会继续被push到远端repo，触发action)。</p>
+<pre><code class="language-yaml">on:
+  push:
+    tags:
+      - &quot;plan-*&quot;
+# some code
+- id: clean-tag
+  name: Delete the tag
+  run: git push --delete origin ${{ github.ref }}
+</code></pre>
+<h3 id="3-用于部署新功能的github-action">3. 用于部署新功能的GitHub Action</h3>
+<p>实际的部署操作应该<strong>仅仅</strong>用于主分支(<code>main</code>分支)。部署动作包含了操作真实云端资源的三个生命周期，创建、更新、和销毁资源。有两种方式来触发该动作。</p>
+<p>唯一能够触发创建和更新动作的时间是<code>pull request merge</code>。然而，在GitHub Actions中没有<code>pull request merge</code>这种触发事件，因此使用下述代码代替（使用if判断是否是pull request的合并分支事件）。</p>
+<p>当部署的资源不再有用，添加一个以<code>*-destroy</code>为结尾的标记来触发销毁资源的操作。</p>
+<p>两种触发方式如下：</p>
+<pre><code class="language-yaml">on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+    push:
+      tags:
+        - &quot;*-destroy&quot;
+</code></pre>
+<p>为了区分销毁操作和其他两种操作（更新和创建），在相关的步骤前面需要使用条件判断：</p>
+<pre><code class="language-yaml">jobs:
+  &lt;job id&gt;:
+    if: github.event.pull_request.merged == true || (github.event_name == &#39;push&#39; &amp;&amp; endsWith(github.ref, &#39;-destroy&#39;))
+    steps:
+      // some configuration steps
+      - id: tg-apply
+        if: github.event.pull_request.merged == true
+        name: Terragrunt Apply
+        run: terragrunt apply-all --terragrunt-non-interactive
+
+      - id: tg-destroy
+        if: github.event_name == &#39;push&#39; &amp;&amp; endsWith(github.ref, &#39;-destroy&#39;)
+        name: Terragrunt Destroy
+        run: |
+          terragrunt destroy-all --terragrunt-non-interactive
+          git push --delete origin ${{ github.ref }}
+</code></pre>
+<p>部署新功能的GitHub Actions不应该使用<code>terragrunt validate-all</code> 或者 <code>terragrunt plan-all</code>这种命令，因为它们本应该在向<code>main</code>分支合并前就已经运行过了。</p>
+
+	</div>
+</body>
+</script>
+</html>

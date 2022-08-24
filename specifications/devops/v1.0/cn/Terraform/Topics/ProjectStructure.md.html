@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="项目结构">项目结构</h2>
+<h2 id="代码仓库规范">代码仓库规范</h2>
+<p>每个Terraform项目应该包含至少两个不同的GitHub仓库：一个以 <strong><em>live</em></strong> 为后缀命名，另一个以 <strong><em>modules</em></strong> 为后缀命名。</p>
+<p><strong><em>live</em></strong> 仓库定义了线上部署的不同环境下的基础设施的实时代码(开发环境，Stage环境，生产环境等)。此仓库的main分支应该<strong>完美、1对1</strong>的反映实际线上部署的基础设施情况。</p>
+<p><strong><em>modules</em></strong> 仓库用于定义在 <strong><em>live</em></strong> 仓库中使用到的可重复使用的、版本化的Terraform模块。该仓库必须使用<code>git tag</code>来合理标注以方便在 <strong><em>live</em></strong> 仓库中调用。</p>
+<p>仓库命名示范：</p>
+<pre>
+dr_sample_terraform_project_live
+dr_sample_terraform_project_modules
+</pre>
+
+<p><strong>注意：</strong> 对于某些小的或者临时的项目，仅仅使用一个 <strong><em>live</em></strong> 仓库即可，但是，仍需要遵循命名规范。</p>
+<h2 id="live仓库">Live仓库</h2>
+<p><strong><em>live</em></strong> 仓库应该包含至少三个环境：开发环境、Stage环境、和生产环境。</p>
+<p><strong>警告：</strong> 不要使用Terraform自带的workspace（工作空间）功能来区分不同的环境。使用文件夹来区分是更好的实践方式。</p>
+<p>每个环境应该进行合理的模块化，而不是仅仅使用一个terraform文件来描述所有用于线上部署的资源。比如，采用如下的项目结构：</p>
+<pre>
+development/ .....................开发环境
+├─ terragrunt.hcl ................顶级Terragrunt配置文件
+├─ vpc/ ..........................AWS VPC 子模块 (网络配置)
+├─ services/ .....................应用服务子模块 (具体的应用服务部署配置)
+│  ├─ frontend-app/ ..............前端应用
+│  │  └─terragrunt.hcl ...........应用的Terragrunt配置文件
+│  └─ backend-app/ ...............后端应用
+│     ├─ terragrunt.hcl ..........应用的Terragrunt配置文件
+│     ├─ variables.tf ............输入变量定义
+│     ├─ dev.tfvars ..............开发环境下的输入变量默认值
+│     ├─ main.tf .................主Terraform配置文件
+│     └─ outputs.tf ..............输出变量定义
+└─ data_storage/ .................数据存储子模块 (具体的数据库的配置)
+   ├─ mysql/ .....................MySQL 数据库
+   └─ redis/ .....................Redis 数据库
+stage/ ...........................Stage环境
+├─ vpc/ ..........................AWS VPC 子模块 (网络配置)
+├─ services/ .....................应用服务子模块 (具体的应用服务部署配置)
+│  ├─ frontend-app/ ..............前端应用
+│  └─ backend-app/ ...............后端应用
+└─ data_storage/ .................数据存储子模块 (具体的数据库的配置)
+   ├─ mysql/ .....................MySQL 数据库
+   └─ redis/ .....................Redis 数据库
+prod/ ............................生产环境
+├─ vpc/ ..........................AWS VPC 子模块 (网络配置)
+├─ services/ .....................应用服务子模块 (具体的应用服务部署配置)
+│  ├─ frontend-app/ ..............前端应用
+│  └─ backend-app/ ...............后端应用
+└─ data_storage/ .................数据存储子模块 (具体的数据库的配置)
+   ├─ mysql/ .....................MySQL 数据库
+   └─ redis/ .....................Redis 数据库
+mgmt/ ............................管理相关的基础设施
+├─ vpc/ ..........................AWS VPC 子模块 (网络配置)
+└─ services/ .....................应用服务子模块 (具体的应用服务部署配置)
+   └─ jenkins/ ...................Jenkins服务器子模块
+global/ ..........................全局的基础设施
+├─ iam/ ..........................AWS IAM 子模块 (用户账户、登录相关)
+└─ s3/ ...........................AWS S3 子模块 (全局存储相关)
+</pre>
+
+<p><strong>注释：</strong></p>
+<ul>
+<li>上述的例子是一个通用的Terraform项目的结构。对于一个具体的项目，比如，Kubernetes项目，并非需要上述所有的文件夹，但是，仍然需要采用适当的模块化方法。</li>
+<li>尽可能的避免使用充当胶水作用的bash脚本，使用Terragrunt作为替代（比如，处理模块依赖，深层的嵌套模块等问题）</li>
+</ul>
+<h2 id="modules仓库">Modules仓库</h2>
+<p><strong><em>modules</em></strong> 仓库本身是可选的，根据项目大小来考虑是否创建此仓库。如果创建了此仓库，应该是一个单独的仓库，因为这个仓库应该包含可重用的、版本化的Terraform模块。这些模块可以被多个不同的 <strong><em>live</em></strong> 仓库使用。每个模块类似传统编程语言中的函数，具有输入、输出变量、和函数体（Terraform中对应于该模块所使用的云端资源配置）。</p>
+<pre>
+modules/ .........................模块文件夹
+└─ services/ .....................应用服务
+   ├─ frontend-app/ ..............前端应用模块
+   │  ├─ README.md ...............模块说明文档（此文档应包含如何在live仓库中使用该模块）
+   │  ├─ variables.tf ............输入变量定义
+   │  ├─ main.tf .................主Terraform配置文件
+   │  └─ outputs.tf ..............输出变量定义
+   └─ backend-app/ ...............后端应用模块
+      ├─ README.md ...............模块说明文档（此文档应包含如何在live仓库中使用该模块）
+      ├─ variables.tf ............输入变量定义
+      ├─ main.tf .................主Terraform配置文件
+      └─ outputs.tf ..............输出变量定义
+examples/ ........................模块使用样例（结构需对应模块文件夹）
+└─ services/
+   ├─ frontend-app/ ..............前端应用模块使用样例
+   └─ backend-app/ ...............后端应用模块使用样例
+test/ ............................模块测试
+└─ services/
+   ├─ frontend-app/ ..............前端应用模块测试
+   └─ backend-app/ ...............后端应用模块测试
+</pre>
+
+<ul>
+<li>模块应该保持复杂度足够小、可组合、可测试、可独立发布。</li>
+<li>模块使用样例文件夹应该包括最小的可使用例子来展示如何。</li>
+<li>模块测试文件夹应该包括使用任意语言编写的测试代码，此测试代码在云上实际部署一个基础设施，然后测试它。比如，使用Go语言和<code>terratest</code>工具进行测试。</li>
+<li>使用<code>git tag</code>命令来发布一个模块。</li>
+<li>模块不应该包含输入参数的默认值。这些默认的参数值应该在**<em>live</em>**仓库里插入（在<code>example</code>和<code>test</code>文件夹中的用例中，也可以插入这些默认值）。这些默认的参数值类似环境变量。</li>
+</ul>
+<p><strong>注意：</strong> 对于小的项目来说，上述的文件结构中的某些部分可以被省略。</p>
+<h2 id="文件拆分规范">文件拆分规范</h2>
+<p>在每一个最底层的文件夹内（一个最小单元的子模块），Terraform定义的基础设施不应该放在一个单独的文件里。相反，应该拆分成至少三个文件：输入变量定义文件、输出变量定义文件，和主要的资源配置文件，具体如下：</p>
+<pre>
+├─ variables.tf ............输入变量定义文件
+├─ main.tf .................主Terraform资源配置、部署文件
+└─ outputs.tf ..............输出变量定义文件
+</pre>
+
+<p><code>*.tfvars</code> 为后缀的文件仅仅用于 <strong><em>live</em></strong> 仓库里，以及<code>example</code>和<code>test</code>文件夹中的用例中，此文件用于给定默认的输入变量的取值。</p>
+
+	</div>
+</body>
+</script>
+</html>

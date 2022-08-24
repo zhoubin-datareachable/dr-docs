@@ -1,0 +1,568 @@
+openapi: 3.0.3
+info:
+  title: AdminAPI
+  description: AdminAPI. Used by dR administrators to manage various things.
+  version: "1.0.0"
+  contact:
+    name: R&D / Backend Team
+    email: matthew.chong@datareachable.com
+servers:
+  - url: 'https://admin-system.dev.datareachable.net'
+paths:
+  /api/v1/admin/plugins/pending:
+    get:
+      description: Gets a list of items pending approval
+      tags: [ Posts Approval ]
+      parameters:
+        - $ref: "#/components/parameters/pluginsPerPage"
+        - $ref: "#/components/parameters/pageNumber"
+      responses:
+        200:
+          description: Listing returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModQueue"
+  /api/v1/admin/plugin/{dri}/grant_privileges:
+    put:
+      description: Grant extra privileges to a 3rd party plugin.
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ Posts Approval ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csp:
+                  type: array
+                  description: >-
+                    A subset of [sandbox attributes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/sandbox) can be added to the plugin's details.
+                  items:
+                    type: string
+                    pattern: "^allow-(modals|popups(-to-escape-sandbox)?|same-origin)$"
+      responses:
+        200:
+          description: Plugin granted extra permissions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin permissions granted" }
+        404:
+          description: Plugin "doesn't exist" - it either really doesn't exist or it has been given the permissions already.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+#  /api/v1/admin/plugin/{dri}/yank:
+#    delete:
+#      description: Removes a plugin revision from our systems.
+#      parameters:
+#        - $ref: "#/components/parameters/dri"
+#      tags: [ Pushing ]
+#      responses:
+#        200:
+#          description: Plugin removed from production
+#          content:
+#            application/json:
+#              schema:
+#                allOf:
+#                  - $ref: "#/components/schemas/GenericResponse"
+#                example: { code: 200000, message: "Plugin yanked" }
+#        404:
+#          description: Plugin "doesn't exist" - it either really doesn't exist or it has been yanked.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/PluginNotFound"
+  /api/v1/admin/plugin/{name}/approve:
+    put:
+      description: Approve a plugin's publish request
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ Posts Approval ]
+      responses:
+        200:
+          description: Approved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin published." }
+        404:
+          description: Plugin does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+  /api/v1/admin/plugin/{name}/delist:
+    put:
+      description: Remove a plugin from the marketplace
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ Posts Approval ]
+      responses:
+        200:
+          description: Delisted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin delisted." }
+        404:
+          description: Plugin does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+  /api/v1/admin/mfa:
+    get:
+      description: Generates the MFA QR code
+      tags: [ "MFA" ]
+      parameters:
+        - required: false
+          name: raw
+          in: query
+          description: "If specified, the API returns an image of the QR code instead of the wrapped JSON response."
+      responses:
+        200:
+          description: MFA code attached
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                  - properties:
+                      data:
+                        description: "data URI of the QR code"
+                        type: string
+                        format: uri
+            image/png:
+              example: ""
+    put:
+      description: Confirm the 2FA code, permanently lock it.
+      tags: [ "MFA" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MFARequest"
+      responses:
+        200:
+          description: MFA code now confirmed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+  /api/v1/admin/plugin/<name>/transfer/<transfer_id>/approve:
+    put:
+      description: Admin approves transfer request
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+        - $ref: "#/components/parameters/transferId"
+      tags: [ "Plug: Transfer" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MFARequest"
+      responses:
+        200:
+          description: Transfer now approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+  /api/v1/admin/plugin/transfers:
+    get:
+      description: Get the list of plugins pending transfer
+      parameters:
+        - $ref: "#/components/parameters/pluginsPerPage"
+        - $ref: "#/components/parameters/pageNumber"
+      tags: [ "Plug: Transfer" ]
+      responses:
+        200:
+          description: Plugin List
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PluginTransferObj"
+  /api/v1/admin/user/:dri:
+    get:
+      description: Get the user's info
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ "Users" ]
+      responses:
+        200:
+          description: User Info
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - properties:
+                      data:
+                        $ref: "#/components/schemas/UserObject"
+  /api/v1/admin/user/:dri/password:
+    put:
+      description: Reset a user's password
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ "Users" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/MFARequest"
+                - properties:
+                    password:
+                      type: string
+                      description: "Plain-text new password of the user"
+      responses:
+        200:
+          description: User Info
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+#  /api/v1/admin/plugins/packages/registry:
+#    get:
+#      description: List the packages pending approval in the registry proxy
+#      tags: [ "Package Registry" ]
+#      parameters:
+#        - $ref: "#/components/parameters/packagesPerPage"
+#        - $ref: "#/components/parameters/pageNumber"
+#      responses:
+#        200:
+#          description: List packages pending approval
+#          content:
+#            application/json:
+#              schema:
+#                allOf:
+#                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+#                  - type: object
+#                    properties:
+#                      data:
+#                        type: array
+#                        description: "List of approval-pending packages"
+#                        items:
+#                          type: object
+#                          properties:
+#                            name:
+#                              type: string
+#                              description: "Name of the plugin"
+#                            integrity:
+#                              type: string
+#                              description: "The npm-generated checksum of the requested package in particular"
+#                            eslintOutputs:
+#                              type: object
+#                              description: "The offending ESLint output."
+#                              properties:
+#                                stdout:
+#                                  type: string
+#                                  description: "stdout of eslint"
+#                                stderr:
+#                                  type: string
+#                                  description: "stderr of eslint"
+#                            scripts:
+#                              type: object
+#                              description: "The offending scripts that failed the check."
+#                              properties:
+#                                preinstall:
+#                                  $ref: "#/components/schemas/ScriptContent"
+#                                install:
+#                                  $ref: "#/components/schemas/ScriptContent"
+#                                postinstall:
+#                                  $ref: "#/components/schemas/ScriptContent"
+#                                prepublish:
+#                                  $ref: "#/components/schemas/ScriptContent"
+#                                preprepare:
+#                                  $ref: "#/components/schemas/ScriptContent"
+#                                prepare:
+#                                  $ref: "#/components/schemas/ScriptContent"
+#                                postprepare:
+#                                  $ref: "#/components/schemas/ScriptContent"
+#                            bindings:
+#                              type: string
+#                              description: "Contents of the binding.gyp file in the root of the package, if it exists."
+#  /api/v1/admin/plugin/packages/registry/<action>:
+#    put:
+#      description: Act upon a package within the registry
+#      parameters:
+#        - name: "action"
+#          in: path
+#          example:
+#            - "whitelist"
+#            - "blacklist"
+#          description: The action to perform against the plugins in the request body.
+#      tags: [ "Package Registry" ]
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              type: object
+#              description: List of plugins to perform the action on
+#              properties:
+#                integrity:
+#                  description: "The npm-generated checksum of the packages. Use the integrity option if the *particular version* is trustworthy, but the package itself as a whole is not"
+#                  items:
+#                    type: string
+#                name:
+#                  description: "The name of the packages to whitelist"
+#                  items:
+#                    type: string
+#              example: {
+#                integrity: [ "sha512-ABCDEFGHIJKLMNOP..." ],
+#                name: [ "react", "@types/node" ]
+#              }
+#      responses:
+#        200:
+#          description: Packages approved
+#          content:
+#            application/json:
+#              schema:
+#                allOf:
+#                  - $ref: "#/components/schemas/GenericResponse"
+#                example: {
+#                  code: 200000,
+#                  message: "All packages approved."
+#                }
+#        400:
+#          description: Some packages failed to get approval
+#          content:
+#            application/json:
+#              schema:
+#                allOf:
+#                  - $ref: "#/components/schemas/GenericResponse"
+#                example: {
+#                  code: 400000,
+#                  message: "Some packages were not approved."
+#                }
+components:
+  parameters:
+    dri:
+      in: path
+      name: dri
+      schema:
+        type: string
+      required: true
+      description: >-
+        The entity's DRI.
+
+        Note that all our endpoints return a standard DRI and it's the responsibility of the frontend to
+        URI-encode the entire DRI before using it as a path parameter with any requests to the backend.
+        In this case, the appropriate function to use is [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
+    plugName:
+      in: path
+      name: name
+      schema:
+        type: string
+      required: true
+      description: The plugin's published name. It can be applied by PUT `/api/v1/plugin/<dri>/tag`, and it is initialized by PUT `/api/v1/plugin/<name>/claim`
+# TODO Replace with skip/take
+    pluginsPerPage:
+      in: query
+      name: plugins_per_page
+      schema:
+        type: number
+        minimum: 4
+        maximum: 25
+      required: false
+      description: The maximum number of plugins to include in the response, and by proxy, the number of plugins per page for the purposes of pagination.
+    pageNumber:
+      in: query
+      name: page
+      schema:
+        type: number
+      required: false
+      description: The page number desired of the overall list of plugins. If omitted, the first page is returned. The page number is zero-indexed. The size of the page is determined by the query parameter `pluginsPerPage`.
+  schemas:
+    GenericResponse:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "dataReachable in-house standard 6-digit response codes. Extension of HTTP response codes"
+        message:
+          type: string
+          description: "Message describing the response in a human-friendly way"
+    GenericResponseWithPayload:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: "Wrapper around the response data"
+    MFARequest:
+      type: object
+      properties:
+        code:
+          type: string
+          pattern: "\\d{6}"
+          description: "The 2FA TOTP code generated by the admin's 2FA app."
+    ModQueuePost:
+      type: object
+      properties:
+        dri:
+          type: string
+          description: "The DRI of the object pending approval / extra permissions."
+        last_revised:
+          type: string
+          format: date-time
+          description: "The time at which the psot was last updated"
+        name:
+          type: string
+          description: "Human-friendly name of the plugin"
+        owner:
+          allOf:
+            - type: object
+              description: "The plugin's owner (org)"
+            - $ref: "#/components/schemas/PseudoUser"
+        creator:
+          allOf:
+            - type: object
+              description: "The plugin's author (user)"
+            - $ref: "#/components/schemas/PseudoUser"
+        description:
+          type: string
+          description: "The entirety of the plugin's description"
+        tags:
+          type: array
+          description: "The tags the plugin was published with"
+          items:
+            type: string
+        pricing:
+          type: number
+          description: "(Nullable) Price of the plugin - PLACEHOLDER"
+        gallery:
+          type: array
+          description: "The identifier of all gallery images of the plugin. The first is the cover/preview image."
+          items:
+            type: string
+        privilegesRequest:
+          type: array
+          description: >-
+            A subset of the list of permission elements [as defined by the iframe sandbox attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#attr-sandbox)
+              * `allow-scripts` (implicit)
+              * `allow-same-origin`
+          items:
+            type: string
+    ModQueue:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ModQueuePost"
+      example: {
+        code: 200000,
+        message: "Listing of plugins pending action.",
+        data: [
+          {
+            dri: "dri:plgMkt::post/hello-world",
+            name: "hello-world",
+            author: "dataReachable Team",
+            description: "# Markdown Description",
+            tags: [ "test", "example" ],
+            pricing: 420.69,
+            gallery: [ "dri:plgMkt::img/<uuid>.<ext>" ],
+            privilegesRequest: [ "allow-same-origin" ]
+          }
+        ]
+      }
+    PluginNotFound:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: {
+        code: 404000,
+        message: "Plugin not found"
+      }
+    ScriptContent:
+      type: string
+      description: "Contents of the script."
+    PluginTransferObj:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Generated transfer ID"
+        plugin_name:
+          type: string
+          format: uri
+          description: "DRI of the plugin claim this transfer references"
+        initiated_at:
+          type: string
+          description: "Time the transfer was initiated"
+          format: iso8601
+        sender:
+          allOf:
+            - description: "The 'current' owner org of the plugin"
+            - $ref: "#/components/schemas/PseudoUser"
+        receiver:
+          allOf:
+            - description: "The 'future' owner org of the plugin"
+            - $ref: "#/components/schemas/PseudoUser"
+        status:
+          type: string
+          pattern: "Initiated|Acknowledged|Approved|Transferred|Cancelled"
+        final_confirmation:
+          type: object
+          description: "Status of the final confirmation, post-approval"
+          properties:
+            sender:
+              type: boolean
+            receiver:
+              type: boolean
+    PseudoUser:
+      type: object
+      properties:
+        dri:
+          description: DRI of this user entity
+        name:
+          description: Name of this user entity
+    UserObject:
+      allOf:
+        - $ref: "#/components/schemas/PseudoUser"
+        - properties:
+            created_at:
+              type: string
+              format: iso8601
+            updated_at:
+              type: string
+              format: iso8601
+            gender:
+              type: string
+            birthday:
+              type: string
+              format: iso8601
+            password:
+              type: string
+            avatar:
+              type: string
+            email:
+              type: string
+            mobile:
+              type: object
+              properties:
+                country:
+                  type: string
+                area:
+                  type: string
+                number:
+                  type: string

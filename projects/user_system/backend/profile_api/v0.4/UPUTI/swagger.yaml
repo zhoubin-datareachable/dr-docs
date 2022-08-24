@@ -1,0 +1,778 @@
+﻿openapi: 3.0.3
+
+info:
+  version: v2.0
+  title: 本文档展示最新版本 profile - UPUTI API 请求规范文档
+  description: >-
+    <br><HR>
+    **项目服务器访问域名&根目录:** https://profile.dev.datareachable.net
+    <br><HR>
+    **Github项目地址:** [User Profile API Server](https://github.com/dataReachable/dr_Back_UserSystemProfile)
+    <br><HR>
+  contact:
+    name: Backend Team
+    email: jiasehng.jing@datareachable.com
+
+servers:
+  - url: "https://profile.dev.datareachable.net/"
+    description: 公网调用地址
+  - url: "http://192.168.2.48:3001/"
+    description: 内网调用地址
+
+tags:
+  - name: Complete
+    description: Already complate api document
+  - name: Developing
+    description: Wiriting api document on process
+
+components:
+  schemas:
+    code:
+      type: string
+      description: 平台自定义的请求响应码 6 位 number 组成
+    succeed:
+      type: boolean
+      description: 前端请求涉及到 update data 的时候需要返回的响应字段， 代表着 update 的结果， false 代表更新失败， true 代表更新成功.
+    message:
+      type: string
+      description: 后端对请求响应结果的简要信息.
+    organization_dri:
+      type: string
+      description: organization 的全局资源定位符
+    organization_name:
+      type: string
+      description: organization 的名称，全局唯一且不能包含特殊字符(.?!除外)
+    organization_email:
+      type: string
+      description: organization 的联系方式u之一——邮箱，初始邮箱一般都是该 organization 的创建者的邮箱，后期支持更改！
+    organization_phone:
+      type: object
+      description: organization 的联系方式之一——电话
+      properties:
+        country:
+          type: number
+          description: 电话号码前的国家代码 例如中国[61]
+        number:
+          type: string
+          description: 电话号码后的号码段
+    organization_description:
+      type: string
+      description: organization 的简介，用于对 organization 进行简要的说明与介绍的文字性内容
+    organization_status:
+      type: string
+      description: organization 的状态值，可选的有 private 和 public， 当为 private 的时候，该 organization 对外显示信息不可见， public 则对外可见，可被搜索到.
+    organization_logo:
+      type: string
+      description: 一个可以被直接加载出来的 organization 的 LOGO AWS网络图片的地址
+    talent_group_name:
+      type: string
+      description: talent_group 的名称， 不能包含特殊字符(.?!除外)，并且需要在同一个 organization 内部不重复
+    talent_group_dri:
+      type: string
+      description: talent_group 的全局资源定位符， uuid 部分包含和其所在的 organization 的 uuid 并追加 6 位私有的 uuid
+    talent_group_status:
+      type: string
+      description: talent_group 的状态描述， 可选值为 private 和 public ，同样，这个状态也标志着本 talent_group 在某些情景下的对外可见情况
+    user_dri:
+      type: string
+      description: system user 的全局资源定位符
+    user_name:
+      type: string
+      description: system user 的名称,在系统中需要全局唯一，并且不能包含特殊字符(.?!除外)，是登录系统凭据的一部分
+    user_password:
+      type: string
+      description: system user 的登录密码， 目前仅仅用作与 user_name 搭配登录系统使用，且需要包含部分特殊字符等强校验规则，用于确保密码强度，在数据库中对密码进行加密(存储密文)保护用户信息
+    user_gender:
+      type: string
+      description: system user 的性别，目前未作设定，尚待确认
+    user_birthday:
+      type: string
+      description: system user 的生日，为日期格式字符串，目前尚未作出相关规范
+    user_email:
+      type: string
+      description: system user 的邮箱地址，默认为用户在系统中首次注册的时候使用的邮箱，此项在后续的系统中一定会存在，并且支持用户后期更改
+    user_mobile:
+      type: string
+      description: system user 的联系方式之一——电话，该项在用户注册的时候不属于强制补全项， 属于用户的后期补充项，可以为 null.
+    user_avatar:
+      type: string
+      description: system user 的头像， 当用户上传头像到aws之后，用户的头像可加载的网络图片地址，在用户没有上传头像之前默认为 null ，由前端根据 organization name 使用组建生成字母头像.
+
+    #=======================
+    res_400100:
+      description: "获取 organization descriptions 参数错误响应"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example:
+        {
+          code: 400100,
+          message: "xxx 是必填字段，不可为空！"
+        }
+
+    res_403100:
+      description: 当前 API 仅支持 organization 的 owner 操作
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 403100,
+        message: "The current operation only supports owner"
+      }
+
+    res_403200:
+      description: 当前 API 仅支持 organization 的 owner 或者 admin 操作
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 403200,
+        message: "The current operation only supports owner or admin"
+      }
+
+    res_403300:
+      description: 当前 API 仅支持 organization 的 member 操作
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 403300,
+        message: "The Current User Does Not Belong To The Organization!"
+      }
+
+  responses:
+    res_500:
+      description: 服务器发生错误时的响应
+      content:
+        application/json:
+          schema:
+            type: object
+            description: 错误响应体
+            properties:
+              code:
+                $ref: "#/components/schemas/code"
+              message:
+                $ref: "#/components/schemas/message"
+            example: {
+              code: 500100,
+              message: "Something Was Wrong On Server!"
+            }
+
+    res_401:
+      description: 无法验证用户导致的错误响应
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                example: {
+                  code: 401100,
+                  message: "JWT not found in the header, access denied!"
+                }
+              - type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                example: {
+                  code: 401100,
+                  message: "JWT validation failed, access denied!"
+                }
+
+paths:
+
+  /api/v2/utility/organization/logo_urls/get:
+    post:
+      tags:
+        - Complete
+      summary: "[批量获取 organization 的 logo urls](UPUTI00001)"
+      description: "需要用户处于登录状态才可以访问当前API！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 需要用户传入需要查询的 organization 的全局资源定位符
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dris"
+              type: object
+              properties:
+                organization_dris:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/organization_dri"
+              example: {
+                "organization_dris": [
+                    "dri:acs::org/EmYFAUfiy6X11esw9j",
+                    "dri:acs::org/wgy9w1Qhj26B3ZFzzg"
+                ]
+              }
+
+      responses:
+        "200":
+          description: 成功获取对应的 organization 的 logo url
+          content:
+            application/json:
+              schema:
+                description: 获取 logo urls 成功响应体，当 organization status 为 `private` 的时候，该 organization 的信息将不会被展示在响应体中！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: response data payload
+                    properties:
+                      organization_logo_urls:
+                        type: array
+                        description: 每个 organization 的元数据信息
+                        items:
+                          properties:
+                            organization_dri:
+                              $ref: "#/components/schemas/organization_dri"
+                            organization_name:
+                              $ref: "#/components/schemas/organization_name"
+                            organization_logo_url:
+                              $ref: "#/components/schemas/organization_logo"
+                example: {
+                  "code": 200100,
+                  "message": "Get Organization Logo Info Successfully!",
+                  "data": {
+                    "organization_logo_urls": [
+                      {
+                        "organization_dri": "dri:acs::org/EmYFAUfiy6X11esw9j",
+                        "organization_name": "org002",
+                        "organization_logo_url": "https://xxxx.xxx/xxx.jpeg"
+                      }
+                    ]
+                  }
+                }
+
+        "400":
+          description: 请求参数错误，服务器取消执行
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/utility/user/avatar_urls/get:
+    post:
+      tags:
+        - Complete
+      summary: "[批量获取 user 的 avatar urls](UPUTI00002)"
+      description: 获取一批系统用户的头像地址名字等非敏感信息， 需要当前用户处于登录状态才可请求当前API。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 请求体中应当包含需要查询的每个用户的 user dri，并以数组的形式提交到后台.
+        content:
+          application/json:
+            schema:
+              required:
+                - "user_dris"
+              type: object
+              properties:
+                user_dris:
+                  type: array
+                  description: 用户的全局资源定位符数组
+                  items:
+                    $ref: "#/components/schemas/user_dri"
+              example: {
+                "user_dris": [
+                    "dri:acs::user/aquyAydK7MrvyPoRBEbFX",
+                    "dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h"
+                ]
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 user avatar urls 的成功响应体！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      user_logo_urls:
+                        type: array
+                        items:
+                          properties:
+                            user_dri:
+                              $ref: "#/components/schemas/user_dri"
+                            user_name:
+                              $ref: "#/components/schemas/user_name"
+                            user_logo_url:
+                              $ref: "#/components/schemas/user_avatar"
+                example: {
+                  "code": 200100,
+                  "message": "Get User Avatar Info Successfully",
+                  "data": {
+                    "user_logo_urls": [
+                      {
+                        "user_dri": "dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h",
+                        "user_name": "JiashengJing.123",
+                        "user_logo_url": "https://xxx.xxxx/xxx.jpeg"
+                      },
+                      {
+                        "user_dri": "dri:acs::user/aquyAydK7MrvyPoRBEbFX",
+                        "user_name": "Changyuswife",
+                        "user_logo_url": null
+                      }
+                    ]
+                  }
+                }
+
+        "400":
+          description: 请求参数错误，服务器取消执行
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/utility/organization/descriptions/get:
+    post:
+      tags:
+        - Complete
+      summary: "[批量获取 organization 的 description](UPUTI00003)"
+      description: 请求该 API 的用户必须在系统中处于登录状态
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 前端需要将目标 organization 的 dri 全部放入 organization_dris 的数组当中，发送到后端.
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dris"
+              type: object
+              properties:
+                organization_dris:
+                  type: array
+                  description: 目标 organization 的定位符数组
+                  items:
+                    $ref: "#/components/schemas/organization_dri"
+              example: {
+                "organization_dris": [
+                    "dri:acs::org/EmYFAUfiy6X11esw9j",
+                    "dri:acs::org/wgy9w1Qhj26B3ZFzzg"
+                ]
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization descriptions 成功响应体，当 organization status 为 `private` 的时候，该 organization 的信息将不会被展示在响应体中！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      organizations_descriptions:
+                        type: array
+                        description: organization 包含 description 的元数据数组
+                        items:
+                          type: object
+                          properties:
+                            organization_dri:
+                              $ref: "#/components/schemas/organization_dri"
+                            organization_name:
+                              $ref: "#/components/schemas/organization_name"
+                            organization_description:
+                              $ref: "#/components/schemas/organization_description"
+                example: {
+                  "code": 200100,
+                  "message": "Get Organization Description Info Successfully!",
+                  "data": {
+                    "organization_descriptions": [
+                      {
+                        "organization_dri": "dri:acs::org/EmYFAUfiy6X11esw9j",
+                        "organization_name": "org002",
+                        "organization_description": "this is a test description!!!!"
+                      }
+                    ]
+                  }
+                }
+
+        "400":
+          description: 请求参数错误，服务器取消执行
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/utility/organization/contacts/get:
+    post:
+      tags:
+        - Complete
+      summary: "[批量获取 organization 的联系方式](UPUTI00004)"
+      description: 请求该 API 的用户需要处于登录状态
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 前端需要传入被查询的所有的 organization 的 dri 到一个 organization_dris 数组当中传递给后端.
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dris"
+              type: object
+              properties:
+                organization_dris:
+                  type: array
+                  description: 包含目标 organoization 的 organization 的 dri 数组
+                  items:
+                    $ref: "#/components/schemas/organization_dri"
+              example: ["dri:acs::org/Sqb61rFpyfDRC-gWtN", "dri:acs::org/Sqb61rFpyfDRC-gWtN"]
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization 联系方式的成功响应体，当 organization status 为 `private` 的时候，该 organization 的信息将不会被展示在响应体中！
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      organization_contact_methods:
+                        type: array
+                        description: 获取到的 organization 包含 contact 的元数据数组
+                        items:
+                          properties:
+                            organization_dri:
+                              $ref: "#/components/schemas/organization_dri"
+                            organization_name:
+                              $ref: "#/components/schemas/organization_name"
+                            organization_email:
+                              $ref: "#/components/schemas/organization_email"
+                            organization_phone:
+                              $ref: "#/components/schemas/organization_phone"
+                example: {
+                  "code": 200100,
+                  "message": "Get Organization Contact Info Successfully!",
+                  "data": {
+                    "organization_contact_methods": [
+                      {
+                        "organization_dri": "dri:acs::org/EmYFAUfiy6X11esw9j",
+                        "organization_name": "org002",
+                        "organization_email": "j_jiasheng@163.com",
+                        "organization_phone": {
+                          "number": "422360725",
+                          "country": "61"
+                        }
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/RFVl6WZIqm6AOxBsEY",
+                        "organization_name": "Changyu.swife",
+                        "organization_email": "j_jiasheng@163.com",
+                        "organization_phone": null
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/goCijRLvxaXdDdY68I",
+                        "organization_name": "最新的organization001",
+                        "organization_email": null,
+                        "organization_phone": {
+                          "number": "422360725",
+                          "country": "61"
+                        }
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/tJBnozdcRbX4i5I8pF",
+                        "organization_name": "limengming.swife",
+                        "organization_email": "j_jiasheng@123.com",
+                        "organization_phone": null
+                      }
+                    ]
+                  }
+                }
+
+        "400":
+          description: 请求参数错误，服务器取消执行
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/utility/user/organizations/get:
+    post:
+      tags:
+        - Complete
+      summary: "[批量获取 user 的 organization name 和 dris](UPUTI00005)"
+      description: 请求该 API 的用户需要处于登录状态
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取用户的 organization list 的成功响应体， 包含 organization 的详情 name 和 dri
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      organizations:
+                        type: array
+                        description: 获取到的 organization 包含 name 和 dri 的元数据数组
+                        items:
+                          properties:
+                            organization_dri:
+                              $ref: "#/components/schemas/organization_dri"
+                            organization_name:
+                              $ref: "#/components/schemas/organization_name"
+                example: {
+                  "code": 200100,
+                  "message": "Get User Organization List Successfully!",
+                  "data": {
+                    "organizations": [
+                      {
+                        "organization_dri": "dri:acs::org/wgy9w1Qhj26B3ZFzzg",
+                        "organization_name": "JiashengJing.123"
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/EmYFAUfiy6X11esw9j",
+                        "organization_name": "org002"
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/o_iiStvT5lZtcJFvqy",
+                        "organization_name": "org003"
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/goCijRLvxaXdDdY68I",
+                        "organization_name": "最新的organization001"
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/Eca3USNhcbhxLhgUvx",
+                        "organization_name": "xiaoxu's organization"
+                      },
+                      {
+                        "organization_dri": "dri:acs::org/6gCReA_9CPHalWzBqW",
+                        "organization_name": "xiaoxu's organization"
+                      }
+                    ]
+                  }
+                }
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"
+
+  /api/v2/utility/user/organization/joined_talent_group/get:
+    post:
+      tags:
+        - Complete
+      summary: "[获取 user 在某一 organization 下加入的所有的 talent_groups](UPUTI00006)"
+      description: 请求该API需要用户处于登录状态才可识别用户的身份
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: 前端需要将查询的目标 organization 的 dri 发送到后端.
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  $ref: "#/components/schemas/organization_dri"
+              example: {
+                "organization_dri":  "dri:acs::org/EmYFAUfiy6X11esw9j"
+              }
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取用户的 organization list 的成功响应体， 包含 organization 的详情 name 和 dri
+                type: object
+                properties:
+                  code:
+                    $ref: "#/components/schemas/code"
+                  message:
+                    $ref: "#/components/schemas/message"
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      talent_groups:
+                        type: array
+                        description: 获取到的 tg 包含 name 和 dri 的元数据数组
+                        items:
+                          properties:
+                            talent_group_dri:
+                              $ref: "#/components/schemas/talent_group_dri"
+                            talent_group_name:
+                              $ref: "#/components/schemas/talent_group_name"
+                example: {
+                  "code": 200100,
+                  "message": "Get User Organization Joined Talent Groups Successfully!",
+                  "data": {
+                    "talent_groups": [
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-2N1zikJU",
+                        "talent_group_name": "mengming's_team"
+                      },
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-8HlC-yM6",
+                        "talent_group_name": "changyu's_team"
+                      },
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg--n6GWRan",
+                        "talent_group_name": "default-group"
+                      },
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-stgXaCaE",
+                        "talent_group_name": "test_return"
+                      },
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-NskU0eu9",
+                        "talent_group_name": "bbbbbb bbb"
+                      },
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-Kt0jchb4",
+                        "talent_group_name": "test init member talent_group"
+                      },
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-CT6aRhcM",
+                        "talent_group_name": "bbb b"
+                      },
+                      {
+                        "talent_group_dri": "dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-dOGRjj1x",
+                        "talent_group_name": "jjjjjsgroup"
+                      }
+                    ]
+                  }
+                }
+
+        "400":
+          description: 请求参数错误，服务器取消执行
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/res_400100"
+
+        "401":
+          $ref: "#/components/responses/res_401"
+
+        "500":
+          $ref: "#/components/responses/res_500"

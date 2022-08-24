@@ -1,0 +1,1843 @@
+openapi: '3.0.2'
+info:
+  version: 0.1.1
+  title: dr_Back_SurveyProjectManager
+  description: >-
+    这个文档主要展示了相关相关操作的API，包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://spm.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [SurveyProjectManager API Server](https://github.com/dataReachable/dr_Back_SurveyProjectManager)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://spm.dev.datareachable.net/api/v1/"
+
+paths:
+  /project:
+    post:
+      summary: '创建项目'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/CreateProject'
+      responses:
+        '200':
+          description: '项目创建成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: "create project successfully"
+                data:
+                  project_dri: 'dri:spm::proj/h2h2ABNfqYhJAmsa'
+        '400':
+          description: '客户端相关的错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 400001
+                message: "project is already existed in organization"
+        '403':
+          description: '用户权限不足'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 403001
+                message: '无法创建项目'
+                data:
+                  error: '用户无权限在此组织创建项目'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500001
+                message: '创建一个新的 Project 时发生未知错误。'
+                data:
+                  error: 'Cannot get current user'
+    get:
+      summary: '获取项目信息'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+        - in: query
+          name: project_dri
+          description: '项目 dri'
+          schema:
+            type: string
+          example:
+            project_dri: 'zU_C1SlVMil_d4Bq'
+        - in: query
+          name: org_dri
+          description: '用户当前组织 dri'
+          schema:
+            type: string
+          example:
+            org_dri: 'dri:acs::org/uHgenPgdLlFeSWun9I'
+      responses:
+        '200':
+          description: '获取项目信息成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectInfo'
+              example:
+                code: 200002
+                message: 'get project information successfully'
+                data:
+                  name: 'project_name'
+                  organization: 'changyu'
+                  creater:
+                    dri: 'dri:acs::user/VgZHg1zq9EbJs8cwrZ9Gd'
+                    name: 'changyu'
+                  status: 'public'
+                  created_at: '2021-06-07T01:18:36.131Z'
+                  description: 'a example project'
+                  criteria: 'this is a criteria'
+                  keywords:
+                    - example
+                    - test
+                  default_contract: dri:spm::contract/zvgekbmNzhAFW1UJ/LALfnseR
+                  invited_organization:
+                    - { "name": "changyu", "logo": null, "dri": "N5PfibdfPKgIPTwk4OXgN","email":[],"phone": [], "description": "", "grade": 2, "updated_at": "2022-01-01T00:00:00.000Z"}
+                  teams: [{"name":"xxxx","orgs":["xxxxx"]}]
+                  contacts:
+                    - {
+                        "name": "123",
+                        "phone": [
+                          { "country":"+86", "area": "xxx", "number":"15823241134" }
+                        ],
+                        "email": [
+                          "123@123.com"
+                        ]
+                      }
+                  attachments:
+                    - {
+                        dri: "this is dri",
+                        type: "file type",
+                        name: "file's name",
+                        link: "文件下载链接",
+                        file_size: "文件大小，单位bytes",
+                        created_at: "创建时间",
+                        updated_at: "更新时间"
+                      }
+        '400':
+          description: '客户端相关错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 400003
+                message: 'no such project'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500002
+                message: '获取 Project 信息时发生未知错误。'
+                data:
+                  error: 'Cannot get current user'
+  /project/description:
+    put:
+      summary: '修改项目描述'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - description
+              properties:
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+                description:
+                  type: string
+                  description: '要更新的项目描述'
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              description: 'this is description for project'
+      responses:
+        '200':
+          description: '修改成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200003
+                message: 'update project description successfully'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500003
+                message: '修改 Project description 时发生未知错误。'
+                data:
+                  error: 'Cannot get current user'
+  /project/criteria:
+    put:
+      summary: '修改项目标准'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - criteria
+              properties:
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+                criteria:
+                  type: string
+                  description: '要更新的项目标准'
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              criteria: 'this is criteria for project'
+      responses:
+        '200':
+          description: '修改成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200004
+                message: 'update project criteria successfully'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500004
+                message: '修改 Project criteria 时发生未知错误。'
+                data:
+                  error: 'Cannot get current user'
+  /project/keywords:
+    put:
+      summary: '修改项目关键字'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - keywords
+              properties:
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+                keywords:
+                  type: array
+                  items:
+                    type: string
+                  description: '要更新的项目关键字'
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              keywords:
+                - example
+                - test
+      responses:
+        '200':
+          description: '修改成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200005
+                message: 'update project keywords successfully'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500005
+                message: '修改 Project keywords 时发生未知错误。'
+                data:
+                  error: 'Cannot get current user'
+  /project/status:
+    put:
+      summary: '修改项目状态'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - status
+              properties:
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+                status:
+                  type: string
+                  enum:
+                    - 'public'
+                    - 'private'
+                  description: '要更新的项目状态'
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              status: 'private'
+      responses:
+        '200':
+          description: '修改成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200006
+                message: 'update project status successfully'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500006
+                message: '修改 Project status 时发生未知错误。'
+                data:
+                  error: 'Cannot get current user'
+  /project/name:
+    put:
+      summary: '修改项目名称'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - name
+              properties:
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+                name:
+                  type: string
+                  description: '要更新的项目名称'
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              name: 'private'
+      responses:
+        '200':
+          description: '修改成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200007
+                message: 'update project name successfully'
+        '400':
+          description: '客户端相关错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 400009
+                message: 'project name is already existed in organization'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500007
+                message: '修改 Project name 时发生未知错误。'
+                data:
+                  error: 'Cannot get current user'
+  /attachment/project:
+    post:
+      summary: '管理员上传项目附件'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                project_arrachment:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              project_attachment:
+                - '文件_1'
+                - '文件_2'
+      responses:
+        '200':
+          description: '附件上传成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '文件上传成功'
+                data:
+                  urls:
+                    - { dri: "this is dri", link: "this is link" }
+                    - { dri: "this is dri", link: "this is link" }
+        '400':
+          description: '客户端相关错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '无有效文件'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500001
+                message: '上传附件时发生错误'
+                data:
+                  error: 'something wrong'
+    delete:
+      summary: '删除项目附件'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - attachment_dri
+                - project_dri
+              properties:
+                attachment_dri:
+                  type: string
+                  description: '附件 dri'
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+            example:
+              attachment_dri: dri:spm::attachment/5NcjnlOCvhGjukIwwCFI
+              project_dri: dri:spm::proj/5UrsEOt6kw4f1FKf
+      responses:
+        '200':
+          description: '项目附件成功删除'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '项目附件成功删除'
+        '400':
+          description: '客户端相关错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '项目附件删除失败'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500001
+                message: '删除项目附件时发生未知错误'
+                data:
+                  error: 'something wrong'
+  /attachment/project/name:
+    put:
+      summary: '修改项目附件别名'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          required: true
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - file_dri
+                - project_dri
+                - file_new_name
+              properties:
+                file_dri:
+                  type: string
+                  description: '附件 dri'
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+                file_new_name:
+                  type: string
+                  description: '附件新名称'
+            example:
+              file_dri: dri:spm::attachment/stmBxrb3nXAruRoLNd8Z
+              project_dri: dri:spm::proj/6ZHqD5Xs76xofQxn
+              file_new_name: newtest
+      responses:
+        '200':
+          description: '修改项目附件别名成功'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Success'
+                  - type: object
+                    properties:
+                      project_dri:
+                        type: string
+                        description: '项目 dri'
+                      new_file_breif:
+                        type: object
+                        properties:
+                          file_name:
+                            type: string
+                            description: '名称'
+                            example: "newFileName"
+                          file_link:
+                            type: string
+                            description: '附件链接'
+                            example: https://dr-spm-project-attachments-dev.s3-ap-southeast-2.amazonaws.com/1fMNEpqk2MF4qfxV/5NcjnlOCvhGjukIwwCFI/test.txt
+              example:
+                code: 200001
+                message: '修改项目附件别名成功'
+                data: {"project_dri":"dri:spm::proj/6ZHqD5Xs76xofQxn","new_file_breif":{"file_name":"newFileName","file_link":"https://dr-spm-project-attachments-dev.s3-ap-southeast-2.amazonaws.com/1fMNEpqk2MF4qfxV/5NcjnlOCvhGjukIwwCFI/test.txt"}}
+        '400':
+          description: '客户端相关错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '修改项目附件别名失败'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500001
+                message: '修改项目附件别名时发生未知错误'
+                data:
+                  error: 'something wrong'
+  /project/team:
+    post:
+      description: '创建 project team'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - name
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                name:
+                  description: 'team 名'
+                  type: string
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              name: '321'
+      responses:
+        '200':
+          description: '创建 team 成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: 'team 创建成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: 'team name 重复'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500008
+                message: '创建项目团队时发生未知错误'
+                data:
+                  error: 'something wrong'
+    delete:
+      description: '删除 project team'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - team_name
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                team_name:
+                  description: 'team name'
+                  type: string
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              team_name: '123456'
+      responses:
+        '200':
+          description: '删除 team 成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '删除 team 成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '删除 team 失败'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500012
+                message: '删除 team member 发生未知错误'
+                data:
+                  error: 'something wrong'
+  /project/team/name:
+    put:
+      description: '修改 project team'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - team_name
+                - new_team_name
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                team_name:
+                  description: '旧 team name'
+                  type: string
+                new_team_name:
+                  description: '新 team name'
+                  type: string
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              team_name: '321'
+              new_team_name: '123456'
+      responses:
+        '200':
+          description: '创建 team 成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: 'team name 修改成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: 'team name 重复'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500011
+                message: '修改 team name 发生未知错误'
+                data:
+                  error: 'something wrong'
+  /project/team/member:
+    post:
+      description: 'project team 添加 member'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - team_name
+                - org_dri
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                team_name:
+                  description: 'team name'
+                  type: string
+                org_dri:
+                  description: '待添加进 team 的组织'
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              team_name: '123456'
+              org_dri: 'dri:acs::org/uHgenPgdLlFeSWun9I'
+      responses:
+        '200':
+          description: 'team 添加 member 成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: 'team 添加成员成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '此组织未与当前甲方签订合同'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500011
+                message: '添加 team member 发生未知错误'
+                data:
+                  error: 'something wrong'
+    delete:
+      description: 'project team 删除 member'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - team_name
+                - org_dri
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                team_name:
+                  description: 'team name'
+                  type: string
+                org_dri:
+                  description: 'team 待添删除的组织'
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              team_name: '123456'
+              org_dri: 'dri:acs::org/uHgenPgdLlFeSWun9I'
+      responses:
+        '200':
+          description: '删除 team member 成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '删除 team member 成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '无法找到和此组织签订的合同'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500012
+                message: '删除 team member 发生未知错误'
+                data:
+                  error: 'something wrong'
+
+  /contract:
+    post:
+      description: '创建空白合同'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - name
+                - supplier_org_dri
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                name:
+                  description: '合同 名'
+                  type: string
+                supplier_org_dri:
+                  description: '邀请的乙方组织 dri'
+                  type: string
+            example:
+              supplier_org_dri: 'dri:acs::org/uHgenPgdLlFeSWun9I'
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              name: '741'
+      responses:
+        '200':
+          description: '创建合同成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: 'team 创建成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '无法找到 project 的组织'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500008
+                message: '创建合同时发生错误'
+                data:
+                  error: 'something wrong'
+    put:
+      description: '保存合同'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - contract_name
+                - supplier_org_dri
+                - contract_dri
+                - keywords
+                - work_scopes
+                - description
+                - contacts
+                - extra_emails
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                contract_name:
+                  description: "合同名"
+                  type: string
+                supplier_org_dri:
+                  description: '供应商 dri'
+                  type: string
+                contract_dri:
+                  description: '合同 dri'
+                  type: string
+                keywords:
+                  description: '关键字'
+                  type: array
+                  items:
+                    type: string
+                work_scopes:
+                  description: '工作范围'
+                  type: string
+                description:
+                  description: '描述信息'
+                  type: string
+                contacts:
+                  description: '联系信息'
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - email
+                      - phone
+                    properties:
+                      name:
+                        description: '联系人姓名'
+                        type: string
+                      email:
+                        description: '电子邮箱'
+                        type: string
+                        format: email
+                      phone:
+                        description: '联系电话'
+                        type: object
+                        properties:
+                          country:
+                            description: '国家号'
+                            type: string
+                          area:
+                            description: '区域'
+                            type: string
+                          number:
+                            description: '电话号码'
+                            type: string
+                extra_emails:
+                  description: '额外的联系邮件'
+                  type: string
+                  format: email
+            example:
+              {
+                "project_dri": "dri:spm::proj/5UrsEOt6kw4f1FKf",
+                "contract_name": "hxjdl",
+                "supplier_org_dri": "dri:acs::org/uHgenPgdLlFeSWun9I",
+                "contract_dri": "dri:spm::contract/UvUhz9QNm1sHdf-6/LuIDMujU",
+                "keywords": [ "123", "123 ", "312" ],
+                "work_scopes": "工作范围说明",
+                "description": "描述信息",
+                "contacts": [{
+                    "name": "lcy",
+                    "email": "changyu.liao@datareachable.com",
+                    "phone": { "country":"+86", "area": "xxx", "number":"15823241134" }
+                }],
+                "extra_emails": [ "123@123.com" ]
+              }
+      responses:
+        '200':
+          description: '保存合同成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200002
+                message: '合同保存成功'
+                data:
+                  dri: 'dri:spm::contract/rgyWZSDuMWv3binT/4LaTtqrk'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '此时合同状态为 ${status?.status} 无法修改合同信息'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500002
+                message: '保存合同时发生错误'
+                data:
+                  error: 'something wrong'
+  /contract/name:
+    post:
+      description: '校验合同名是否存在于项目中'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - name
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                name:
+                  description: '待校验的合同名'
+                  type: string
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              name: '123456'
+      responses:
+        '200':
+          description: '合同名在此项目中不存在'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '此合同名在项目内不存在'
+        '400':
+          description: '合同名重复'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '合同名重复'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500001
+                message: '校验 contract name 发生未知错误'
+                data:
+                  error: 'something wrong'
+  /contract/send:
+    post:
+      description: (CR-00005) 发送合同
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - contract_dri
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                contract_dri:
+                  description: '合同 dri'
+                  type: string
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              contract_dri: 'dri:spm::contract/UvUhz9QNm1sHdf-6/LuIDMujU'
+      responses:
+        '200':
+          description: '合同发送成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '合同发送成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '此时合同状态为 ${status?.status} 无法发送'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500003
+                message: '发送合同时发生错误'
+                data:
+                  error: 'something wrong'
+  /attachment/contract:
+    post:
+      description: '上传合同附件'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                contract_attachment:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                participant_type:
+                  type: string
+                  description: '当前用户的参与角色'
+                  enum:
+                    - supplier
+                    - project_admin
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                contract_dri:
+                  description: '合同 dri'
+                  type: string
+                org_dri:
+                  description: '当前组织 dri'
+                  type: string
+            example:
+              participant_type: 'project_admin'
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              org_dri: 'dri:acs::org/uHgenPgdLlFeSWun9I'
+              contract_dri: 'dri:spm::contract/UvUhz9QNm1sHdf-6/LuIDMujU'
+              contract_attachment:
+                - '文件_1'
+                - '文件_2'
+      responses:
+        '200':
+          description: '上传文件成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '文件上传成功'
+                data:
+                  urls:
+                    - { dri: "this is dri", link: "this is link" }
+                    - { dri: "this is dri", link: "this is link" }
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '无有效文件'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500001
+                message: '上传附件时发生错误'
+                data:
+                  error: 'something wrong'
+    delete:
+      summary: '删除合同附件'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - participant_type
+                - project_dri
+                - contract_dri
+                - attachment_dri
+                - org_dri
+              properties:
+                participant_type:
+                  type: string
+                  description: '当前用户的参与角色'
+                  enum:
+                    - supplier
+                    - project_admin
+                project_dri:
+                  type: string
+                  description: '项目 dri'
+                contract_dri:
+                  type: string
+                  description: '合同 dri'
+                attachment_dri:
+                  type: string
+                  description: '附件 dri'
+                org_dri:
+                  type: string
+                  description: '组织 dri'
+            example:
+              participant_type: project_admin
+              project_dri: dri:spm::proj/5UrsEOt6kw4f1FKf
+              contract_dri: dri:spm::contract/UvUhz9QNm1sHdf-6/LuIDMujU
+              attachment_dri: dri:spm::attachment/5NcjnlOCvhGjukIwwCFI
+              org_dri: dri:acs::org/uHgenPgdLlFeSWun9I
+      responses:
+        '200':
+          description: '删除合同附件成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '删除合同附件成功'
+        '400':
+          description: '客户端相关错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400004
+                message: '删除合同附件失败'
+        '403':
+          description: '权限错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 403001
+                message: '合同已经被签署，无法修改'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500001
+                message: '删除合同附件时发生错误'
+                data:
+                  error: 'something wrong'
+  /project/contact:
+    post:
+      description: '项目管理员在 project 添加联系人'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - contacts
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                contacts:
+                  type: array
+                  description: '联系人信息'
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: '联系人姓名'
+                        type: string
+                      email:
+                        description: '联系人邮箱'
+                        type: string
+                        format: email
+                      phone:
+                        allOf:
+                          - $ref: "#/components/schemas/phone"
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              contacts:
+                - { "name": "123", "email": "123@123.com", "phone": { "country":"+86", "area": "xxx", "number":"15823241134" } }
+      responses:
+        '200':
+          description: '添加成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '联系信息保存成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '联系信息保存失败'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500009
+                message: '添加联系信息的时候发生错误'
+                data:
+                  error: 'something wrong'
+    put:
+      description: '项目管理员在 project 修改联系人'
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - name
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                name:
+                  description: '联系人姓名'
+                  type: string
+                email:
+                  description: '联系人邮箱'
+                  type: string
+                  format: email
+                phone:
+                  allOf:
+                    - $ref: "#/components/schemas/phone"
+            example:
+              { "project_dri": "dri:spm::proj/rjdpbdSsTEoGiJySASkEq", "name": "123", "email": "123@123.com", "phone": { "country":"+86", "area": "xxx", "number":"15823241134" } }
+      responses:
+        '200':
+          description: '添加成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '联系信息更新成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '联系信息没有变化'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500009
+                message: '添加联系信息的时候发生错误'
+                data:
+                  error: 'something wrong'
+    delete:
+      description: '项目管理员在 project 删除联系人'
+      parameters:
+        - in: header
+          name: DR-AUTH
+          schema:
+            description: '在 OP 端登录后返回的 token'
+            type: string
+            format: jwt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - project_dri
+                - contacts
+              properties:
+                project_dri:
+                  description: '项目 dri'
+                  type: string
+                contacts:
+                  type: array
+                  description: '联系人信息'
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: '联系人姓名'
+                        type: string
+                      email:
+                        description: '联系人邮箱'
+                        type: string
+                        format: email
+                      phone:
+                        allOf:
+                          - $ref: "#/components/schemas/phone"
+            example:
+              project_dri: 'dri:spm::proj/5UrsEOt6kw4f1FKf'
+              contacts:
+                - { "name": "123", "email": "123@123.com", "phone": { "country":"+86", "area": "xxx", "number":"15823241134" } }
+      responses:
+        '200':
+          description: '删除成功'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 200001
+                message: '删除联系人信息成功'
+        '400':
+          description: '客户端相关'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                code: 400001
+                message: '删除联系人信息失败'
+        '500':
+          description: '未知/未分类错误'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500010
+                message: '删除联系信息的时候发生错误'
+                data:
+                  error: 'something wrong'
+
+components:
+  schemas:
+    Success:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        data:
+          type: object
+    Error:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        data:
+          type: object
+          required:
+            - error
+          properties:
+            error:
+              type: string
+    CreateProject:
+      type: object
+      required:
+        - name
+        - status
+        - org_dri
+      properties:
+        name:
+          type: string
+          description: '要创建的project name'
+        status:
+          type: string
+          description: '项目状态'
+          enum:
+            - public
+            - private
+        org_dri:
+          type: string
+          description: '项目所属组织 dri'
+      example:
+        name: "project_name"
+        status: "public"
+        org_dri: "dri:acs::org/uHgenPgdLlFeSWun9I"
+    phone:
+      description: '联系电话'
+      type: object
+      properties:
+        country:
+          type: string
+          description: 国家号
+        area:
+          type: string
+          description: 区域号
+        number:
+          type: string
+          description: 电话号码
+      example: { "country":"+86", "area": "xxx", "number":"15823241134" }
+    ProjectInfo:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        data:
+          type: object
+          required:
+            - name
+            - organization
+            - creater
+            - status
+            - created_at
+            - description
+            - criteria
+            - keywords
+            - invited_organization
+            - teams
+            - contacts
+          properties:
+            name:
+              type: string
+              description: '合同名称'
+            organization:
+              type: string
+              description: '项目所属组织'
+            creater:
+              type: object
+              required:
+                - dri
+                - name
+              properties:
+                dri:
+                  type: string
+                  description: '创建者 dri'
+                name:
+                  type: string
+                  description: '创建者用户名'
+            status:
+              type: string
+              description: '项目状态'
+              enum:
+                - private
+                - piublic
+            created_at:
+              type: string
+              format: date
+              description: '创建时间'
+            description:
+              type: string
+              description: '项目描述'
+            criteria:
+              type: string
+              description: '项目标准'
+            keywords:
+              type: array
+              items:
+                type: string
+            default_contract:
+              type: string
+            invited_organization:
+              type: array
+              description: '接收邀请的组织'
+              items:
+                type: object
+                required:
+                  - name
+                  - logo
+                  - dri
+                  - email
+                  - phone
+                  - description
+                  - grade
+                  - updated_at
+                properties:
+                  name:
+                    description: '组织名'
+                    type: string
+                  logo:
+                    description: '组织 logo'
+                    type: string
+                    format: url
+                  email:
+                    description: '组织邮箱'
+                    type: string
+                    format: email
+                  phone:
+                    allOf:
+                      - $ref: "#/components/schemas/phone"
+                  description:
+                    description: '组织描述'
+                    type: string
+                  dri:
+                    type: string
+                    description: '被邀请的组织 dri'
+                  grade:
+                    type: number
+                    description: 等级。有效值： 2(组织有signed状态的合同),1(组织没有signed状态但有invite_sent状态的合同),0(组织即没有signed状态也没有invite_sent状态的合同)
+                  updated_at:
+                    type: string
+                    description: 合同更新时间
+            teams:
+              description: '项目 team group'
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    description: 'team group 名称'
+                    type: string
+                  orgs:
+                    description: '组织 dri数组'
+                    type: array
+                    items:
+                      type: string
+            contacts:
+                  description: '联系信息'
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - email
+                      - phone
+                    properties:
+                      name:
+                        description: '联系人下姓名'
+                        type: string
+                      email:
+                        description: '电子邮箱'
+                        type: string
+                        format: email
+                      phone:
+                        allOf:
+                          - $ref: "#/components/schemas/phone"

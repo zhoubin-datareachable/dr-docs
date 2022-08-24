@@ -1,0 +1,151 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: Dashboard Backend Project - Session Management and Logout APIs
+  description: >-
+    This document contains the RESTful APIs provided for session management/logout.
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://dashboard.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [Dashboard API Server](https://github.com/dataReachable/dr_Back_Dashboard)
+  contact:
+    name: Backend Team
+    email: mengming.li@datareachable.com
+
+servers:
+  - url: "https://dashboard.dev.datareachable.net/api/v1/session/"
+    description: Sydney Development Cluster for Dashboard Project
+
+paths:
+  /status:
+    get:
+      tags:
+        - Session Status Check
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    post:
+      tags:
+        - Session Status Check
+      summary: Check whether the user session at the backend has expired or not
+      description: This API provides an active method for the frontend to check the user session status at the backend. <br/> This API should `NOT` be overused, because for privileged API requests, backend checks user session status. This is a passive checking for the frontend.
+      responses:
+        "200":
+          description: User session not expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_SessionTimeOut"
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /logout:
+    post:
+      tags:
+        - Logout
+      summary: Only returns an error
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_WrongRequestMethod"
+    get:
+      tags:
+        - Logout
+      summary: User logout
+      description: >-
+        When user triggers logout, frontend should `redirect` the user browser to this URL. The rest is handled by the backend.
+        <br/>
+        <br/>
+        `NO` permission check on this API. User can trigger the logout API anytime, `regardless` of his session status.
+      responses:
+        "302":
+          description: Redirect the user browser from the application to the OpenID Connect provider.
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200000
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "Session is not expired!"
+
+    Res_BadFields:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400001, message: "The error of the fields will be described here." }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: { code: 500000, message: "General error message", data: { error: "Details of the error goes here" } }
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 405000, message: "You're using the completely wrong HTTP method!" }
+
+    Res_AccessDenied_SessionTimeOut:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 403001, message: "Session time out, access denied!" }
+
+    Res_AccessDenied_JWTNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT not found in the header, access denied!" }
+
+    Res_AccessDenied_JWTValidationFailure:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT validation failed, access denied!" }

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="前端项目规范">前端项目规范</h2>
+<p>该文档是前端项目规范文档，请仔细阅读相关文档条例。</p>
+<h2 id="项目-markdown-规范列表">项目 markDown 规范列表</h2>
+<ul>
+<li><h3 id="标题">标题</h3>
+<p>项目规范文档的标题请使用 Markdown level 1 字体</p>
+<p>可选项：项目的标题应该包含一个集中说明的图像或者徽章，请引用<a href="https://shields.io/">Shields</a></p>
+</li>
+<li><h3 id="描述">描述</h3>
+<p>项目的描述标题请使用 Markdown level 1 字体</p>
+<p>项目描述的内容请使用 Markdown 普通文本字体</p>
+</li>
+<li><h3 id="项目结构">项目结构</h3>
+<p>项目结构标题请使用 Markdown level 1 字体</p>
+<h4 id="subsections">Subsections:</h4>
+<p>子标题请使用 Markdonw Level 2 字体.</p>
+<ol>
+<li>项目结构代码<br> 项目的代码结构源码可以通过 vs code extentsion:<a href="https://marketplace.visualstudio.com/items?itemName=yarimit.directory-configuration-generator">directory-tree generator</a>自动生成。</li>
+<li>根目录描述<br> 该部分应该包含了更目录中每个重要文件的详细描述。</li>
+<li>Src 目录描述<br> 该部分应该包含了在 src 目录下一些重要文件/文件夹的详细描述。</li>
+<li>其他目录描述<br> 其他目录的描述包含了<em>test</em>， *.config 等文件/文件夹的详细描述。</li>
+</ol>
+</li>
+</ul>
+<h2 id="使用方法">使用方法</h2>
+<ul>
+<li><h3 id="项目在本地环境中的配置">项目在本地环境中的配置</h3>
+<p><a href="SAMPLEPROJECT.md">SAMPLEPROJECT.md</a>文档主要介绍了项目结构，以及如何在本地配置项目的环境。</p>
+</li>
+<li><h3 id="项目代码规范">项目代码规范</h3>
+<p><a href="PROJECTRULES.md">PROJECTRULES.md</a>文档主要介绍了基本的代码规范，比如如何给 class 命名和如何添加注释等。</p>
+</li>
+<li><h3 id="git-使用规范">git 使用规范</h3>
+<p><a href="GITUSAGE.md">GITSPECIFICATIONS.md</a>文档主要介绍了如何使用 git 和使用 git 的一些规范，比如如何新建一个 feature 分支和如何书写 commit 信息。</p>
+</li>
+<li><h3 id="code-review-规范">code review 规范</h3>
+<p><a href="CODEREVIEW.md">CODEREVIEW.md</a>该文件是前端代码 review 规则，主要包含了如何进行组员之间的代码 reveiew。</p>
+</li>
+<li><h3 id="testing-规范">testing 规范</h3>
+<p><a href="TESTINGRULE.md">TESTINGRULE.md</a>该文件是前端代码测试规则，主要包含了如何进行测试。</p>
+</li>
+<li><h3 id="redux-规范">redux 规范</h3>
+<p><a href="REDUXRULES.md">REDUXRULES.md</a> 该文件是 redux 的代码编写规范.</p>
+</li>
+<li><h3 id="saga-规范">saga 规范</h3>
+<p><a href="SAGARULES.md">SAGARULES.md</a> 该文件是 saga 的代码编写规范.</p>
+</li>
+<li><h3 id="ajax-请求规范">Ajax 请求规范</h3>
+<p><a href="AJAXREQUESTRULE.md">AJAXREQUESTRULE.md</a> 主要包括 Ajax 请求的书写规范.</p>
+</li>
+<li><h3 id="前端常见-qa">前端常见 Q&amp;A</h3>
+<p><a href="Q&amp;A.md">Q&amp;A.md</a> 主要包括了前端常见的 Q&amp;A</p>
+</li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

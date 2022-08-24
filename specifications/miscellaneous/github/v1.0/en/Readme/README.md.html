@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="readmemd-writing-specifications-for-all-projects">README.md Writing Specifications For All Projects</h2>
+<h2 id="⚠️-deprecated">⚠️ Deprecated</h2>
+<p>The specifications in this document is deprecated due to the verbosity of writing this complete <code>README.md</code> in practice. A simplified version is provided <a href="../ReadmeSimplified/README.md">here</a>.</p>
+<h2 id="description">Description</h2>
+<p>This repo defines the specifications on writing the <code>README.md</code> files at DataReachable. In each application source code repo and infrastructure code repo, this specification should be enforced.</p>
+<h2 id="list-of-specifications">List of Specifications</h2>
+<ul>
+<li><h3 id="title-required">Title (Required)</h3>
+<p>The title of the project should be placed at the first line and in Markdown Level 2 title:</p>
+<p>Optional: The contents of the title section should contain a centralized graph and relevant badges from <a href="https://shields.io/">Shields</a></p>
+</li>
+<li><h3 id="description-required">Description (Required)</h3>
+<p>The description of the project should be Markdown Level 2 title.</p>
+<p>The contents of the description should be Markdown normal text.</p>
+</li>
+<li><h3 id="project-structure-required">Project Structure (Required)</h3>
+<p>The project structure should be Markdown Level 2 title.</p>
+<h4 id="subsections-required">Subsections (Required)</h4>
+<p>Subsection titles should be Markdonw Level 3 title. Possible subsections are listed below:</p>
+<ol>
+<li>Code Structure Overview (Required)<br> The tree structure of the project&#39;s source code can be automatically generated by the VS Code extension: <a href="https://marketplace.visualstudio.com/items?itemName=yarimit.directory-configuration-generator">directory-tree generator</a>.</li>
+<li>Root Folder Description (Optional)<br> This section should include the detailed descriptions of each key file in the project root folder.</li>
+<li>Src Folder Description (Optional)<br> This section should include the detailed descriptions of each key folder/file in the project src folder.</li>
+<li>Other Folder Description (Optional)<br> Descriptions of other folders, such as testing, configuration etc.</li>
+</ol>
+</li>
+<li><h2 id="usage-required">Usage (Required)</h2>
+<p>This section should include the usage of the project.</p>
+<p>Before describing the usage, instructions on how to configure a local environment should be included, such as must-install dependencies, minimum version requirement, etc.</p>
+<p>The contents of this section varies from project to project, but it should be well organized into a tree structure with example code given.</p>
+</li>
+<li><h2 id="change-log-optional">Change Log (Optional)</h2>
+<p>This section should <strong>NOT</strong> be included in the <code>README.md</code> file, but should be recorded in another file <code>CHANGELOG.md</code>.</p>
+<h3 id="using-the-auto-changelog-tool-required">Using the Auto ChangeLog Tool (Required)</h3>
+<p>  The change log is relied on the <strong>git logs</strong>, and should be automatically generated using the <a href="https://github.com/CookPete/auto-changelog">Auto ChangeLog</a> tool.</p>
+<p>To use the <a href="https://github.com/CookPete/auto-changelog">Auto ChangeLog</a> tool, first install it via <code>npm install -g auto-changelog</code>. Then, run the following command to generate the <code>CHANGELOG.md</code> file.</p>
+<pre><code class="language-bash">auto-changelog --hide-credit --unreleased --output CHANGELOG.md
+</code></pre>
+<p>This tool mainly logs the change logs of the formal releases. In each release, detailed changes should be included in the description of the release.</p>
+<p>The above command also logs all the unreleased commits.</p>
+<p>When using the above tool, the commit history is important. Therefore, each commit message should be formated for easy-reading. Refer to: <a href="../../../Git/v1.0/en/README.md">Git Usage Conventions</a>.</p>
+</li>
+</ul>
+<hr>
+<h2 id="samples">Samples</h2>
+<ol>
+<li><a href="WasmSample/README.md">WebAssembly Sample Project</a></li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

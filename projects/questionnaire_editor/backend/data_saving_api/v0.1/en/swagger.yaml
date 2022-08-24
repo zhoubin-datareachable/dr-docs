@@ -1,0 +1,1622 @@
+openapi: 3.0.3
+
+info:
+  version: 1.1.0
+  title: Questionnaire Editor Data Saving APIs
+  description: >-
+    This document contains the RESTful APIs provided by the Questionnaire Editor data saving backend api servers. One of the api servers is for fetching data encryption keys and the other is for manipulating the user-generated drafts and committed immutable records.
+    <br/>
+    **Project GitHub Repos:**
+      - [Encryption Key Fetching Backend](https://github.com/possie-engine/dr_qe_saving_data_backend_key_db)
+      - [User Data Saving Backend](https://github.com/possie-engine/dr_qe_saving_data_backend_data_db)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "http://localhost:{port}/{basePath}/{function}"
+    description: Localhost
+    variables:
+      port:
+        enum:
+          - "3800"
+          - "3801"
+        default: "3800"
+      basePath:
+        enum:
+          - api/v1
+        default: api/v1
+      function:
+        enum:
+          - key
+          - draft
+          - record
+        default: key
+  - url: "https://{server}.remote.hostname/{basePath}/{function}"
+    description: Remote
+    variables:
+      server:
+        enum:
+          - key
+          - data
+        default: key
+      basePath:
+        enum:
+          - api/v1
+        default: api/v1
+      function:
+        enum:
+          - key
+          - draft
+          - record
+        default: key
+
+tags:
+  - name: key
+    description: Operations on user data encryption keys
+  - name: draft
+    description: Operations on user drafts
+  - name: record
+    description: Operations on user committed records
+
+paths:
+  /api/v1/key:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3800"
+            default: "3800"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - key
+            default: key
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - key
+            default: key
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - key
+            default: key
+    post:
+      tags:
+        - key
+      summary: Fetch a data encryption of a specific user
+      description: >-
+        This api returns a 12-character string for the requested user. The key is bound with the user id. For the same user, the api returns the same key value. If the request is for a new user, the api randomly generates the key and associates it with the new user.
+      operationId: fetchKey
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user whose encryption key is to be returned
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenericRequest"
+      responses:
+        "200":
+          description: A user encrytion key to be returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FetchKeyRes"
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    delete:
+      tags:
+        - key
+      summary: Delete a data encryption of a specific user
+      operationId: deleteKey
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user whose encryption key is to be deleted
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenericRequest"
+      responses:
+        "200":
+          description: A user encrytion key to be deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - key
+      summary: CORS Preflight
+      operationId: optKey
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - key
+      summary: Testing api, only returns an error
+      operationId: testKeyApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/draft/fetch:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+    post:
+      tags:
+        - draft
+      summary: Fetch a draft of a specific user
+      description: >-
+        This api returns the draft data of a requested specific user.
+      operationId: fetchDraft
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user whose encryption key is to be returned
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenericRequest"
+      responses:
+        "200":
+          description: A draft to be returned for the requested user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FetchDraftRes"
+        "204":
+          description: No draft found for the requested user
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - draft
+      summary: CORS Preflight
+      operationId: optFetchDraft
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - draft
+      summary: Testing api, only returns an error
+      operationId: testFetchDraftApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/draft/insert:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+    post:
+      tags:
+        - draft
+      summary: Create or update (upsert) a draft of a specific user
+      description: >-
+        This api returns the creation/update status.
+      operationId: upsertDraft
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user, user-defined tag and draft content
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InsertDataReq"
+      responses:
+        "200":
+          description: Success on update of a draft for the requested user and no content returns
+        "201":
+          description: Success on creation of a draft for the requested user and no content returns
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - draft
+      summary: CORS Preflight
+      operationId: optUpsertDraft
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - draft
+      summary: Testing api, only returns an error
+      operationId: testUpsertDraftApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/draft/sync:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+            default: draft
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+            default: draft
+    post:
+      tags:
+        - draft
+      summary: Syncs remote copy of draft with local copy.
+      description: >-
+        This api returns the creation/update status.
+      operationId: syncDraft
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenericRequest"
+      responses:
+        "200":
+          description: A draft is returned user. May or may not be a conflict. In case of a local/remote conflict, both copies will be included with the response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncDraftRes"
+        "201":
+          description: Remote doesn't have a copy. Local copy uploaded to remote. Local copy is returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FetchDraftRes"
+        "204":
+          description: No remote or local copy of draft found for the requested user
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+
+  /api/v1/draft/delete:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+    post:
+      tags:
+        - draft
+      summary: Delete a draft of a specific user
+      description: >-
+        This api returns the deletion status.
+      operationId: deleteDraft
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user whose encryption key is to be returned
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenericRequest"
+      responses:
+        "200":
+          description: Deletion result for the requested user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+              example: { code: 200103, message: "User draft deleted" }
+        "204":
+          description: No draft found for the requested user
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    delete:
+      tags:
+        - draft
+      summary: Delete a draft of a specific user
+      description: >-
+        This api returns the deletion status.
+      operationId: deleteDraft
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user whose encryption key is to be returned
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenericRequest"
+      responses:
+        "200":
+          description: Deletion result for the requested user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+              example: { code: 200103, message: "User draft deleted" }
+        "204":
+          description: No draft found for the requested user
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - draft
+      summary: CORS Preflight
+      operationId: optDeleteDraft
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - draft
+      summary: Testing api, only returns an error
+      operationId: testDeleteDraftApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/draft/check:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: draft
+    post:
+      tags:
+        - draft
+      summary: Check the user-defined tag and the draft content checksum
+      description: >-
+        This api returns the checking status.
+      operationId: checkDraft
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user, user-defined tag and checksum
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckDraftReq"
+      responses:
+        "200":
+          description: Checking result for the requested user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckDraftRes"
+        "204":
+          description: No draft found for the requested user
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - draft
+      summary: CORS Preflight
+      operationId: optCheckDraft
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - draft
+      summary: Testing api, only returns an error
+      operationId: testCheckDraftApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/record/fetch:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+    post:
+      tags:
+        - record
+      summary: Fetch a record of a specific user
+      description: >-
+        This api returns the record data of a requested specific user.
+      operationId: fetchRecord
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user, and the user-defined record tag
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FetchRecordReq"
+      responses:
+        "200":
+          description: A record to be returned for the requested user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FetchRecordRes"
+        "204":
+          description: No draft found for the requested user
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - record
+      summary: CORS Preflight
+      operationId: optFetchRecord
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - record
+      summary: Testing api, only returns an error
+      operationId: testFetchRecordApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/record/insert:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+    post:
+      tags:
+        - record
+      summary: Insert a record of a specific user (records are immutable)
+      description: >-
+        This api returns the insertion status.
+      operationId: insertRecord
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user, user-defined tag and record content
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InsertDataReq"
+      responses:
+        "200":
+          description: Success on insertion of a record and no content returns
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - record
+      summary: CORS Preflight
+      operationId: optInsertRecord
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - record
+      summary: Testing api, only returns an error
+      operationId: testInsertRecordApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/record/delete:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+    post:
+      tags:
+        - record
+      summary: Delete a record of a specific user
+      description: >-
+        This api returns the deletion status.
+      operationId: deleteRecord
+      requestBody:
+        required: true
+        description: >-
+          Unique user identifier to specify a user, and/or a user-defined tag.<br/>
+
+          - When the user tag is provided, the server attempts to delete a specific user committed record.
+
+          - When the user tag is **NOT** provided, the server attempts to delete all the committed records of the specified user.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteRecordReq"
+      responses:
+        "200":
+          description: >-
+            Deletion result for the requested user.<br/>
+
+            - When the user tag is provided, return the status of deleting a specific user committed record.
+
+            - When the user tag is **NOT** provided, return the status of deleting all the committed records of the specified user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+              example: { code: 200203, message: "User record deleted" }
+        "204":
+          description: >-
+            No record/colletion found for the requested user.<br/>
+
+            - When the user tag is provided, return no **record** found for the specified user committed record.
+
+            - When the user tag is **NOT** provided, return no **collection** found for the specified user.
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    delete:
+      tags:
+        - record
+      summary: Delete a record of a specific user
+      description: >-
+        This api returns the deletion status.
+      operationId: deleteRecord
+      requestBody:
+        required: true
+        description: >-
+          Unique user identifier to specify a user, and/or a user-defined tag.<br/>
+
+          - When the user tag is provided, the server attempts to delete a specific user committed record.
+
+          - When the user tag is **NOT** provided, the server attempts to delete all the committed records of the specified user.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteRecordReq"
+      responses:
+        "200":
+          description: >-
+            Deletion result for the requested user.<br/>
+
+            - When the user tag is provided, return the status of deleting a specific user committed record.
+
+            - When the user tag is **NOT** provided, return the status of deleting all the committed records of the specified user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+              example: { code: 200203, message: "User record deleted" }
+        "204":
+          description: >-
+            No record/colletion found for the requested user.<br/>
+
+            - When the user tag is provided, return no **record** found for the specified user committed record.
+
+            - When the user tag is **NOT** provided, return no **collection** found for the specified user.
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - record
+      summary: CORS Preflight
+      operationId: optDeleteRecord
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - record
+      summary: Testing api, only returns an error
+      operationId: testDeleteRecordApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+  /api/v1/record/check:
+    servers:
+      - url: "http://localhost:{port}/{basePath}/{function}"
+        description: Localhost
+        variables:
+          port:
+            enum:
+              - "3801"
+            default: "3801"
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+      - url: "https://{server}.remote.hostname/{basePath}/{function}"
+        description: Remote
+        variables:
+          server:
+            enum:
+              - data
+            default: data
+          basePath:
+            enum:
+              - api/v1
+            default: api/v1
+          function:
+            enum:
+              - draft
+              - record
+            default: record
+    post:
+      tags:
+        - record
+      summary: Check the user-defined tag and the draft content checksum
+      description: >-
+        This api returns the checking status. For committed records, it compares the input data with the latest record in the remote database.
+      operationId: checkRecord
+      requestBody:
+        required: true
+        description: Unique user identifier to specify a user, user-defined tag and checksum
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckRecordReq"
+      responses:
+        "200":
+          description: Checking result for the requested user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckRecordRes"
+        "400":
+          description: Parameters in request object are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidInputsRes"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerInternalErrorsRes"
+    options:
+      tags:
+        - record
+      summary: CORS Preflight
+      operationId: optCheckRecord
+      responses:
+        "200":
+          description: CORS info for this api
+          headers:
+            Access-Control-Allow-Origin:
+              description: Allowed origins
+              schema:
+                type: string
+              examples:
+                allow_all_origins:
+                  summary: allow all origins
+                  value: "*"
+                allow_specific_origins:
+                  summary: allow a specific origin
+                  value: "http://localhost:8080"
+            Access-Control-Allow-Methods:
+              description: Allowed methods
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "GET", "PUT", "POST", "DELETE" ]
+    get:
+      tags:
+        - record
+      summary: Testing api, only returns an error
+      operationId: testCheckRecordApi
+      responses:
+        "405":
+          description: Wrong request method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongRequestMethodRes"
+
+components:
+  schemas:
+    GenericRequest:
+      description: Request schema for all requests.
+      properties:
+        user_id:
+          description: User globally unique identifier
+          type: string
+      required:
+        - user_id
+      example: { user_id: "12345abcde" }
+
+    GenericResponse:
+      description: Response schema for all responses.
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          description: Customised response code
+          type: integer
+          format: int32
+        message:
+          description: Customised message to return
+          type: string
+      example: { code: "200101", message: "User record found" }
+
+    WrongRequestMethodRes:
+      description: Response schema for wrong request method
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: { code: 405100, message: "Using Get method for Post only API" }
+
+    InvalidInputsRes:
+      description: Response schema for invalid input parameters
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                invalid_params:
+                  description: Invalid input parameters as a feedback for the frontend to fix corresponding fields
+                  type: array
+                  items:
+                    type: string
+      example:
+        {
+          code: "405101",
+          message: "Invalid inputs",
+          data: { "invalid_params": [ "user_tag" ] },
+        }
+
+    ServerInternalErrorsRes:
+      description: Response schema for server internal errors
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                error:
+                  description: Error message
+                  type: string
+      example:
+        {
+          code: "500100",
+          message: "Unknown server internal error",
+          data: { error: "No CORS Allowed Error" },
+        }
+
+    FetchKeyRes:
+      description: Response schema for successfully fetching a user encryption key
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                key:
+                  description: The user encrytion key
+                  type: string
+                digest:
+                  description: The checksum of the user encryption key for integrity checking
+                  type: string
+      example:
+        {
+          code: 200000,
+          message: "User key found",
+          data:
+            {
+              key: "pJ1i0YB1sfDQ",
+              digest: "c74c5a197e6bc48caa22ee409bf5aec8d20ca6eeb216e4755a18b865b079038c",
+            },
+        }
+
+    FetchDraftRes:
+      description: Response schema for fetching a user draft
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                meta:
+                  description: Draft metadata
+                  type: object
+                  properties:
+                    tag:
+                      description: User-defined tag of the draft
+                      type: string
+                    checksum:
+                      description: Checksum of the draft content
+                      type: string
+                content:
+                  description: Draft content
+                  type: string
+                created_at:
+                  description: Creation time of this draft
+                  type: string
+                updated_at:
+                  description: Last modification time of this draft
+                  type: string
+      example:
+        {
+          code: 200100,
+          message: "User draft found",
+          data:
+            {
+              meta:
+                {
+                  tag: "version",
+                  checksum: "47b0df723c43a5387b157ad17784a7c1",
+                },
+              content: "Hello John Doe",
+              created_at: "03/12/2020, 12:05:46",
+              updated_at: "03/12/2020, 12:05:46",
+            },
+        }
+    SyncDraftRes:
+      description: Response schema for a draft sync
+      oneOf:
+        - $ref: "#/components/schemas/SyncDraftConflictRes"
+        - $ref: "#/components/schemas/FetchDraftRes"
+    SyncDraftConflictRes:
+      description: Response schema for a sync conflict. Unless explicitly prefixed with `local`, all data is overloaded and sourced from the server.
+      allOf:
+        - $ref: "#/components/schemas/FetchDraftRes"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                meta:
+                  description: Draft metadata
+                  type: object
+                  properties:
+                    tag:
+                      description: User-defined tag of the draft
+                      type: string
+                    localTag:
+                      description: User-defined tag of the draft of the local version
+                      type: string
+                    checksum:
+                      description: Remote's checksum of the draft content
+                      type: string
+                content:
+                  description: Remote's draft content
+                  type: string
+                created_at:
+                  description: Creation time of this draft at remote
+                  type: string
+                updated_at:
+                  description: Last modification time of this draft at remote
+                  type: string
+                localContent:
+                  description: Local draft's content
+                  type: string
+      example:
+        {
+          code: 200105,
+          message: "Remote/local tag mismatch.",
+          data:
+            {
+              meta:
+                {
+                  tag: "version",
+                  localTag: "localVersion",
+                  checksum: "47b0df723c43a5387b157ad17784a7c1",
+                },
+              content: "Hello John Doe",
+              localContent: "{\"local\": \"content\"}",
+              created_at: "03/12/2020, 12:05:46",
+              updated_at: "03/12/2020, 12:05:46",
+            },
+        }
+
+    InsertDataReq:
+      description: Request schema for upserting a user draft and inserting a user record data
+      required:
+        - user_tag
+        - user_data
+      allOf:
+        - $ref: "#/components/schemas/GenericRequest"
+        - type: object
+          properties:
+            user_tag:
+              description: User-defined tag
+              type: string
+            user_data:
+              description: User data content
+              type: string
+      example:
+        {
+          "user_id": "12345abcde",
+          "user_tag": "version-1.2.3",
+          "user_data": "hello world",
+        }
+
+    CheckDraftReq:
+      description: Request schema for checking a user draft
+      required:
+        - user_tag
+        - user_checksum
+      allOf:
+        - $ref: "#/components/schemas/GenericRequest"
+        - type: object
+          properties:
+            user_tag:
+              description: User-defined tag
+              type: string
+            user_checksum:
+              description: Checksum of the draft content
+              type: string
+      example:
+        {
+          "user_id": "12345abcde",
+          "user_tag": "version-1.2.3",
+          "user_checksum": "120EA8A25E5D487BF68B5F7096440019",
+        }
+
+    CheckDraftRes:
+      description: Response schema for checking a user draft
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                last_modified_at:
+                  description: The timestamp to tell the user when the remote draft is last modified
+                  type: string
+      example:
+        {
+          code: 200105,
+          message: "Remote and local are different",
+          data: { last_modified_at: "03/12/2020, 12:05:46" },
+        }
+
+    FetchRecordReq:
+      description: Request schema for fetching a user record
+      required:
+        - user_tag
+      allOf:
+        - $ref: "#/components/schemas/GenericRequest"
+        - type: object
+          properties:
+            user_tag:
+              description: User-defined tag
+              type: string
+      example: { user_id: "12345abcde", user_tag: "version-1.2.3" }
+
+    FetchRecordRes:
+      description: Response schema for fetching a user record
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                meta:
+                  description: Record metadata
+                  type: object
+                  properties:
+                    tag:
+                      description: User-defined version tag
+                      type: string
+                    version:
+                      description: System-generated version tag
+                      type: string
+                    checksum:
+                      description: Checksum of the record content
+                      type: string
+                content:
+                  description: Record content of the requested user
+                  type: string
+                created_at:
+                  description: Creation timestamp of this record
+                  type: string
+                updated_at:
+                  description: Last modification timestamp of this record
+                  type: string
+      example:
+        {
+          code: 200200,
+          message: "User record found",
+          data:
+            {
+              meta:
+                {
+                  version: "ver-5d17",
+                  tag: "john-doe-tag-1",
+                  checksum: "5d176402bc687275bad6125ba9a59afb",
+                },
+              "content": "hello john doe tag",
+              "created_at": "01/12/2020, 21:35:45",
+              "updated_at": "01/12/2020, 21:35:45",
+            },
+        }
+
+    DeleteRecordReq:
+      description: Request schema for deleting a user record
+      allOf:
+        - $ref: "#/components/schemas/GenericRequest"
+        - type: object
+          properties:
+            user_tag:
+              description: User-defined tag
+              type: string
+      example: { user_id: "12345abcde", user_tag: "version-1.2.3" }
+
+    CheckRecordReq:
+      description: Request schema for checking a user record
+      required:
+        - user_tag
+        - user_checksum
+      allOf:
+        - $ref: "#/components/schemas/GenericRequest"
+        - type: object
+          properties:
+            user_tag:
+              description: User-defined tag
+              type: string
+            user_checksum:
+              description: Checksum of the record content
+              type: string
+      example:
+        {
+          user_id: "12345abcde",
+          user_tag: "version-1.2.3",
+          user_checksum: "120EA8A25E5D487BF68B5F7096440019",
+        }
+
+    CheckRecordRes:
+      description: Response schema for checking a user record
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: Response payload
+              type: object
+              properties:
+                comparison_record_created_at:
+                  description: The timestamp to tell the user which remote record is used to compare with the input record
+                  type: string
+      example:
+        {
+          code: 200204,
+          message: "User tag is globally unique and data is different from the last version",
+          data: { comparison_record_created_at: "01/12/2020, 20:41:22" },
+        }

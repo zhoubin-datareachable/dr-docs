@@ -1,0 +1,249 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: Common Auth Service
+  description: >-
+    This document contains the RESTful APIs provided by the Common Auth server for common. It includes: <br/>
+    1. user session liveness check
+    <br/>
+    <br/>
+    **Project server domain:** https://api.dev.datareachable.net/auth/common/v1
+    <br/>
+    <br/>
+    **Project GitHub Repos:**
+      - [Common Auth Server](https://github.com/dataReachable/dr_Back_CommonAuth_Service)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://api.dev.datareachable.net/auth/common/v1"
+    description: Sydney Development Cluster
+
+paths:
+  /session/status:
+    post:
+      tags:
+        - Session Status Check
+      summary: "[Frontend Only] Check whether the user session at the backend has expired or not"
+      description: >-
+        This API checks the user session status at the backend. It is used for providing an external session status check API for the frontend to explicitly call.
+        <br/>
+        <br/>
+        This API should `ONLY` be invoked directly. User session information is not extracted by this API. It only answers yes or no.
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The JWT value to identify the user.
+          schema:
+            type: string
+            example: "xxxx.yyyyy.zzz"
+      responses:
+        "200":
+          description: User session not expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_SessionTimeOut"
+
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /session/_extauth:
+    post:
+      tags:
+        - Session Status For ExtAuth
+      summary: "[API Gateway] External auth endpoint for checking user session status"
+      description: >-
+        This API checks the user session status at the backend. It is used for providing an external session check service for the API gateway so that the upstream priviledged API servers do `NOT` need to check the user session liveness again.
+        <br/>
+        <br/>
+        When this API returns http status 200, the API gateway continues to the upstream servers. In this case, this API also converts user's session information into user DRI, which is stored in the response header and `passed onto the upstream servers`.
+        <br/>
+        <br/>
+        When this API returns http status other than 200, the API gateway responses to the end user's browser with this response.
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The JWT value to identify the user.
+          schema:
+            type: string
+            example: "xxxx.yyyyy.zzz"
+      responses:
+        "200":
+          description: User session not expired
+          headers:
+            DR-Sess-User-DRI:
+              required: true
+              schema:
+                type: string
+                description: User DRI string for session
+                example: "dri:acs::user/xyz-123-456"
+
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_SessionTimeOut"
+
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200000
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "Success!"
+
+    Res_GenericBadFields:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400001, message: "The error of the fields will be described here." }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: { code: 500000, message: "General error message", data: { error: "Details of the error goes here" } }
+
+    Res_Mobile:
+      type: object
+      description: User provided mobile number. If not provided, the field is `null`.
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        number:
+          type: string
+          description: The actual mobile number of the user.
+      example: { "country": "61", "number": "1234567890" }
+
+    Res_Email:
+      type: string
+      description: User provided email address. If not provided, the field is `null`.
+      example: "xxxx@datareachable.com"
+
+    Req_EntryInfo:
+      type: object
+      required:
+        - "code"
+        - "session_state"
+      properties:
+        code:
+          type: string
+          description: The code extracted from the browser URL.
+        session_state:
+          type: string
+          description: The session_state value extracted from the browser URL.
+      example: { "code": "xxxxxxxxxx", "session_state": "xxxxxxxxxx" }
+
+    Res_EntryInfo_Success:
+      type: object
+      properties:
+        userinfo:
+          required:
+            - "sub"
+            - "name"
+          type: object
+          properties:
+            sub:
+              type: string
+              description: >-
+                User universally unique id.
+                <br/>
+                **Must** be returned and contain value.
+              example: "xxxxxxxxx-yyyyy_zzzzz"
+            name:
+              type: string
+              description: >-
+                User name.
+                <br/>
+                **Must** be returned and contain value.
+              example: "John Doe"
+            email:
+              $ref: "#/components/schemas/Res_Email"
+            mobile:
+              $ref: "#/components/schemas/Res_Mobile"
+            birthday:
+              type: string
+              format: date
+              description: User birthday
+              example: "1970-01-01"
+            gender:
+              type: string
+              description: User gender
+              example: "male"
+            avatar:
+              type: string
+              description: User avatar public-readable URL
+              example: "https://xxxxxx.aws.com"
+
+    Res_AccessDenied_SessionTimeOut:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 403001, message: "Session time out, access denied!" }
+
+    Res_AccessDenied_JWTNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT not found in the header, access denied!" }
+
+    Res_AccessDenied_JWTValidationFailure:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT validation failed, access denied!" }

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="nodejs-express-backend-application-project-template-in-typescript">NodeJS Express Backend Application Project Template in TypeScript</h2>
+<p><img src="https://github.com/dataReachable/dr_nodejs_project_template/workflows/Test/badge.svg" alt="Test">
+<img src="https://github.com/dataReachable/dr_nodejs_project_template/workflows/Documentation/badge.svg" alt="Documentation">
+<img src="https://github.com/dataReachable/dr_nodejs_project_template/workflows/Release/badge.svg" alt="Release"></p>
+<div align="center">
+    <img src="./img/LOGO.png" />
+</div>
+
+<p>This repo demonstrates a NodeJS Express backend project template in TypeScript. It is a complete and runnable project with a few RESTFul APIs. It contains the essential configurations and dependencies for a TypeScript-based backend project and followed the conventions outlined in the documentation server. To find detailed explaination and usage of this template and other specifications, refer to the documentation server <a href="http://documentation-doc-server.documentation.svc.cluster.local/specifications/backend/v1.0/en/README.md">here</a>.</p>
+<h2 id="features">Features</h2>
+<table>
+<thead>
+<tr>
+<th align="center">Feature</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Store a key</td>
+<td align="center">Write a record containing an encryption key in the database</td>
+</tr>
+<tr>
+<td align="center">Fetch a key</td>
+<td align="center">Fetch the encryption key from the database</td>
+</tr>
+<tr>
+<td align="center">Check key existence</td>
+<td align="center">Check if the given encryption key exists in the database</td>
+</tr>
+</tbody></table>
+<h2 id="environment-variables">Environment Variables</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NODE_ENV</td>
+<td>NodeJS running environment</td>
+<td>development</td>
+</tr>
+<tr>
+<td>HTTP_PORT</td>
+<td>https port number</td>
+<td>3000</td>
+</tr>
+<tr>
+<td>TZ</td>
+<td>NodeJS Timezone</td>
+<td>Australia/Sydney</td>
+</tr>
+<tr>
+<td>SAMPLE_API</td>
+<td>Sample API Route</td>
+<td>&quot;/sample&quot;</td>
+</tr>
+<tr>
+<td>MONGODB_URI</td>
+<td>mongodb url</td>
+<td>&quot;&quot;</td>
+</tr>
+<tr>
+<td>MONGODB_MAX_POOL_SIZE</td>
+<td>mongodb max pool size</td>
+<td>&quot;5&quot;</td>
+</tr>
+<tr>
+<td>MONGODB_MIN_POOL_SIZE</td>
+<td>mongodb min pool size</td>
+<td>&quot;0&quot;</td>
+</tr>
+<tr>
+<td>MONGODB_DBNAME</td>
+<td>mongodb database name</td>
+<td>&quot;Key&quot;</td>
+</tr>
+<tr>
+<td>MONGODB_COLL_NAME</td>
+<td>mongodb collection name</td>
+<td>&quot;user_key&quot;</td>
+</tr>
+<tr>
+<td>MONGODB_COLL_SCHEMA_VERSION</td>
+<td>mongodb collection schema version</td>
+<td>&quot;1&quot;</td>
+</tr>
+<tr>
+<td>CORS_WHITELIST</td>
+<td>CORS whitelist origins</td>
+<td>&quot;*&quot;</td>
+</tr>
+<tr>
+<td>USER_DATA_LEN</td>
+<td>user data length</td>
+<td>&quot;16&quot;</td>
+</tr>
+<tr>
+<td>CHECKSUM_ALGO</td>
+<td>checksum calculation algorithm</td>
+<td>&quot;sha256&quot;</td>
+</tr>
+</tbody></table>
+
+	</div>
+</body>
+</script>
+</html>

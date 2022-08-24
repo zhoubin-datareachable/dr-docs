@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="git-使用规范">Git 使用规范</h2>
+<h2 id="描述">描述</h2>
+<p>在该文档中将会解释如何使用 git 中常见的命令，该文档主要包括 git 不同分支所扮演的角色，如何命名新的分支和如何书写 commit 信息。</p>
+<h2 id="不同分支所扮演的角色">不同分支所扮演的角色</h2>
+<p>为了更好的将开发规范化，保持代码提交记录和 git 分支结构清晰，以方便后续维护，现在标准化 git 的相关操作。</p>
+<ul>
+<li><h3 id="main-branch">Main Branch</h3>
+<p>Main 分支用于部署生产环境，以确保主分支的稳定性。 主分支通常由 developer 和 hotfix 分支合并，并且主分支的代码不能随时直接修改。</p>
+</li>
+<li><h3 id="版本-dev-branch">[版本]-dev Branch</h3>
+<p>[版本]-dev 分支是一个开发环境分支，并且始终保留最新的已完成和错误修复的代码。 通常，在开发新功能时，将基于 [版本]-dev 分支创建 feature 分支。并且 [版本]-dev 分支的代码不能随时直接修改, 只有通过 Feature/Hotfix 分支发送 pull request 才可以进行更新.</p>
+</li>
+<li><h3 id="版本-test-branch">[版本]-test Branch</h3>
+<p>[版本]-test 分支是一个测试环境分支，改分支是基于产品版本需求而创建的分支。 通常，当开发的新功能经过测试, 并且完成错误代码修复以后会将[版本]-dev 分支的代码 meger 到[版本]-test 分支, 从而用于产品 QA 和产品内部展示，并且 [版本]-test 分支的代码不能直接修改, 该分支所有代码的更新应该基于[版本]-dev 分支代码修复完成后进行 meger 后更新。</p>
+</li>
+<li><h3 id="版本-feature-branch">[版本]-feature Branch</h3>
+<p>开发新功能时，请基于 [版本]-dev 创建 [版本]-feature 分支.</p>
+<p>分支命名规则：分支的名称以 feature 开头，并将 feature 与其对应的场景通过/连接，例如<code>v2/feature/user_module</code>，<code>v2/feature/data_module</code>.</p>
+</li>
+<li><h3 id="版本-hotfix-branch">[版本]-Hotfix Branch</h3>
+<p>当线上程序出现紧急问题时，需要及时进行修复，这时将会基于 main 分支创建 hotfix 分支。 修复完成后，需要将其合并到 main 分支和 developer 分支中。</p>
+<p>分支命名规则：分支的名称以 hotfix 开头，并将 hotfix 与其对应修复的场景通过/连接，例如<code>v2/hotfix/data_storage_error</code>，<code>v2/hotfix/user_login_error</code>。</p>
+</li>
+</ul>
+<h2 id="使用方法">使用方法</h2>
+<h3 id="每个分支的工作流程">每个分支的工作流程</h3>
+<ul>
+<li><h4 id="添加新的功能">添加新的功能</h4>
+<pre><code>(dev)$: git checkout -b v2/feature/xxx          # 创建 feature 分支
+(feature/xxx)$: developing...                # 开发中...
+(feature/xxx)$: git add xxx
+(feature/xxx)$: git commit -m &#39;:sparkles: new feature xxx 2020/06/28&#39;
+(dev)$: git merge v2/feature/xxx --no-ff        # 将开发完成的feature分支meger到develop分支上
+</code></pre>
+</li>
+<li><h4 id="紧急-bug-修复">紧急 bug 修复</h4>
+<pre><code>(main)$: git checkout -b v2/hotfix/xxx           # 从main分支上创建 hotfix 分支
+(hotfix/xxx)$: developing...                  # 开发中...
+(hotfix/xxx)$: git add xxx
+(hotfix/xxx)$: git commit -m &#39;:bug: new bug fix xxx 2020/06/28&#39;
+(main)$: git merge v2/hotfix/xxx --no-ff         # 将hotfix分支合并到main分支上并准备发布到生产环境
+(dev)$: git merge v2/hotfix/xxx --no-ff          # 确保develop分支同样修复了bug
+</code></pre>
+</li>
+<li><h4 id="测试环境">测试环境</h4>
+<pre><code>(release)$: git merge dev --no-ff             # 将代码从develop分支上合并过来，并在当前分支环境中进行测试
+</code></pre>
+</li>
+<li><h4 id="生产环境">生产环境</h4>
+<pre><code>(main)$: git merge release --no-ff          # 将代码重release分支上合并到main分支并且准备上线
+(main)$: git tag -a v0.1 -m &#39;tagName&#39;       # 对当前
+</code></pre>
+</li>
+</ul>
+<h3 id="commit-内容规范">commit 内容规范</h3>
+<p>所有的 commit 信息都需要符合下面的要求：</p>
+<pre><code>:gitmoji: 当前版本号-commit的信息    Commit的时间
+</code></pre>
+<p><a href="https://gitmoji.carloscuesta.me/"><code>:gitmoji</code></a> 用于清楚显示当前提交的目的。 请仔细搜索以上链接以找到最合适的 GitMoji。对于 ad hoc commits, 请用 <code>:construction:</code> 来表示仍然处于开发阶段，未完成。</p>
+<p>在 commit 的时候，用 <code>$commitDate</code> 变量来获取当前日期和时间。</p>
+<p>要将以上格式作为命令来进行调用，可以在 shell 中定义一个 git commit 命令别名。 例如，在 Unix / Linux 环境下，使用<code>bash</code>，可以将以下行添加到<code>$ HOME / .bashrc</code>文件中：</p>
+<pre><code class="language-bash">export git-commit() {
+  git commit -m &quot;$1 $2 $(date +&quot;%d-%B-%Y&quot;)&quot;
+}
+</code></pre>
+<p>然后，使用命令 <code>git-commit &quot;:gitmoji:&quot; &quot;Your Message&quot;</code> 执行提交操作。 这会生成诸如<code>：bug：v2-Fix Bugs 06-June-2020</code>之类的提交消息。</p>
+<p>在前端项目中也可以手动输入格式为<code>:bug: V2-Fix Bugs 2020/06/06</code>的 commit 信息.</p>
+
+	</div>
+</body>
+</script>
+</html>

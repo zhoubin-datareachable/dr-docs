@@ -1,0 +1,1631 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: QEditor Backend Project - QEditor Survey Comment APIs
+  description: >-
+    QESC0000X, 包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://qeditor.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [QEditor API Server](https://github.com/dataReachable/dr_Back_QuestionnaireEditor)
+  contact:
+    name: Backend Team
+    email: mengming.li@datareachable.com
+
+servers:
+  - url: "https://qeditor.dev.datareachable.net/"
+    description: Sydney Development Cluster
+
+paths:
+  /api/v1/comment/add/topic:
+    post:
+      summary: (QESC00000) 为 Element 添加 Comment Topic
+      description: 在 QEditor 编辑器环境下, 为 Survey 的一个 Element 添加 Comemnt Topic
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - survey_element_id
+                - comment_topic_name
+                - comment_message
+                - base_version_dri
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "survey_element_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "comment_topic_name": "topic001",
+                    "comment_message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "base_version_dri": "dri:qed::basev/PJONuzYSUcEAM0Z8UE3Mla"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                survey_element_id:
+                  type: string
+                  description: survey 下的一个 element 的 uuid, 后端不会验证该 uuid 的有效性
+                comment_topic_name:
+                  type: string
+                  description: 新 topic 的 name
+                comment_message:
+                  type: string
+                  description: comment topic 的具体内容
+                base_version_dri:
+                  type: string
+                  description: base version 的 dri, 该 base version 需要是当前 survey 的一个 base version
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00000_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00000_400001"
+                  - $ref: "#/components/schemas/Res_QESC00000_400002"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00000_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/get/topics/by_element:
+    post:
+      summary: (QESC00001) 获取一个 Element 的 Comment Topic 的基础信息
+      description: 在 QEditor 编辑器环境下, 根据 element_id 获取当前 survey 下的一个 element 关于某个 base version 的 comment topic 的基础信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - survey_element_id
+                - base_version_dri
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "survey_element_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "base_version_dri": "dri:qed::basev/PJONuzYSUcEAM0Z8UE3Mla"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                survey_element_id:
+                  type: string
+                  description: survey 下的一个 element 的 uuid
+                base_version_dri:
+                  type: string
+                  description: base version 的 dri, 该 base version 应该是当前 survey 的一个 base version
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00001_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00001_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00001_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/get/topic:
+    post:
+      summary: (QESC00002) 获取一个 Comment Topic 的基础信息
+      description: 在 QEditor 编辑器环境下, 根据 comment_topic_dri 获取 survey 下的一个 element 的一个 comment topic 的基础信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - comment_topic_dri
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "comment_topic_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                comment_topic_dri:
+                  type: string
+                  description: comment topic dri, 一个 topic 的唯一标识符
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00002_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00002_400001"
+                  - $ref: "#/components/schemas/Res_QESC00002_400002"
+                  - $ref: "#/components/schemas/Res_QESC00002_400003"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00002_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/temp_ver/get/base_ver/simple:
+    post:
+      summary: (QESC00003) 获取 Temporary Version 基于的 Base Version
+      description: 在 QEditor 编辑器环境下, 获取 survey 当前的 Temporary Version 基于的 Base Version 的信息
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00003_200001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00003_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/add/reply:
+    post:
+      summary: (QESC00004) 为 Comment Topic 添加 Reply
+      description: 在 QEditor 中, writer, commenter 或者 task_giver 调用此 API 为 Comment Topic 添加一个 Reply
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - comment_topic_dri
+                - comment_message
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "comment_topic_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                    "comment_message": "reply message"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                comment_topic_dri:
+                  type: string
+                  description: comment topic dri, 一个 topic 的唯一标识符
+                comment_message:
+                  type: string
+                  description: 回复的消息内容, 长度不能超过 5 万个字符
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00004_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00004_400001"
+                  - $ref: "#/components/schemas/Res_QESC00004_400002"
+                  - $ref: "#/components/schemas/Res_QESC00004_400003"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00004_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/update/topic/status:
+    post:
+      summary: (QESC00005) 改变 Comment Topic 的 Status
+      description: 在 QEditor 中, writer, commenter 或者 task_giver 调用此 API 可以改变一个 Comment Topic 的 Status, 需要当前用户是 Topic 的创建者或是 Survey 所绑定的 Project 的 admin
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - comment_topic_dri
+                - status_to_be
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "comment_topic_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                    "status_to_be": "open"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                comment_topic_dri:
+                  type: string
+                  description: comment topic dri, 一个 topic 的唯一标识符
+                status_to_be:
+                  type: string
+                  description: 指定要变为的状态, 只能为 "open" 或者 "closed"
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00005_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00005_400001"
+                  - $ref: "#/components/schemas/Res_QESC00005_400002"
+                  - $ref: "#/components/schemas/Res_QESC00005_400003"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00005_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/update/reply/message:
+    post:
+      summary: (QESC00006) 修改 Comment Reply
+      description: 在 QEditor 中, writer, commenter 或者 task_giver 调用此 API 来修改一个 Reply 的 Message
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - comment_reply_dri
+                - comment_message
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "comment_reply_dri": "dri:qed::comment:reply/5zs2BUk-PfWCBx9CcwyBVxvRj9-i",
+                    "comment_message": "reply message (modified)"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                comment_reply_dri:
+                  type: string
+                  description: comment reply dri, 一个 reply 的唯一标识符
+                comment_message:
+                  type: string
+                  description: 修改后的 reply message
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00006_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00006_400001"
+                  - $ref: "#/components/schemas/Res_QESC00006_400002"
+                  - $ref: "#/components/schemas/Res_QESC00006_400003"
+                  - $ref: "#/components/schemas/Res_QESC00006_400004"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00006_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/get/topics/by_elements:
+    post:
+      summary: (QESC00007) 获取一组 Element 的 Comment Topic 的基础信息
+      description: 在 QEditor 编辑器环境下, 根据当前 survey 下的一组 element_id 获取这些 element 关于关于一个 base version 的 comment topic 的基础信息。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - survey_element_ids
+                - base_version_dri
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "survey_element_ids": [
+                        "123e4567-e89b-12d3-a456-426614174000",
+                        "cb5d1fbc-58cb-4501-bb2c-96f8c09b940b"
+                    ],
+                    "base_version_dri": "dri:qed::basev/PJONuzYSUcEAM0Z8UE3Mla"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                survey_element_ids:
+                  type: array
+                  description: survey 下的一些 element 的 uuid
+                  items:
+                    type: string
+                base_version_dri:
+                  type: string
+                  description: base version 的 dri, 该 base version 应该是当前 survey 的一个 base version
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00007_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00007_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00007_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/get/replies/by_dris:
+    post:
+      summary: (QESC00008) 根据一组 reply 的 dri 批量获取 reply
+      description: 在 QEditor 编辑器环境下, 根据当前 survey 下的一组 reply 的 dri 获取这些 dri 对应的 reply 的详细信息。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - survey_reply_dris
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "survey_reply_dris": [
+                        "dri:qed::comment:reply/5zs2BUk-PfWCBx9CcwyBVxvRj9-i",
+                        "dri:qed::comment:reply/iRy05PUi_zt2NLl7l-F7oTcpYAY2",
+                        "dri:qed::comment:reply/nVnKgiDZR2kZZ_mnWK16HOeMJKfy",
+                    ]
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                survey_reply_dris:
+                  type: array
+                  description: 包含待获取的 reply 的 dri 数组
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00008_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00008_400001"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00008_403001"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /api/v1/comment/del/reply:
+    post:
+      summary: (QESC00009) 删除 reply
+      description: reply 的创建者 可以调用此 API 对 reply 进行删除
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - reply_dri
+              example:
+                {
+                    "access_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "reply_dri": "dri:qed::comment:reply/gpxxo4QgvF1zfXdJxOJ2sHWJ31Ev"
+                }
+              properties:
+                access_token:
+                  type: string
+                  description: 用户的 role token, 代表用户的角色(writer, commenter 或者 task_giver)
+                reply_dri:
+                  type: string
+                  description: 要删除的 reply 的 dri
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_QESC00009_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00009_400001"
+                  - $ref: "#/components/schemas/Res_QESC00009_400002"
+                  - $ref: "#/components/schemas/Res_QESC00009_400003"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 未授权的操作
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESC00009_403001"
+                  - $ref: "#/components/schemas/Res_QESC00009_403002"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+####################################################################################################
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      description: 成功响应的通用部分
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "对响应的一段简短的描述"
+
+    Res_AuthenticationFailed:
+      type: object
+      description: 用户未登录或者登录过期的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示 jwt 不存在或者已经过期"
+      example:
+        {
+            "code": 401001,
+            "message": "Cannot get JWT in request, unauthorized access."
+        }
+
+    Res_GenericInternalError:
+      type: object
+      description: 服务器内部错误的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "发生错误时的简短提示"
+        data:
+          type: object
+          description: 错误响应携带的数据
+          properties:
+            error:
+              description: 错误的详细信息
+              type: string
+      example:
+        {
+          "code": 500001,
+          "message": "[xxxx Controller]: An unknown error occurred, please check",
+          "data":
+            {
+              "error": "Details of the error goes here"
+            }
+        }
+
+    Res_MissingOrWrongParameters:
+      type: object
+      description: 参数错误或缺失时的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示参数错误或参数缺失"
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example:
+        {
+          "code": 405000,
+          "message": "You're using the completely wrong HTTP method!"
+        }
+
+    Res_UnauthorizedOperation:
+      type: object
+      description: 未授权的操作
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: 提示操作没有被授权
+
+    Res_QESC00000_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Add new comment topic for survey successfully",
+            "data": {
+                "comment_topic_dri": "dri:qed::comment:topic/xVLlJCwh4sdAX9MNXv2yNhAYcJ"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                comment_topic_dri:
+                  type: string
+                  description: 新的 comment topic 的 dri, 由固定的前缀和唯一的 id 组成
+
+    Res_QESC00000_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_element_id\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00000_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such base version in survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00000_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00001_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get comment topics for a element of survey successfully",
+            "data": {
+                "comment_topics": [
+                    {
+                        "dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                        "survey_dri": "dri:qed::output/ffFIOHASeovVFg_Cpx2wy5",
+                        "name": "topic001",
+                        "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                        "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                        "created_time": "2021-08-17T06:58:27.345Z",
+                        "updated_time": "2021-08-17T06:58:27.345Z",
+                        "status": "open",
+                        "reply_array": []
+                    },
+                    {
+                        "dri": "dri:qed::comment:topic/WZQq1Xy6jUK3DM0SWdviU80Ora",
+                        "survey_dri": "dri:qed::output/ffFIOHASeovVFg_Cpx2wy5",
+                        "name": "topic002",
+                        "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                        "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                        "created_time": "2021-08-17T06:58:30.342Z",
+                        "updated_time": "2021-08-17T06:58:30.342Z",
+                        "status": "open",
+                        "reply_array": []
+                    },
+                    {
+                        "dri": "dri:qed::comment:topic/998qBjDoFwOHO9nH683VCws_-l",
+                        "survey_dri": "dri:qed::output/ffFIOHASeovVFg_Cpx2wy5",
+                        "name": "topic003",
+                        "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                        "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                        "created_time": "2021-08-17T06:58:33.359Z",
+                        "updated_time": "2021-08-17T06:58:33.359Z",
+                        "status": "open",
+                        "reply_array": []
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                comment_topics:
+                  type: array
+                  description: comment topic array list
+                  items:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                        description: comemnt topic's dri, unique identifier
+                      survey_dri:
+                        type: string
+                        description: the survey_dri to which the question belongs
+                      name:
+                        type: string
+                        description: comment topic's name
+                      message:
+                        type: string
+                        description: comment topic's message
+                      creator_dri:
+                        type: string
+                        description: user dir of comment topic's creator
+                      created_time:
+                        type: string
+                        description: the time of comment topic's created at
+                      updated_time:
+                        type: string
+                        description: the time of comment topic's updated at
+                      status:
+                        type: string
+                        description: flag to indicate the topic is open or closed
+                      reply_array:
+                        type: array
+                        description: dri array of topic's replies
+                        items:
+                          type: string
+    Res_QESC00001_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_element_id\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00001_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00002_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get comment topics for a element of survey successfully",
+            "data": {
+                "comment_topic": {
+                    "dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                    "survey_dri": "dri:qed::output/ffFIOHASeovVFg_Cpx2wy5",
+                    "name": "topic001",
+                    "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                    "created_time": "2021-08-17T06:58:27.345Z",
+                    "updated_time": "2021-08-17T06:58:27.345Z",
+                    "status": "open",
+                    "reply_array": []
+                }
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                dri:
+                  type: string
+                  description: comemnt topic's dri, unique identifier
+                survey_dri:
+                  type: string
+                  description: the survey_dri to which the question belongs
+                name:
+                  type: string
+                  description: comment topic's name
+                message:
+                  type: string
+                  description: comment topic's message
+                creator_dri:
+                  type: string
+                  description: user dir of comment topic's creator
+                created_time:
+                  type: string
+                  description: the time of comment topic's created at
+                updated_time:
+                  type: string
+                  description: the time of comment topic's updated at
+                status:
+                  type: string
+                  description: flag to indicate the topic is open or closed
+                reply_array:
+                  type: array
+                  description: dri array of topic's replies
+                  items:
+                    type: string
+
+    Res_QESC00002_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"comment_topic_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00002_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such comment topic"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00002_400003:
+      type: object
+      example:
+        {
+            "code": 400003,
+            "message": "The provided comment topic does not belong to current survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00002_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00003_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Get the base version on which the temporary is based successfully",
+            "data": {
+                "base_version_dri": "dri:qed::basev/AIMd43Wb8A7ulwc0zBnELD",
+                "base_version_string": "V8"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                base_version_dri:
+                  type: string
+                  description: base version's dri
+                base_version_string:
+                  type: string
+                  description: base version's tag string
+
+    Res_QESC00003_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00004_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Add reply successfully",
+            "data": {
+                "comment_topic_to_be_refreshed_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                comment_topic_to_be_refreshed_dri:
+                  type: string
+                  description: the dri of comment topic which need to be refreshed by frontend
+
+    Res_QESC00004_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"comment_message\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00004_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such comment topic"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00004_400003:
+      type: object
+      example:
+        {
+            "code": 400003,
+            "message": "The provided comment topic does not belong to current survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00004_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00005_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Change topic status successfully",
+            "data": {
+                "comment_topic_to_be_refreshed_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                comment_topic_to_be_refreshed_dri:
+                  type: string
+                  description: the dri of comment topic which need to be refreshed by frontend
+
+    Res_QESC00005_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"status_to_be\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00005_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such comment topic"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00005_400003:
+      type: object
+      example:
+        {
+            "code": 400003,
+            "message": "The provided comment topic does not belong to current survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00005_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00006_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Modify reply message successfully",
+            "data": {
+                "comment_reply_to_be_refreshed_dri": "dri:qed::comment:reply/5zs2BUk-PfWCBx9CcwyBVxvRj9-i"
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                comment_reply_to_be_refreshed_dri:
+                  type: string
+                  description: the dri of comment reply which need to be refreshed by frontend
+
+    Res_QESC00006_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"status_to_be\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00006_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such comment topic"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00006_400003:
+      type: object
+      example:
+        {
+            "code": 400003,
+            "message": "The provided comment topic does not belong to current survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00006_400004:
+      type: object
+      example:
+        {
+            "code": 400004,
+            "message": "Replier of the provided comment reply is not current user"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00006_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00007_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Batch to get comment topics of survey by element successfully",
+            "data": {
+                "mappings": {
+                    "123e4567-e89b-12d3-a456-426614174000": {
+                        "comment_topics": [
+                            {
+                                "dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                                "name": "topic001",
+                                "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                                "created_time": "2021-08-17T06:58:27.345Z",
+                                "updated_time": "2021-08-25T03:28:46.490Z",
+                                "status": "open",
+                                "reply_array": [
+                                    "dri:qed::comment:reply/5zs2BUk-PfWCBx9CcwyBVxvRj9-i",
+                                    "dri:qed::comment:reply/iRy05PUi_zt2NLl7l-F7oTcpYAY2"
+                                ]
+                            },
+                            {
+                                "dri": "dri:qed::comment:topic/WZQq1Xy6jUK3DM0SWdviU80Ora",
+                                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                                "name": "topic002",
+                                "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                                "created_time": "2021-08-17T06:58:30.342Z",
+                                "updated_time": "2021-08-17T06:58:30.342Z",
+                                "status": "open",
+                                "reply_array": []
+                            },
+                            {
+                                "dri": "dri:qed::comment:topic/998qBjDoFwOHO9nH683VCws_-l",
+                                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                                "name": "topic003",
+                                "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                                "created_time": "2021-08-17T06:58:33.359Z",
+                                "updated_time": "2021-08-17T06:58:33.359Z",
+                                "status": "open",
+                                "reply_array": []
+                            },
+                            {
+                                "dri": "dri:qed::comment:topic/jkqw4xiFFF8u-_wMniTVd2u9fV",
+                                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                                "name": "topic003",
+                                "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                                "created_time": "2021-08-27T03:34:46.379Z",
+                                "updated_time": "2021-08-27T03:34:46.379Z",
+                                "status": "open",
+                                "reply_array": []
+                            }
+                        ]
+                    },
+                    "cb5d1fbc-58cb-4501-bb2c-96f8c09b940b": {
+                        "comment_topics": [
+                            {
+                                "dri": "dri:qed::comment:topic/IFPZcb3B76_KcnpVPjhzNKN5DW",
+                                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                                "name": "topic001",
+                                "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                                "created_time": "2021-08-27T03:34:06.650Z",
+                                "updated_time": "2021-08-27T03:34:06.650Z",
+                                "status": "open",
+                                "reply_array": []
+                            },
+                            {
+                                "dri": "dri:qed::comment:topic/KmuNbwBHqyhO74wnxaFpKqPc_M",
+                                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                                "name": "topic002",
+                                "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                                "created_time": "2021-08-27T03:34:09.585Z",
+                                "updated_time": "2021-08-27T03:34:09.585Z",
+                                "status": "open",
+                                "reply_array": []
+                            },
+                            {
+                                "dri": "dri:qed::comment:topic/BifV1HfGDf5onraOEQskMtuTN9",
+                                "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                                "name": "topic003",
+                                "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                "creator_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                                "created_time": "2021-08-27T03:34:12.576Z",
+                                "updated_time": "2021-08-27T03:34:12.576Z",
+                                "status": "open",
+                                "reply_array": []
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                mappings:
+                  type: object
+                  description: the mapping from element_id to topics
+                  additionalProperties:
+                    type: object
+                    properties:
+                      comment_topics:
+                        type: array
+                        description: comment topic array list
+                        items:
+                          type: object
+                          properties:
+                            dri:
+                              type: string
+                              description: comemnt topic's dri, unique identifier
+                            survey_dri:
+                              type: string
+                              description: the survey_dri to which the question belongs
+                            name:
+                              type: string
+                              description: comment topic's name
+                            message:
+                              type: string
+                              description: comment topic's message
+                            creator_dri:
+                              type: string
+                              description: user dir of comment topic's creator
+                            created_time:
+                              type: string
+                              description: the time of comment topic's created at
+                            updated_time:
+                              type: string
+                              description: the time of comment topic's updated at
+                            status:
+                              type: string
+                              description: flag to indicate the topic is open or closed
+                            reply_array:
+                              type: array
+                              description: dri array of topic's replies
+                              items:
+                                type: string
+    Res_QESC00007_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_element_ids\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00007_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00008_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Batch to get replies of a survey by dris",
+            "data": {
+                "replies": [
+                    {
+                        "reply_dri": "dri:qed::comment:reply/5zs2BUk-PfWCBx9CcwyBVxvRj9-i",
+                        "topic_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                        "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                        "replier_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                        "organization_dri": "dri:acs::org/pPoSsTEoGiJySASkEq",
+                        "message": "This is first message (modified)",
+                        "created_at": "2021-08-25T02:46:31.075Z",
+                        "updated_at": "2021-08-25T02:51:43.731Z"
+                    },
+                    {
+                        "reply_dri": "dri:qed::comment:reply/iRy05PUi_zt2NLl7l-F7oTcpYAY2",
+                        "topic_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                        "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                        "replier_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                        "organization_dri": "dri:acs::org/pPoSsTEoGiJySASkEq",
+                        "message": "reply message",
+                        "created_at": "2021-08-25T03:28:46.490Z",
+                        "updated_at": "2021-08-25T03:28:46.490Z"
+                    },
+                    {
+                        "reply_dri": "dri:qed::comment:reply/nVnKgiDZR2kZZ_mnWK16HOeMJKfy",
+                        "topic_dri": "dri:qed::comment:topic/6FzAU4Zm4DXC8tEPxKETwtoAW4",
+                        "survey_dri": "dri:qed::output/app6ZaNbPmnqnBqm3nmd9f",
+                        "replier_dri": "dri:acs::user/rjdpPoSsTEoGiJySASkEq",
+                        "organization_dri": "dri:acs::org/pPoSsTEoGiJySASkEq",
+                        "message": "reply message",
+                        "created_at": "2021-09-23T01:52:37.690Z",
+                        "updated_at": "2021-09-23T01:52:37.690Z"
+                    }
+                ]
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                replies:
+                  type: array
+                  description: 与 payload 中 dri 数组对应的 replies 的数组
+                  items:
+                    type: object
+                    properties:
+                      reply_dri:
+                        type: string
+                        description: reply 的 dri
+                      topic_dri:
+                        type: string
+                        description: 这个 reply 所属的 topic
+                      survey_dri:
+                        type: string
+                        description: 这个 reply 所属的 survey 的 dri, 且这个 survey 一定是当前的(access_token代表的) survey
+                      replier_dri:
+                        type: string
+                        description: 创建这个 reply 的 dri
+                      organization_dri:
+                        type: string
+                        description: 用户创建这个 reply 是所使用的 organization 的 dri
+                      message:
+                        type: string
+                        description: reply 的消息内容
+                      created_at:
+                        type: string
+                        description: 这个 reply 被创建的时间
+                      updated_at:
+                        type: string
+                        description: 这个 reply 被更新的时间
+    Res_QESC00008_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_reply_dris\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00008_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00009_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Delete reply successfully"
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+
+    Res_QESC00009_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"reply_dri\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00009_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such reply"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00009_400003:
+      type: object
+      example:
+        {
+            "code": 400003,
+            "message": "The provided reply does not belong to the current survey"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESC00009_403001:
+      type: object
+      example:
+        {
+            "code": 403001,
+            "message": "Invalid access_token"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+    Res_QESC00009_403002:
+      type: object
+      example:
+        {
+            "code": 403002,
+            "message": "You are not the creator of this reply"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_UnauthorizedOperation"

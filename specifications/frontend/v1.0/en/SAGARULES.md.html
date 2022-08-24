@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="saga-rules-specifications">SAGA RULES SPECIFICATIONS</h1>
+<h1 id="description">DESCRIPTION</h1>
+<p>This document is an introduction of the structure of saga which refers to saga.ts files. The structure of comments and the usage of saga are also mentioned in this document. Each saga will be defined in folders separately with its own saga.ts files. A rootSaga will be defined in the <code>Store</code> folder.</p>
+<h1 id="comments">Comments</h1>
+<p>Comments are necessary in all files.
+Every interface need an introduction to describe its meaning and parameters.</p>
+<h2 id="top-levelfile-comments">Top Level/File Comments</h2>
+<p>The top-level comment is used to tell readers who are not familiar with this code what is included in this file. The general content of the file, its author, dependencies and compatibility information should be provided.</p>
+<pre><code class="language-javascript">/**
+ * @file type/actions/saga
+ * @date 2020/09/21
+ * @author Administrator
+ * @lastModify Administrator 2020/09/21
+ */
+</code></pre>
+<h2 id="comments-of-saga-generation-function">Comments of saga generation function</h2>
+<p>The comment below shows how to describe an saga generation function. First of all, An introduction of this saga is needed. Then meanings and types of each parameters should be shown in the comment.</p>
+<pre><code class="language-js">/**
+ * This is an introduction of the saga generation function1.
+ * @param {type} parameter the meaning of this parameter
+ * */
+function* handleDataFetch1(parameter) {
+  yield put(demo);
+}
+/**
+ * This is an introduction of the saga generation function2.
+ * @param {type} parameter the meaning of this parameter
+ * */
+function* handleDataFetch2(parameter) {
+  yield put(demo);
+}
+</code></pre>
+<h2 id="comments-of-saga-watch-generation-function">Comments of saga watch generation function</h2>
+<p>Each saga generation function need a watching generation function to triger. Please write commonts for each watching generation function to descripe the purpose of them, All the types for the action will be get from the types.ts file.</p>
+<pre><code class="language-js">import * as types from &quot;./types&quot;;
+
+/**
+ * This is an introduction of the saga watching generation function 1.
+ * */
+function* watchAsyncTasks() {
+  yield [
+    takeLatest(types.dataFetch1, handleDataFetch1),
+    takeLatest(types.dataFetch2, handleDataFetch2),
+  ];
+}
+
+or;
+
+/**
+ * This is an introduction of the saga watching generation function 1.
+ * */
+function* watchAsyncTasks1() {
+  yield takeLatest(types.dataFetch1, handleDataFetch1);
+}
+function* watchAsyncTasks2() {
+  yield takeLatest(types.dataFetch2, handleDataFetch2);
+}
+
+or;
+
+/**
+ * This is an introduction of the saga watching generation function 1.
+ * */
+function* watchAsyncTasks() {
+  yield takeLatest(types.dataFetch1, handleDataFetch1);
+  yield takeLatest(types.dataFetch2, handleDataFetch2);
+}
+</code></pre>
+<h2 id="export-your-saga-prepare-using-in-rootsagajs">Export your saga, prepare using in rootSaga.js</h2>
+<p>When you finish develop your saga.ts file, don&#39;t forget to export them</p>
+<pre><code class="language-js">const sagas = [fork(watchAsyncTasks), fork(watchAsyncTasks2)];
+export default sagas;
+</code></pre>
+<h2 id="import-your-saga-in-rootsagats">Import your saga in rootSaga.ts</h2>
+<p>After you success write all the saga.ts file, don&#39;t forget to import all the separate saga.ts into the rootSaga.js file.</p>
+<pre><code class="language-js">import { all } from &quot;redux-saga/effects&quot;;
+import exampleSagas1 from &quot;/path&quot;;
+import exampleSagas2 from &quot;/path&quot;;
+
+export default function* rootSaga(): Generator {
+  try {
+    // this is where the saga combine into the rootSaga
+    yield all([...exampleSagas, ...exampleSagas2]);
+  } catch (err) {
+    // This is where error monitoring should go
+    console.log(&quot;error caught in rootsaga::&quot;, err);
+  }
+}
+</code></pre>
+<h2 id="more-official-documentation">More official documentation</h2>
+<p>If you have any problem with using saga in the project, plase go to <a href="https://redux-saga.js.org/">saga official website</a> to check the documentations.</p>
+
+	</div>
+</body>
+</script>
+</html>

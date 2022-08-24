@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="front-end-frequent-qa">Front End Frequent Q&amp;A</h2>
+<p>This document sorts out common questions in the front-end development process, and answers to questions</p>
+<hr>
+<h4 id="q-every-time-a-new-task-is-obtained-and-the-development-is-completed-the-code-is-pushed-to-github-at-this-time-a-new-branch-is-checked-out-to-complete-another-task-and-then-a-pull-request-is-sent-again-a-conflict-will-appear">Q: Every time a new task is obtained and the development is completed, the code is pushed to github. At this time, a new branch is checked out to complete another task, and then a pull request is sent again. A conflict will appear.</h4>
+<h4 id="a-every-time-you-get-a-development-task-you-need-to-checkout-a-new-branch-from-the-development-branch-and-then-perform-task-development-on-this-new-branch-at-this-time-if-your-task-is-completed-if-you-directly-checkout-another-branch-in-the-current-branch-to-continue-development-at-this-time-your-pull-request-must-have-conflict-the-point-is-that-every-time-you-get-a-task-you-must-checkout-new-branches-from-development">A: Every time you get a development task, you need to checkout a new branch from the development branch, and then perform task development on this new branch. At this time, if your task is completed, if you directly checkout another branch in the current branch to continue development, At this time, your pull request must have conflict. The point is that every time you get a task, you must checkout new branches from development.</h4>
+<hr>
+<h4 id="q-what-default-attributes-in-css-need-to-be-added">Q: What default attributes in css need to be added</h4>
+<h4 id="a-1-any-ui-interaction-styles-appearing-on-the-ui-represent-the-interaction-process-between-the-users-mouse-and-the-ui-at-this-time-you-need-to-set-the-properties-of-the-cursor-according-to-the-current-interaction-scene-2-when-some-text-exists-in-a-button-or-a-card-that-can-be-clicked-you-need-to-set-user-select-to-none-for-these-texts">A: 1. Any UI interaction styles appearing on the UI represent the interaction process between the user&#39;s mouse and the UI. At this time, you need to set the properties of the cursor according to the current interaction scene. 2. When some text exists in a button or a card that can be clicked, you need to set user-select to none for these texts.</h4>
+<hr>
+<h4 id="q-under-different-design-sizes-is-the-layout-control-hard-coded-or-is-the-size-expressed-as-a-percentage">Q: Under different design sizes, is the layout control hard-coded, or is the size expressed as a percentage?</h4>
+<h4 id="a-the-current-design-size-is-divided-into-four-breakpoints-375px-768px-1024px-and-1920px">A: The current design size is divided into four breakpoints, 375px, 768px, 1024px and 1920px</h4>
+<ol>
+<li>375px: When the screen width is less than 768px, follow the design of 375px, and the width of the frame is calculated as percentage.</li>
+<li>768px: When the screen width is between 768px and 1024px, the screen design follows the 768px design, and the frame width is calculated as percentage.</li>
+<li>1024px: When the width of the screen is between 1024px and 1600px, the screen design follows the design of 1024px, and the width of the frame is subject to the width of the design drawing, not calculated as a percentage.</li>
+<li>1920px: When the width of the screen is greater than 1600px, the screen design will follow the 1920px design, and the screen will be scaled proportionally when the screen width exceeds 1920px.</li>
+</ol>
+<p>Note: If there is no 1920px design style in the design, the style will be scaled proportionally after the screen size is greater than 1024px. After the screen size is greater than 1024px, all are subject to the size of the design drawing, and the width is not written as a percentage. If there is no ipad in the mobile design in the design, only the case where the screen size is greater than or equal to 1024px is considered, and the other cases are not considered in the current development stage.</p>
+<hr>
+<h4 id="q-what-is-the-configuration-of-css-global-style">Q: What is the configuration of css global style?</h4>
+<h4 id="a-currently-all-style-files-in-the-project-will-set-such-a-style--margin0-padding0-in-order-to-ensure-the-cleanliness-and-maintainability-of-the-code-all-projects-will-add-the-globalscss-file-under-the-src-directory-and-configure-the-style-of-margin0padding0-into-the-globalscss-file-for-the-rest-of-the-general-styles-please-adjust-the-different-styles-individually-through-class-id-and-other-css-selectors">A: Currently, all style files in the project will set such a style * {margin:0; padding:0}, In order to ensure the cleanliness and maintainability of the code, all projects will add the global.scss file under the src directory, And configure the style of *{margin:0;padding:0} into the global.scss file. For the rest of the general styles, please adjust the different styles individually through class, id and other CSS selectors.</h4>
+<hr>
+<h4 id="q-after-pulling-the-code-from-github-i-want-to-rename-the-previous-folder-with-capital-letters-but-github-prompts-that-there-is-no-modification-and-cannot-commit-the-newly-named-capital-file-to-the-remote-branch-how-to-fix-this-issue">Q: After pulling the code from github, I want to rename the previous folder with capital letters, but github prompts that there is no modification and cannot commit the newly-named capital file to the remote branch. How to fix this issue?</h4>
+<h4 id="a-first-you-need-to-run-the-git-config---get-coreignorecase-command-in-the-terminal-to-see-if-the-output-is-true-if-it-is-true-run-this-command-to-modify-the-github-case-sensitive-git-config-coreignorecase-false-run-git-config---get-coreignorecase-again-at-this-time-if-it-returns-false-it-means-the-modification-is-successful-and-github-can-do-case-sensitive-processing-however-it-should-be-noted-that-at-this-time-when-pushing-to-the-remote-server-there-may-be-two-identical-folders-one-uppercase-named-folder-and-one-lowercase-named-folder-please-contact-the-department-head-to-modify-the-folder-structure-in-the-remote-server">A: First, you need to run the git config --get core.ignorecase command in the terminal to see if the output is true. If it is true, run this command to modify the github case-sensitive git config core.ignorecase false, run git config --get core.ignorecase again at this time, if it returns false, it means the modification is successful, and github can do case-sensitive processing. However, it should be noted that at this time, when pushing to the remote server, there may be two identical folders, one uppercase named folder and one lowercase named folder. Please contact the department head to modify the folder structure in the remote server.</h4>
+
+	</div>
+</body>
+</script>
+</html>

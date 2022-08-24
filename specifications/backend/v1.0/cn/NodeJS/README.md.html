@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="nodejs和expressjs后端开发规范">NodeJS和ExpressJS后端开发规范</h2>
+<p>ExpressJS是一个轻量级的基于NodeJS的后端开发框架。然而，它并不是一个全面的MVC框架。它的使用十分的灵活。这就造成了不同开发者采用非常不同的项目布局和命名方式，由此在团队合作中会产生非常多的冲突。本文档给出在数支公司开发ExpressJS后端时应该遵循的最佳规范。</p>
+<hr>
+<h2 id="开发语言">开发语言</h2>
+<p><strong>仅使用<a href="https://www.typescriptlang.org/">TypeScript</a></strong></p>
+<p>TypeScript通过添加类型系统扩展了JavaScript。在开发阶段，限制开发中仅使用TypeScript（而不是JavaScript）让程序更加可扩展，减少错误，更加可维护。</p>
+<hr>
+<h2 id="项目布局">项目布局</h2>
+<p>我们参考了一些其他的全面的后端MVC框架，比如：<a href="https://spring.io/projects/spring-boot">Spring Boot</a> 和 <a href="https://eggjs.org/en/index.html">Egg.js</a>，从中，形成如下的项目布局：</p>
+<ol>
+<li>总体项目结构</li>
+<li>源程序文件夹结构<code>src</code></li>
+</ol>
+<hr>
+<h2 id="项目的总体结构">项目的总体结构</h2>
+<p>项目的总体结构包括了根目录下的文件夹和文件。省略了部分次要文件和文件夹。</p>
+<!-- DIRSTRUCTURE_START_MARKER -->
+<pre>
+sample_project/
+├─ README.md ...................(<font color=red>必需</font>)Readme.md项目说明文件
+├─ package.json ................(<font color=red>必需</font>)NPM全局配置文件
+├─ tsconfig.json ...............(<font color=red>必需</font>)TypeScript编译器和TypeDoc相关配置
+├─ babel.config.json ...........(<font color=red>必需</font>)Babel配置文件
+├─ .eslintrc.json ..............(<font color=red>必需</font>)ESLint配置文件
+├─ .eslintignore ...............(<font color=red>必需</font>)ESLing忽略的文件和文件夹
+├─ Dockerfile ..................(<font color=red>必需</font>)Docker镜像构建文件
+├─ .dockerignore ...............(<font color=red>必需</font>)Docker镜像构建忽略文件
+├─ .github/
+│  └─ workflow/ ................(<font color=cyan>可选</font>)GitHub Actions文件
+├─ node_modules/ ...............(<font color=red>必需</font>)安装的NPM包文件
+├─ logs/ .......................(<font color=yellow>自动</font>)日志
+├─ config/ .....................(<font color=red>必需</font>)项目配置文件夹
+│  ├─ envars/ ..................(<font color=red>必需</font>)环境变量
+│  ├─ pm2/ .....................(<font color=cyan>可选</font>)PM2配置文件
+│  └─ testing/ .................(<font color=red>必需</font>)测试配置
+├─ outputs/ ....................(<font color=yellow>自动</font>)输出文件
+│  ├─ docs/ ....................TypeDoc输出的文档
+│  ├─ eslint/ ..................ESLint输出的报告
+│  └─ jest/ ....................Jest输出的报告 (比如，代码覆盖率)
+├─ build/ ......................(<font color=red>必需</font>)转译（构建）后的JavaScript代码
+├─ test/ .......................(<font color=red>必需</font>)测试代码文件夹
+│  └─ controller/ ..............测试控制器
+│     └─ ctr_sample.test.js ....测试某一个具体的控制器
+└─ src/ ........................(<font color=red>必需</font>)源代码文件夹
+</pre>
+<!-- DIRSTRUCTURE_END_MARKER -->
+
+<hr>
+<h2 id="源代码文件夹src的结构">源代码文件夹<code>src</code>的结构</h2>
+<p>源代码文件夹包含了<code>src</code>文件夹的结构细节。本结构遵循MVC的规范。</p>
+<!-- DIRSTRUCTURE_START_MARKER -->
+<pre>
+sample_project/
+└─ src/ .............................后端项目的源码文件夹
+   ├─ bin/ ..........................(<font color=red>必需</font>)可执行文件
+   │  └─ www.ts .....................(<font color=red>必需</font>)项目入口文件（启动HTTP服务器）
+   ├─ init/ .........................(<font color=red>必需</font>)后端应用的初始化函数（创建对象，连接数据库，打开资源等）
+   │  ├─ init_dbs.ts ................(<font color=cyan>可选</font>)数据库连接初始化
+   │  ├─ init_errorhandler.ts .......(<font color=red>必需</font>)全局的错误处理函数，用于在初始化过程中，发生致命错误时，做资源清理等工作
+   │  ├─ init_sample_service.ts .....(<font color=cyan>可选</font>)初始化数据服务对象，用于提供数据库操作
+   │  └─ init_server.ts .............(<font color=red>必需</font>)后端应用的全局初始化函数（创建控制器对象，向合适的路由中注入所需要的对象等）
+   ├─ controller/ ...................(<font color=red>必需</font>)MVC架构下的控制器
+   │  ├─ ctr_error_handler.ts .......错误处理函数
+   │  └─ ctr_sample_controller.ts ...示例控制器
+   ├─ middleware/ ...................(<font color=cyan>可选</font>)中间件（通常需要）
+   │  ├─ mdw_body_parser.ts .........请求体解析中间件
+   │  ├─ mdw_cors.ts ................CORS中间件
+   │  ├─ mdw_logger.ts ..............日志中间件
+   │  └─ mdw_security.ts ............安全相关中间件
+   ├─ model/ ........................(<font color=cyan>可选</font>)MVC架构下的数据模型
+   │  ├─ schema/ ....................(<font color=red>必需</font>)数据范式
+   │  │  └─ sch_sample_schema.ts ....一个数据范式的例子
+   │  └─ service/ ...................(<font color=red>必需</font>)数据层的服务(数据库的增删改查操作通常定义于此)
+   │     └─ svc_sample_service.ts ...一个服务的例子
+   ├─ router/ .......................(<font color=red>必需</font>)路由
+   │  └─ rte_sample_router.ts .......一个路由的例子
+   ├─ public/ .......................(<font color=cyan>可选</font>)公共的静态资源
+   │  ├─ folder_1/ ..................(<font color=cyan>可选</font>)某个视图的静态资源
+   │  │  ├─ sample_folder_1.png
+   │  │  └─ sample_folder_1.css
+   │  └─ folder_2/
+   │     ├─ sample_folder_2.html
+   │     └─ sample_folder_2.svg
+   ├─ view/ .........................(<font color=cyan>可选</font>)MVC架构下的视图
+   │  └─ vw_sample.ts
+   └─ utils/ ........................(<font color=cyan>可选</font>)辅助工具
+      ├─ utl_helpers.ts .............帮助函数库
+      ├─ db_adapter/ ................数据库适配器
+      │  └─ utl_mongodb.ts ..........一个MongoDB数据库适配器
+      └─ start_server/ ..............服务器启动函数
+         └─ utl_server_starter.ts ...HTTP服务器启动函数
+</pre>
+<!-- DIRSTRUCTURE_END_MARKER -->
+
+<hr>
+<h2 id="关于项目结构的具体描述">关于项目结构的具体描述</h2>
+<p><code>root</code>: 根目录包含一个标准的NodeJS项目所应该具备的文件和文件夹。具体的说，在根目录下，我们有：</p>
+<ul>
+<li><code>config</code> 文件夹来定义本地运行项目时需要的相关配置文件
+可能含有app需要的环境变量，PM2配置，Jest测试框架配置文件等。</li>
+<li><code>logs</code> 文件夹来存储本地运行项目时的日志文件 (本文件夹是自动生成的)</li>
+<li><code>node_modules</code> 文件夹用于存放本地的NPM包</li>
+<li><code>test</code> 文件夹用于存放测试代码
+可能含有单元测试代码，端到端测试等。</li>
+<li><code>src</code> 文件夹存放项目的所有TypeScript源码</li>
+<li><code>outputs</code> 文件夹存放程序中生成的内容 (本文件夹是自动生成的)
+可能含有TypeDoc生成的文档，ESLint检查报告，Jest测试报告等。</li>
+<li><code>build</code> 文件夹存放转译后的开发环境或生产环境代码
+必须有同<code>src</code>文件夹一模一样的结构</li>
+</ul>
+<p><code>root</code> 文件夹下的文件包括：NPM包配置文件，TypeScript编译器配置文件，Babel配置文件，ESLint配置文件，Docker配置文件。</p>
+<p><code>src</code>: 后端应用的源码文件夹。其中包含整个的<strong>MVC</strong>设置，中间件，辅助函数等等</p>
+<ul>
+<li><code>bin</code> 文件夹是<strong>必需的</strong>，存放可执行文件（**命名被限定为<code>bin</code>**）<ul>
+<li><code>www.ts</code> 是<strong>必需的</strong>，该文件是整个项目的入口文件，其整合了所有其他地方定义的代码并启动HTTP服务器（**命名被限定为<code>www.ts</code>**）</li>
+</ul>
+</li>
+<li><code>init</code> 文件夹是<strong>必需的</strong>，其中包含多个应用中不同部分的初始化器。<ul>
+<li><code>init_server.ts</code> 是<strong>必需的</strong>，其作为根初始化器，用于把创建的不同对象连接组合到一起。该函数直接被<code>www.ts</code>调用。</li>
+<li><code>init_errorhandler.ts</code> 是<strong>必需的</strong>，其作为全局错误处理函数，用于当服务器启动过程中发生致命错误时，执行清理任务。</li>
+<li><code>init_dbs.ts</code> 是<strong>可选的</strong>，用于连接数据库。</li>
+<li><code>init_sample_service.ts</code> 是<strong>可选的</strong>用于创建一个具体的数据服务对象。</li>
+</ul>
+</li>
+<li><code>config</code> 文件夹是<strong>必需的</strong>，应包含项目有关的所有配置</li>
+<li><code>controller</code> 文件夹是<strong>必需的</strong>，该文件夹包括请求处理器，错误处理器，这些处理器随后被路由器调用。控制器可以调用数据层服务来完成请求处理</li>
+<li><code>middleware</code> 文件夹是<strong>可选的</strong>，但是通常是必需的，可以包含第三方或者用户自定义的中间件。比如，请求体处理中间件和日志记录中间件是通常都需要的</li>
+<li><code>model</code> 是<strong>可选的</strong>，包含数据库操作服务。其中，应包含两个<strong>必需的</strong>文件夹：<code>schema</code> 和 <code>service</code><pre><code>- `schema` 定义了底层的数据模式，相当于在其他MVC框架中的“数据对象”或者“DAO”层
+- `service` 是数据对象的包裹层，提供数据库操作函数
+</code></pre>
+<ul>
+<li><code>router</code> 文件夹是<strong>必需的</strong>，定义了顶层的请求路由。一个路由根据请求信息将其发送给合适的控制器完成对请求的处理。</li>
+<li><code>view</code> 文件夹是<strong>可选的</strong>，包含服务器端渲染的模板</li>
+<li><code>public</code> 文件夹是<strong>可选的</strong>，包含了公共的资源文件，这些文件可能是<code>view</code>模板所需要的
+子文件夹可以根据具体需要建立</li>
+<li><code>utils</code> 文件夹是<strong>可选的</strong>，包含了辅助函数和其他项目需要的工具。比如，<code>db_adapter</code> 文件夹定义了数据库连接池管理器。<code>db_adapter</code> 可以包含多种不同类型的数据库，以及很多数据库连接。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="restful-api返回的响应体格式">Restful API返回的响应体格式</h2>
+<p>我们统一每一个Restful API返回的响应体格式如下：</p>
+<p>(原因：前端团队要求固定返回的响应的格式，这样，在所有的应用中，前端都能拿到相同格式的响应)</p>
+<ol>
+<li><p>API总是要返回一个最接近实际状态的HTTP状态码。</p>
+</li>
+<li><p>对于成功的响应，也就是HTTP状态码在1xx到3xx之间的，响应体必须符合下述格式：</p>
+</li>
+</ol>
+<pre><code class="language-jsonc">  {
+    // 详细的返回响应码
+    &quot;code&quot;: 200010,
+    // 响应信息 (简短的总结即可)
+    &quot;message&quot;: &quot;&lt;general message&gt;&quot;,
+    // 响应的数据体（以键值对的形式）
+    &quot;data&quot;: {
+      &quot;&lt;key-value data payload&gt;&quot;
+    },
+  }
+</code></pre>
+<p><strong>必须具有的数据域：</strong> <code>code</code> 和 <code>message</code>。</p>
+<ol start="3">
+<li>对于错误的响应，也就是HTTP状态码在4xx到5xx的范围内，响应体必须符合下述格式：</li>
+</ol>
+<pre><code class="language-jsonc">  {
+    // 详细的返回响应码
+    &quot;code&quot;: 400103,
+    // 总体错误消息 (一个基本的错误消息分类)
+    &quot;message&quot;: &quot;&lt;generic error message&gt;&quot;,
+    &quot;data&quot;: {
+      // 详细的错误信息
+      &quot;error&quot;: &quot;&lt;detailed error message&gt;&quot;
+    },
+  }
+</code></pre>
+<p><strong>必须具有的数据域：</strong> <code>code</code>，<code>message</code>，和<code>data.error</code>。</p>
+<ol start="4">
+<li><p>在顶层的<code>code</code>域应该在对应的OpenAPI文档中详细描述。前端团队<strong>仅仅</strong>参考一个RESTful API的OpenAPI文档来获取关于该API的所有信息。(之前使用Excel表格来记录，描述<code>code</code>域的方法已经<font color="red"><strong>不再使用</strong></font>。)</p>
+</li>
+<li><p><font color="red">不要在顶层添加其他的域了</font></p>
+</li>
+</ol>
+<hr>
+<h2 id="模块样式">模块样式</h2>
+<p>在开发环境中，我们仅允许<strong>ES Module</strong>样式的语法进行模块管理，也就是<code>import/export</code>语法。这也是TypeScript的标准用法。<code>require</code>语法是<strong>不被允许的</strong>。</p>
+<p>然而，在生产环境中，我们仅仅允许使用<strong>CommonJS</strong>样式的模块管理语法，这是为了避免兼容性问题。ES Module系统在TypeScript中仍然有一些限制和问题，比如，<a href="https://github.com/microsoft/TypeScript/issues/16577">这个问题</a>。</p>
+<hr>
+<h2 id="nodejs进程管理">NodeJS进程管理</h2>
+<p>我们推荐使用<a href="https://www.npmjs.com/package/pm2">PM2</a>作为NodeJS项目的本地开发环境下的进程管理器。注意PM2应该<strong>仅仅</strong>在开发环境中使用。</p>
+<p>我们并不强制使用PM2，在开发环境中，你可以选择任何你喜欢的方式启动和管理NodeJS应用。</p>
+<hr>
+<h2 id="命名规范">命名规范</h2>
+<p>必需文件夹的名称<strong>不允许</strong>改变。对于命名文件，变量，函数，类，接口，类型等规范，请参考<a href="../Naming/README.md">命名规范</a>。</p>
+<hr>
+<h2 id="代码规范最佳实践">代码规范最佳实践</h2>
+<p>我们使用ESLint和其上的TypeScript相关插件来避免易错代码，规范代码风格，并且强制一些最佳实践。请参考<a href="../Lint/README.md">ESLint规范</a>。</p>
+<hr>
+<h2 id="错误处理">错误处理</h2>
+<p>我们要求开发人员使用ExpressJS的错误处理链来妥善的处理服务器内部错误。每一个控制器和自定义的中间件<strong>至少</strong>需要有一个错误处理函数，用于给客户端返回用户友好的消息，同时便于发生错误是定位问题。你可以随意在更低层次上添加错误处理函数，比如，数据服务层。</p>
+<p>请参考<a href="https://expressjs.com/en/guide/error-handling.html">官方文档</a>去学习ExpressJS中的错误处理方法。</p>
+<p>发生在函数中的错误，一般就直接抛出即可。</p>
+<p>对于发生在控制器/中间件层以上的错误，比如，路由，通过抛出错误结束整个服务器，因为如果在服务器启动过程中发生了错误，则不需要从错误中恢复。</p>
+<hr>
+<h2 id="中间件">中间件</h2>
+<p>你应该考虑使用自定义的ExpressJS的中间件，来复用代码。</p>
+<hr>
+<h2 id="用于部署时的特殊要求">用于部署时的特殊要求</h2>
+<p>当App部署到Kubernetes集群时，App需要提供一个健康检查路由给Kubernetes存活探针使用。如果Kubernetes发现容器不再正常响应探针，会尝试重启容器。</p>
+<p>存活探针的路由是<code>/healthz</code>。该路由返回HTTP状态码200即可，不要返回JSON数据体。</p>
+
+	</div>
+</body>
+</script>
+</html>

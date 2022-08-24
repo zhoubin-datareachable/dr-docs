@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="git-specifications">Git specifications</h2>
+<h2 id="description">Description</h2>
+<p>This file will describe how to use git command. It will included the general explaination of the role for different branches, how to name a new branch and how to write a commit message.</p>
+<h2 id="the-role-of-diffenet-branches">The Role Of Diffenet Branches</h2>
+<p>In order to standardize the development, keep the code submission record and the git branch structure clear to facilitate subsequent maintenance, and now standardize the relevant operations of git.</p>
+<ul>
+<li><h3 id="main-branch">Main Branch</h3>
+<p>The main branch is used to deploy the production environment to ensure the stability of the main branch. The main branch is generally merged by the develop and hotfix branches, and the code cannot be directly modified at any time.</p>
+</li>
+<li><h3 id="develop-branch">Develop Branch</h3>
+<p>develop branch is a development branch, and always keeps the latest completed and bug-fixed code. When developing new functions in general, the feature branch is created based on the develop branch, and the code cannot be directly modified at any time.</p>
+</li>
+<li><h3 id="feature-branch">Feature Branch</h3>
+<p>When developing new features, create a feature branch based on develop</p>
+<p>Branch Naming Rule: The name of the branch starts with feature, and connect the feature with / and follow with the feature&#39;s name, such as <code>feature/user_module</code>, <code>feature/data_module</code></p>
+</li>
+<li><h3 id="release-branch">Release Branch</h3>
+<p>Release branch is a pre-launch branch, during the release testing phase, the release branch code will be benchmarked, When the development of a set of features is completed, it will first be merged into the develop branch. When entering the test, a release branch will be created. If there are bugs in the testing process that need to be fixed, the developer directly fixes and submits them in the release branch. When the test is complete, merge the release branch into the master and develop branches. At this time, the master is the latest code and is used to go online.</p>
+</li>
+<li><h3 id="hotfix-branch">Hotfix Branch</h3>
+<p>When an urgent problem occurs online, it needs to be repaired in time. The master branch is used as a baseline to create a hotfix branch. After the repair is completed, it needs to be merged into the master branch and the develop branch.</p>
+<p>Branch Naming Rule: The name of the branch starts with hotfix, and connect the hotfix with / and follow with the hotfix&#39;s name, such as <code>hotfix/data_storage_error</code>, <code>hotfix/user_login_error</code></p>
+</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<h3 id="workflow-of-each-branch">Workflow of each branch</h3>
+<ul>
+<li><h4 id="add-new-feature">Add new feature</h4>
+<pre><code>(dev)$: git checkout -b feature/xxx          # create feature branch
+(feature/xxx)$: developing...                # developing...
+(feature/xxx)$: git add xxx
+(feature/xxx)$: git commit -m &#39;:sparkles: new feature xxx 2020/06/28&#39;
+(dev)$: git merge feature/xxx --no-ff        # merge the feature to development branch
+</code></pre>
+</li>
+<li><h4 id="fix-emergency-bugs">Fix emergency bugs</h4>
+<pre><code>(master)$: git checkout -b hotfix/xxx         # create the hotfix branch from master branch
+(hotfix/xxx)$: developing...                  # developing...
+(hotfix/xxx)$: git add xxx
+(hotfix/xxx)$: git commit -m &#39;commit comment&#39;
+(master)$: git merge hotfix/xxx --no-ff       # merge the hotfix to master branch and deploy to production environment
+(dev)$: git merge hotfix/xxx --no-ff          # ensure the development branch also fix this bug
+</code></pre>
+</li>
+<li><h4 id="test-environment">Test environment</h4>
+<pre><code>(release)$: git merge dev --no-ff             # merge the code from development branch, and tested in this environment
+</code></pre>
+</li>
+<li><h3 id="production-environment">Production environment</h3>
+<pre><code>(master)$: git merge release --no-ff          # merge the release code to master branch and prepare to publish
+(master)$: git tag -a v0.1 -m &#39;tagName&#39;       # name the version and tag
+</code></pre>
+</li>
+</ul>
+<h3 id="commit-message-rules">Commit Message Rules</h3>
+<p>All commit messages should be committed as such:</p>
+<pre><code>:gitmoji:    Your Message-taskNumber    Commit Date
+</code></pre>
+<p><a href="https://gitmoji.carloscuesta.me/"><code>:gitmoji</code></a> is used to clearly show the purpose of current commit. Please carefully search in the above link to locate the most appropriate GitMoji. For ad hoc commits, use <code>:construction:</code> to represent the work is still under development and has not reached a milestone.</p>
+<p>Use <code>$commitDate</code> variable to fetch the current date when committing.</p>
+<p>To pin the above formate as a command, one can define a git commit command alias in the shell. For example, under Unix/Linux environment, using <code>bash</code>, one can add the following line to the <code>$HOME/.bashrc</code> file:</p>
+<pre><code class="language-bash">export git-commit() {
+  git commit -m &quot;$1 $2 $(date +&quot;%d-%B-%Y&quot;)&quot;
+}
+</code></pre>
+<p>Then, use command <code>git-commit &quot;:gitmoji:&quot; &quot;Your Message&quot;</code> to perform the commit operation. This generates a commit message like <code>:bug: Fix Bugs 06-June-2020</code>.</p>
+<p>In front-end project, you can manually input commit message such as <code>:bug: Fix Bugs 2020/06/06</code>.</p>
+
+	</div>
+</body>
+</script>
+</html>

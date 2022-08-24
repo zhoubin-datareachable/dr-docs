@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="项目开发流程规范">项目开发流程规范</h2>
+<p>在项目开发的过程中，会涉及到任务的分配，任务的安排以及阅读相关任务的文档。在该文档主要通过流程图的形式来对开发流程进行解释，请仔细阅读该文档，如有问题请联系.</p>
+<ul>
+<li>Travis (后端/Devops): <code>travis.yuan@datareachable.com</code></li>
+<li>Frank (前端): <code>frank.su@datareachable.com</code></li>
+</ul>
+<h2 id="开发流程图">开发流程图</h2>
+<p>下面的开发流程图主要描述了开发过程中的一系列步骤</p>
+<img src="../images/developmentWorkFlow.jpg" />
+
+<h2 id="开发流程图详解">开发流程图详解</h2>
+<ul>
+<li>步骤 1： PM 会实时获取最新项目需求</li>
+<li>步骤 2： PM 会分析当前获取的项目需求是存粹的 ui 开发，还是当前需求存在大量的用户交互，根据其分析来判断是否需要书写 useCase</li>
+</ul>
+<hr>
+<ul>
+<li>步骤 3.1.1： 当前需求为纯 ui 开发，无需 useCase</li>
+<li>步骤 3.1.2： PM 会将需求以任务的形式安排至 asana 所对应的 project 中</li>
+<li>步骤 3.1.3： 开发根据所分配的任务并且对照 figma 中的设计样式进行开发</li>
+<li>步骤 3.1.4： 开发完成后会进行 QA 与测试阶段</li>
+</ul>
+<hr>
+<ul>
+<li>步骤 3.2.1： 当前需求存在大量用户的交互行为</li>
+<li>步骤 3.2.2： PM 分析当前需求是否需要后端 api</li>
+</ul>
+<hr>
+<ul>
+<li>步骤 3.2.2.1.1： 当前需求虽然存在大量交互，但是这些交互为纯前端业务逻辑，无需后端 api</li>
+<li>步骤 3.2.2.1.2： PM 书写 useCase,并且上传到 oneNote 所对应的目录下</li>
+<li>步骤 3.1.2.1.3： PM 会将需求以任务的形式安排至 asana 所对应的 project 中</li>
+<li>步骤 3.1.2.1.4： 开发根据所分配的任务并且对照 figma 中的设计样式以及 useCase 中的业务逻辑进行开发</li>
+<li>步骤 3.1.2.1.5： 开发完成后进行 QA 与测试阶段</li>
+</ul>
+<hr>
+<ul>
+<li>步骤 3.2.2.2.1： 当前需求存在大量的用户交互，并且需要后端 api</li>
+<li>步骤 3.2.2.2.2： PM 书写 useCase,并且上传到 oneNote 所对于的目录下</li>
+<li>步骤 3.2.2.2.3.1.1/3.2.2.2.3.2.1： 前端/后端的 PM 会将需求以任务的形式安排至 asana 所对应的 project</li>
+<li>步骤 3.2.2.2.3.1.2/3.2.2.2.3.2.2： 开发根据所分配的任务并且对照 figma 中的设计样式以及 useCase 中的业务逻辑进行开发</li>
+<li>步骤 3.2.2.2.3.1.3/3.2.2.2.3.2.3： 开发完成后进行 QA 与测试阶段</li>
+</ul>
+<h2 id="asana-任务安排详解">asana 任务安排详解</h2>
+<h3 id="前端-asana-任务详解">前端 asana 任务详解</h3>
+<p>在前端开发中，每一个开发所接到的任务应该如下图所示</p>
+<img src="../images/FEtask1.jpg" />
+<img src="../images/FEtask2.jpg" />
+
+<p>每个 task 主要由一下几部分所组成（<code>前缀</code>）- （<code>具体 gitHub repo</code>）- （<code>useCase ID</code>） - （<code>useCase/UI 所对应的目录</code>）</p>
+<ul>
+<li>前缀：前缀主要解释了当前项目任务类型，主要包括<code>UI</code>， <code>useCase</code>，<code>Bug</code>和<code>Task</code>四种类型（未来可能会根据任务需求进行添加）</li>
+<li>具体 gitHub repo：如果项目中只有一个 github repo，则该选项为空，只有党项目中存在多个 repo 的时候，该选项才会存在</li>
+<li>useCase ID：该选项为 useCase 的 ID，开发人员只需要根据 useCase/UI 所对应的目录在 oneNote 中找到对应 ID 的 useCase 即可</li>
+<li>useCase/UI 所对应的目录：当前缀为<code>UI</code>时，开发人员只需要在 figma 中找到对应目录的设计即可进行开发，如果前缀为<code>useCase</code>，开发人员需要在 oneNote 找到对应的 useCase 并且对照 figma 中相同路径的设计来进行开发</li>
+</ul>
+<p>例子：
+以下图为例</p>
+<img src="../images/FEtask1.jpg" />
+
+<ol>
+<li>分析当前任务，可以得知当前任务为 useCase 类型</li>
+<li>打开 oneNote, 根据 <code>profile/main page</code>路径找到对应的 note，并且查找 ID 为<code>20210118003</code>的 useCase<img src="../images/useCaseSample.jpg" /></li>
+<li>打开 figma, 根据 <code>profile/main page</code>路径找到对应的设计样式，并且查到 ID 为<code>20210118003</code>的设计<img src="../images/figamSample.png" /></li>
+<li>根据获取到的 useCase 文档和 figma 设计进行开发</li>
+</ol>
+<h2 id="后端任务工作流程">后端任务工作流程</h2>
+<h3 id="总体描述">总体描述</h3>
+<p>后端项目工作流总体的描述如下：</p>
+<div align="center">
+  <img width="85%" src="../images/backendDevWorkflow_CN.png" />
+  <div>后端开发工作流程</div>
+</div>
+
+<p><font color="red"><strong>重要提示：</strong></font></p>
+<ul>
+<li>代码质量检查是任务质量检查中的一项重要内容。操作流程请参考<a href="../../backend/v1.0/cn/CodeReview/README.md">这里</a>。</li>
+<li>组员完成任务时，须按照规范提交相关的交付材料（<a href="../../backend/v1.0/cn/Submission/README.md">后端交付要求</a>）。可能包括如下材料：GitHub上的源码和项目说明README.md，Docker镜像上传到ghrc.io以及相关的使用文档，OpenAPI格式的API使用说明文档，API和UseCase匹配文档，其他设计图和文档，现场演示等；</li>
+<li>所有的任务都是<font color="red"><strong>不可变的</strong></font>。这意味着一旦你完成了一个任务，你<font color="red"><strong>永远</strong></font>不被允许再次重启、修改同一个任务。进一步的对已完成任务的相关反馈和后续任务作为新任务发布。原来的已完成任务的质量被锁定并计入到你的绩效中。你只能通过新任务的完成质量来弥补老任务上的损失。</li>
+</ul>
+<hr>
+<h3 id="后端工作流例子">后端工作流例子</h3>
+<ul>
+<li><p><strong>第一步</strong></p>
+<p>当一个开发人员参与进某一个项目中以后，他/她会被邀请加入一个Asana项目。该项目由团队组长管理，组员在项目中只有有限的操作权限以防止没有管理员权限的组员擅自更改分配到的任务。</p>
+</li>
+<li><p><strong>第二步</strong></p>
+<p>任务在相关的Asana项目中发布和分配。</p>
+<div align="center">
+  <img width="75%" src="../images/backendAsanaProject.png" />
+  <div>Asana项目的例子</div>
+</div></li>
+<li><p><strong>第三步</strong></p>
+<p>任务的细节会在相应的Asana任务中详细描述。</p>
+<p>涉及到RESTful API的任务时，目前，RESTful API需求由前端团队通过Asana任务的形式发布。后端团队组长负责集中，重组这些API需求，并将其合理分配给组员完成。通常情况下，这些API需求以线上的共享Excel表格形式描述。</p>
+<p>为了理解RESTful API需求任务的细节，请参考下面的<em>后端Restful API需求样例</em>部分。</p>
+<div align="center">
+  <img width="90%" src="../images/backendAsanaTasks_List.png" />
+  <div>Asana 任务例子 (列表视图)</div>
+</div>
+
+<p>说明：</p>
+<ol>
+<li>任务类型</li>
+<li>任务标题</li>
+<li>任务截止日期</li>
+<li>任务优先级（当有多个任务时，按照优先级顺序完成，优先级顺序一般由团队组长确定）</li>
+<li>任务编号（全公司唯一的任务编号，用于记录绩效）</li>
+</ol>
+<div align="center">
+  <img width="75%" src="../images/backendAsanaTasks_Details.png" />
+  <div>Asana 任务细节 1</div>
+</div>
+
+<div align="center">
+  <img width="75%" src="../images/backendAsanaTasks_Attachment.png" />
+  <div>Asana 任务细节 2</div>
+</div></li>
+<li><p><strong>第四步</strong>:</p>
+<p>最后，任务完成时，需要将相关的Asana任务标记为完成，并且提交相关的交付材料。具体示例，参考<a href="../../backend/v1.0/cn/Submission/README.md">任务提交</a>。</p>
+</li>
+</ul>
+<hr>
+<h3 id="后端restful-api需求样例">后端Restful API需求样例</h3>
+<p>本节给出RESTful API是如何通过Asana来发布的例子。</p>
+<ul>
+<li><p><strong>Asana 任务例子</strong></p>
+<div align="center">
+  <img width="80%" src="../images/backendAsanaTask_API.png" />
+  <div>Asana 任务 (RESTful API 需求)</div>
+</div></li>
+<li><p><strong>API 描述样例</strong></p>
+<p>RESTful API 需求细节通过在线的Excel共享文档给出（使用腾讯文档以方便在中国访问）。</p>
+<div align="center">
+  <img src="../images/backendAsanaTask_API_Doc.png" />
+  <div>RESTful API 细节描述 (使用Excel文档描述)</div>
+</div></li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

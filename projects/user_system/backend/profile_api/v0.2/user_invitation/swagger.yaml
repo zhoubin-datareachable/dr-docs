@@ -1,0 +1,530 @@
+﻿openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: Profile Backend Project - Operations Of Organization
+  description: >-
+    本文档主要展示邀请组织成员与邀请团队成员相关的请求规范
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://profile.dev.datareachable.net/api/v1/org/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [User Profile API Server](https://github.com/dataReachable/dr_Back_UserSystemProfile)
+  contact:
+    name: Backend Team
+    email: jiasehng.jing@datareachable.com
+
+servers:
+  - url: "https://profile.dev.datareachable.net/api/v1/org/"
+    description: Sydney Development Cluster
+
+paths:
+  /member/send/inviteMessage:
+    post:
+      tags:
+        - 邀请组织新成员时，发送邀请信息
+      summary: "邀请新的组织成员"
+      description: "只有拥有`owner`权限的用户才能邀请新的组织成员！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: ">   这个请求中发送邀请操作的执行者用户名，即`inviterName`为`可选`参数
+                      ，另外`inviteeName`与`inviteeEmail`两个参数`不能同时为空`，也就是说
+                      由前端判断用户输入的用户搜索关键字类型是邮箱还是用户名，
+                      进而选择性填写两个关于被邀请用户的两个参数`其中一个`，
+                      如果两个参数均填写的话，默认按照`用户名-inviteeName`进行匹配"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_sendInviteMessageToInviteOrgMemberBody"
+
+      responses:
+        "200":
+          description: "邀请信息发送成功！"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_sendInviteMessageToInviteOrgMemberUsePhoneSuccess"
+                  - $ref: "#/components/schemas/Res_sendInviteMessageToInviteOrgMemberUseEmailSuccess"
+                  - $ref: "#/components/schemas/Res_sendInviteMessageToInviteOrgMemberSignUpUseEmailSuccess"
+        "400":
+          description: "由于各种原因导致的创建失败啊"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotInviteNotExistUser"
+                  - $ref: "#/components/schemas/Res_UserAlreadyExistInOrgOrGroup"
+                  - $ref: "#/components/schemas/Res_UserNotExistPhoneOrEmail"
+        "403":
+          description: "用户没有权限执行该操作"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_DeniedPermission"
+                  - $ref: "#/components/schemas/Res_DeniedTokenDiffer"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTNotFound"
+                  - $ref: "#/components/schemas/Res_AccessDenied_JWTValidationFailure"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_SendInviteMessageToOrgFailedWithServerError"
+
+  /group/member/send/inviteMessage:
+    post:
+      tags:
+        - "邀请新的团队成员"
+      summary: "给新的团队成员发送邀请信息"
+      description: "检测团队名称是否在组织的团队内中已存在！"
+
+      requestBody:
+        required: true
+        description: ">   这个请求中发送邀请操作的执行者用户名，即`inviterName`为`可选`参数
+                     ，另外`inviteeName`与`inviteeEmail`两个参数`不能同时为空`，也就是说
+                     由前端判断用户输入的用户搜索关键字类型是邮箱还是用户名，
+                     进而选择性填写两个关于被邀请用户的两个参数`其中一个`，
+                     如果两个参数均填写的话，默认按照`用户名-inviteeName`进行匹配"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_sendInviteMessageToInviteGroupMemberBody"
+
+      responses:
+        "200":
+          description: "邀请信息发送成功"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_sendInviteMessageToInviteGroupMemberUsePhoneSuccess"
+                  - $ref: "#/components/schemas/Res_sendInviteMessageToInviteGroupMemberUseEmailSuccess"
+                  - $ref: "#/components/schemas/Res_sendInviteMessageToInviteGroupMemberSignUpUseEmailSuccess"
+        "400":
+          description: "由于各种原因导致的检测失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_MissingRequireParameters"
+                  - $ref: "#/components/schemas/Res_CannotFindGroupInCurrentOrg"
+                  - $ref: "#/components/schemas/Res_CannotInviteNotExistUser"
+                  - $ref: "#/components/schemas/Res_UserNotExistInCurrentOrg"
+                  - $ref: "#/components/schemas/Res_UserAlreadyExistInOrgOrGroup"
+                  - $ref: "#/components/schemas/Res_UserNotExistPhoneOrEmail"
+        "403":
+          description: "用户没有权限执行该操作"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_DeniedPermission"
+                  - $ref: "#/components/schemas/Res_DeniedTokenDiffer"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_SendInviteMessageToGroupFailedWithServerError"
+
+components:
+  schemas:
+    # -------------------响应体相关
+    code:
+      type: number
+      description: "自定义响应码"
+    message:
+      type: string
+      description: "响应简要信息"
+    error:
+      type: string
+      description: "请求发生错误时的详细信息！"
+    #---------------------文件上传部分
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200000
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "Success!"
+    Req_updateOrganizationLogoBody:
+      properties:
+        file:
+          type: object
+          required:
+            - "name"
+            - "files"
+          description: >-
+            Frontend must upload `one and only one` file as the user avatar. Multiple file uploads are rejected by the backend.
+            <br/>
+            The input field needs to have a `name` tag.
+            <br/>
+            The size of the avatar is limited to `10MB` by the backend.
+          properties:
+            name:
+              type: string
+            files:
+              type: array
+              minimum: 1
+              maximum: 1
+              items:
+                type: string
+                format: binary
+    Res_updateOrganizationLogoSuccess:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 200003, message: "Logo has been uploaded.", data: { url: "https://xxxx.aws.com" } }
+    Res_updateOrganizationLogo_NoFileUploaded:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: No files were uploaded" }
+    Res_updateOrganizationLogo_FileNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: Target input file name XXX NOT found" }
+    Res_updateOrganizationLogo_MultipleFiles:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400004, message: "Invalid Input: Multiple files are uploaded under input file name XXX" }
+    Res_AccessDenied_UserNotOwner:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401002, message: "Unauthorized: User is not the organization owner!" }
+    Res_AccessDenied_JWTNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT not found in the header, access denied!" }
+    Res_AccessDenied_JWTValidationFailure:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT validation failed, access denied!" }
+    Res_AccessDenied_SessionTimeOut:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 403001, message: "Session time out, access denied!" }
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: { code: 500000, message: "General error message", data: { error: "Details of the error goes here" } }
+    #定制化部分---------------------
+
+    # ---------------------------------------------请求体相关
+    # 邀请新的组织成员时的请求体
+    Req_sendInviteMessageToInviteOrgMemberBody:
+      required:
+        - "organizationName"
+        - "role"
+      description: "用户新建组织时的请求体！"
+      type: object
+      properties:
+        inviterName:
+          type: string
+          description: "当前登录用户的用户名，即发送邀请操作执行者用户名"
+          example: "张三"
+        inviteeName:
+          type: string
+          description: "被邀请成员的用户名"
+          example: "李四"
+        inviteeEmail:
+          type: string
+          description: "被邀请成员的邮箱"
+          example: "j_jiasheng@qq.com"
+        organizationName:
+          type: string
+          description: "组织名称，邀请用户加入的目标组织名"
+          example: "xxx组织"
+        role:
+          type: string
+          description: "当用户成为组织成员时的默认角色,可选的值为`admin`，`owner`，`reviewer`"
+          example: "admin"
+
+    # 邀请新团队成员的请求体
+    Req_sendInviteMessageToInviteGroupMemberBody:
+      required:
+        - "organizationName"
+        - "groupName"
+      description: "邀请新团队成员的请求体"
+      type: object
+      properties:
+        inviterName:
+          type: string
+          description: "用户即发送邀请的执行者操作员的用户名"
+          example: "张三"
+        inviteeName:
+          type: string
+          description: "被邀请者的用户名"
+          example: "李四"
+        inviteeEmail:
+          type: string
+          description: "被邀请者的邮箱"
+          example: "j_jiasheng@qq.com"
+        organizationName:
+          type: string
+          description: "成员要加入的团队所在的组织名称"
+          example: ""
+        groupName:
+          type: string
+          description: "被邀请者要加入的目标团队名"
+
+    # ---------------------------------------------成功响应相关
+    # 成功发送组织成员邀请短信
+    Res_sendInviteMessageToInviteOrgMemberUsePhoneSuccess:
+      description: "成功发送组织成员邀请短信！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 200110,
+        message: "已向用户：张三的电话：86-15071583530
+                发送加入组织：xxx组织邀请，请通知用户确认！"
+      }
+    # 成功发送邀请邮件
+    Res_sendInviteMessageToInviteOrgMemberUseEmailSuccess:
+      description: "成功发送组织成员邀请邮件！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 200111,
+        message: "已向用户：张三的邮箱：J_jiasheng@qq.com
+                  发送加入组织：xxx组织邀请，请通知用户确认！"
+      }
+    # 成功发送邀请注册邮件
+    Res_sendInviteMessageToInviteOrgMemberSignUpUseEmailSuccess:
+      description: "成功发送组织成员邀请注册邮件！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 200112,
+        message: "该邮箱J_jiasheng@qq.com并未注册系统账号，已向该邮箱发送注册邀请！
+                  注册成功后将自动加入到组织：xxx组织中！"
+      }
+    # ---------
+    # 成功发送团队成员邀请短信
+    Res_sendInviteMessageToInviteGroupMemberUsePhoneSuccess:
+      description: "成功发送团队成员邀请短信！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 200110,
+        message: "已向用户：张三的电话：86-15071583530
+                发送加入团队：xxx团队-xxx团队邀请，请通知用户确认！"
+      }
+    # 成功发送团队成员邀请邮件
+    Res_sendInviteMessageToInviteGroupMemberUseEmailSuccess:
+      description: "成功发送团队成员邀请邮件！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 200111,
+        message: "已向用户：张三的邮箱：J_jiasheng@qq.com
+                  发送加入团队：xxx组织-xxx团队邀请，请通知用户确认！"
+      }
+    # 成功发送邀请注册邮件
+    Res_sendInviteMessageToInviteGroupMemberSignUpUseEmailSuccess:
+      description: "成功发送团队成员邀请注册邮件！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 200112,
+        message: "该邮箱J_jiasheng@qq.com并未注册系统账号，已向该邮箱发送注册邀请！
+                  注册成功后将自动加入到团队：xxx组织-xxx团队中！"
+      }
+    # ----------------------------------------------服务器拒绝响应
+    # 权限不足
+    Res_DeniedPermission:
+      description: "用户权限不足，无法执行操作！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: 403101, message: "请检查是否有权限执行此操作！" }
+    # tokens-userName验证不一致
+    Res_DeniedTokenDiffer:
+      description: "用户输入了操作员的userName，但与当前登录token不一致！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: 403102, message: "用户身份验证不通过！请核验用户名：张三是否为当前登录用户名" }
+    # ----------------------------------------------服务器异常相关
+    # 服务器异常导致邀请组织成员消息发送失败！
+    Res_SendInviteMessageToOrgFailedWithServerError:
+      description: "服务器异常导致邀请组织成员消息发送失败！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            error:
+              $ref: "#/components/schemas/error"
+      example: {
+        code: 500110,
+        message: "[ SendMessageToGroupMemberController ]:发送邀请组织成员信息的时候服务器发生未知错误！",
+        data: {
+          error: "错误详情：xxx"
+        }
+      }
+    # 服务器异常导致邀请团队成员消息发送失败！
+    Res_SendInviteMessageToGroupFailedWithServerError:
+      description: "服务器异常导致邀请团队成员消息发送失败！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            error:
+              $ref: "#/components/schemas/error"
+      example: {
+        code: 500111,
+        message: "[ SendMessageToGroupMemberController ]:发送邀请团队成员信息的时候服务器发生未知错误！",
+        data: {
+          error: "错误详情：xxx"
+        }
+      }
+
+
+    # ------------------------------------------------失败响应相关
+    # 缺少邀请用户关键字`inviteeName`或者`inviteeEmail`
+    Res_MissingRequireParameters:
+      description: "缺少邀请用户关键字`inviteeName`或者`inviteeEmail`！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 400110,
+        message: "inviteeName或者inviteeEmail不能全为空！"
+      }
+
+    # 不能向不存在的用户发送邀请
+    Res_CannotInviteNotExistUser:
+      description: "不能向不存在的用户发送邀请！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 400111,
+        message: "不能向不存在的用户:张三发送邀请！"
+      }
+
+    # 添加团队成员时发现组织中并不存在当前团队名
+    Res_CannotFindGroupInCurrentOrg:
+      description: "添加团队成员时发现组织中并不存在当前团队名！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: 400113, message: "组织中并不存在当前团队：xxx团队，请检查团队名是否正确！" }
+
+    # 被邀请的用户还不是当前组织的成员，无法直接添加到该组织的团队中
+    Res_UserNotExistInCurrentOrg:
+      description: "被邀请的用户还不是当前组织的成员，无法直接添加到该组织的团队中！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 400114,
+        message: "该用户：xxx还不是当前组织的成员，请先添加当前到组织中，再执行添加团队成员操作！"
+      }
+
+    # 组织或团队中已存在当前用户
+    Res_UserAlreadyExistInOrgOrGroup:
+      description: "组织或团队中已存在当前用户！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: 400112, message: "组织：xxx组织||团队：xxx团队中已存在当前用户：xxx！" }
+
+    # 用户不存在有效的消息发送途径
+    Res_UserNotExistPhoneOrEmail:
+      description: "用户不存在有效的消息发送途径！"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: {
+        code: 400115,
+        message: "用户：xxx没有有效的发送邀请途径：短信或邮件，请检查用户信息！"
+      }

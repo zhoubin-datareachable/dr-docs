@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="terragrunt使用的最佳实践">Terragrunt使用的最佳实践</h2>
+<p>强制要求使用<a href="https://terragrunt.gruntwork.io/">Terragrunt</a> (TG) 配合 Terrafrom (TF). 其实，仅仅使用Terragrunt就够了。</p>
+<h2 id="强制使用terragrunt的原因">强制使用Terragrunt的原因</h2>
+<p>在 <strong><em>live</em></strong> 仓库中，通常希望一次性的部署某个应用的整个基础设施，而不是逐步部署（先部署一部分再部署一部分）。然而，由于在terraform中，我们要求使用模块化设计，这带来了两个主要的问题：</p>
+<ul>
+<li>第一个问题源于Terraform中对于子文件夹的处理。Terraform项目中若存在很多独立的子文件夹，terraform工具本身无法处理各个子文件夹内需要部署的资源的依赖关系。通常只能使用充当胶水作用的某种脚本来解决依赖关系。否则，必须手动，根据依赖关系的顺序，在每一个子文件夹中使用<code>terraform</code>命令分别部署子文件夹内包含的资源。</li>
+<li>第二个问题源于模块输入和输出的连接。一个模块可能需要其他模块的输出作为它的输入。如果仅仅使用terraform工具，只能通过<code>terraform_remote_state</code> 数据源来查询其他模块的输出。</li>
+</ul>
+<p>解决以上两个问题的方法就是 <strong>强制使用</strong> <a href="https://terragrunt.gruntwork.io/">Terragrunt</a>。它是一个Terraform的增强工具，完善了terraform工具的一些不足之处。使用terragrunt工具可以避免使用胶水脚本和一些连接各个依赖模块的技巧。</p>
+<h2 id="最佳实践">最佳实践</h2>
+<h3 id="1-用terragrunt生成的文件的命名方式">1. 用Terragrunt生成的文件的命名方式</h3>
+<p>为了区分Terragrunt工具自动生成的文件和手工编写的Terraform文件，此处规定，前者的文件名需要使用前缀 &quot;_&quot; 注明. 同时，这些自动生成的文件需要排除在github仓库外（把这些文件添加进.gitignore）。比如：</p>
+<pre><code class="language-sh">generate &quot;provider&quot; {
+  path = &quot;_provider.tf&quot;
+  if_exists = &quot;overwrite_terragrunt&quot;
+  contents = &lt;&lt;EOF
+provider &quot;aws&quot; {
+  region = &quot;ap-southeast-2&quot;
+}
+EOF
+}
+</code></pre>
+
+	</div>
+</body>
+</script>
+</html>

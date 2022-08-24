@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="front-end-ajax-request-documentation">Front end Ajax request documentation</h2>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">Front end Ajax request documentation</span>
+    </div>
+</div>
+
+<h2 id="description">Description</h2>
+<p>This documentation mainly include the Ajax requestion standard in front end, it&#39;s mainly include how to do the Ajax request and how to set the request initial state in reducer.</p>
+<h3 id="how-to-do-the-ajax-request">How to do the Ajax request</h3>
+<p>In the front end project, we currently using Axios as request tool, the purpose to use it is to unifiled development process</p>
+<h3 id="create-domian-file">Create domian file</h3>
+<p>In the proejct, We need to encapsulate the domain of the Ajax request into a file, conveniently distinguish different api domain names introduced in different environments, this file will encapsulate into <code>/src/Api/mainDomain.ts</code> file.</p>
+<p>Example:</p>
+<pre><code class="language-javascript">let mainDomain = &quot;&quot;;
+if (process.env.NODE_ENV == &quot;production&quot;) {
+  mainDomain = &quot;https://productionMainDomain.net/api/v1&quot;;
+} else {
+  mainDomain = &quot;https://developmentMainDomain.net/api/v1&quot;;
+}
+
+export default mainDomain;
+</code></pre>
+<h3 id="create-redirectdomain-file">Create redirectDomain file</h3>
+<p>In the project, we sometimes need the redirect function in somewhere, but the redirect URL is different under different develop envrionment, so we need to encapsulate those domain into one <code>/src/Api/redirectDomain.ts</code> which can make refactor easier in the future development.</p>
+<p>Example:</p>
+<pre><code class="language-javascript">let redirectToSomePlace = &quot;&quot;; // redirect to company website
+if (process.env.NODE_ENV == &quot;production&quot;) {
+  redirectToSomePlace = &quot;http://productionDomain.com&quot;;
+} else {
+  redirectToSomePlace = &quot;http://developmentDomain.com&quot;;
+}
+
+export { redirectToSomePlace };
+</code></pre>
+<h3 id="create-interceptors-file">Create interceptors file</h3>
+<p>In the proejct, we sometimes need some interceptor to handover some request requirements, so we need to creat interceptor file at <code>/src/Api/interceptors.ts</code> position, this file will handover all interceptor logic.
+Example:</p>
+<pre><code class="language-javascript">import axios, { AxiosResponse, AxiosRequestConfig, AxiosError } from &quot;axios&quot;;
+import mainDomain from &quot;./mainDomain&quot;;
+
+// create axios instance
+const service = axios.create({
+  baseURL: mainDomain, // api base url
+  timeout: 10000, // request timeout
+});
+
+// request interceptor
+service.interceptors.request.use(
+  (config: AxiosRequestConfig) =&gt; {
+    //what need to do before the request
+    return config;
+  },
+  (error: AxiosError) =&gt; {
+    //deal with request error
+    return error;
+  }
+);
+
+// response interceptor
+service.interceptors.response.use(
+  (response: AxiosResponse) =&gt; {
+    //what need to do before get response
+    return response;
+  },
+  (error: AxiosError) =&gt; {
+    //deal with response error
+    if (error.response) {
+      return error.response;
+    }
+  }
+);
+</code></pre>
+<h3 id="encapsulate-ajax-request-file">Encapsulate Ajax request file</h3>
+<p>After finish below steps, we need to encapsulate the detail request file, those files should have the same name with <code>/src/store/moduleA</code> file, in this case the file should naming as <code>moduleA</code>.</p>
+<p>Example: now, we need to check whether the use exist in our system or not, please see the following code, simultaneously, we also need to encapsulate the APIResponse as interface and export it.</p>
+<pre><code class="language-javascript">import axios from &quot;./request&quot;;
+import { AxiosResponse } from &quot;axios&quot;;
+
+/**
+ * api response
+ */
+export interface APIResponse {
+  data: {
+    code: number,
+    message: string,
+    data?: { [key: string]: unknown },
+  };
+}
+
+/**
+ * check username
+ */
+export const checkUsername = (data: {
+  username: string,
+}): Promise&lt;AxiosResponse&gt; =&gt; {
+  return axios.request({
+    method: &quot;post&quot;,
+    url: `/register/check_availability`,
+    data,
+  });
+};
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>In the project, all the Ajax request need to handover through the redux-saga, which means you need to go through <code>dispatch action</code> --&gt; <code>saga</code> --&gt; <code>reducer</code>, for example, now we need to check whether the user exist in our system or not, we need to write the following code in reducer.</p>
+<pre><code class="language-javascript">const initialState: types.InitialState = {
+  initState: {
+    //The structure of this part will be found in Outlook before starting related tasks. Do not perform other modification operations. All parameter naming and types must be consistent with the document. Data updates are here.
+  }
+  userNameCheckRequest: {
+    data: {}, //please add comments to descirpt it, if it not be used, please write the comment as Null
+    message: &quot;&quot;, //please add comments to descirpt it, if it not be used, please write the comment as Null
+    isLoading: false, //please add comments to descirpt it, if it not be used, please write the comment as Null
+    status: false, //please add comments to descirpt it, if it not be used, please write the comment as Null
+  },
+};
+</code></pre>
+<p>in the <code>userNameCheckRequest</code></p>
+<ul>
+<li><code>data</code> It is used to save additional data. Please do not use this part as initState. You only need to use it when there are additional instructions in the document.</li>
+<li><code>message</code> means the error message for this Ajax request</li>
+<li><code>isLoading</code> means the waiting time for this Ajax request, for instance: before start this reuest, <code>isLoading</code> should be setup as false, when this Ajax request start <code>isLoding</code> should be setup as true and UI will display the loading animation, when the Ajax request finish, <code>isLoading</code> will be setup as false again which means this Ajax request finished.</li>
+<li><code>status</code> which means when the Ajax request finished, the UI need to get the feedback from this request to control the UI styling.</li>
+</ul>
+<p>All those four parameter must be included in the initialState, but for some parameter you may never use it in the project, but just leave it here, and give a null comment to tell the other dev, it&#39;s never be used.</p>
+
+	</div>
+</body>
+</script>
+</html>

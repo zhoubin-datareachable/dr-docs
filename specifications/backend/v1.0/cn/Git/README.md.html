@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="git-规范---part-1-单一版本代码仓库">Git 规范 - Part 1 (单一版本代码仓库)</h2>
+<h2 id="描述">描述</h2>
+<p>本文件描述如何在后端项目中使用git命令，包括不同分支的角色和作用，如何命名git分支和书写提交信息。</p>
+<h2 id="不同git分支的角色">不同Git分支的角色</h2>
+<p>为了标准化开发流程，保持代码提交记录和git分支结构的清晰有助于后续的代码仓库维护，因此，这里规范git的相关操作。</p>
+<ul>
+<li><h3 id="主分支">主分支</h3>
+<p>主分支用于正式的发布代码，应该保持其为最新稳定版本代码。主分支<strong>仅仅</strong>能够接受来自功能分支的合并操作，并且强制使用pull request进行合并，并在代码审阅通过后可以合并。允许合并到主分支前，相应的自动化测试必须通过。</p>
+<p><strong>分支命名规则:</strong> main</p>
+<p><strong>分支删除规则:</strong> main分支<strong>永远</strong>不应该被删除</p>
+<p><strong>打标签规则:</strong> 仅使用正式版本号进行打标签，比如：<code>v0.1.2</code></p>
+</li>
+<li><h3 id="主开发分支">主开发分支</h3>
+<p>主开发分支用于将功能分支合并到一个单一的预发布分支上。主开发分支是基于主分支上的。</p>
+<p><strong>分支命名规则:</strong> 分支的名称必须是<code>development</code>，并且<strong>不能</strong>被改变。</p>
+<p><strong>分支删除规则:</strong> 当主开发分支足够稳定，充分测试，并且已经合并到主分支后，该分支可以被删除。附着在其上的功能分支也一并删除。删除功能分支需要管理员权限。</p>
+<p><strong>打标签规则:</strong> 由管理员打标签。</p>
+</li>
+<li><h3 id="功能分支">功能分支</h3>
+<p>当开发新功能时，从主开发分支上创建一个功能分支。</p>
+<p><strong>分支命名规则:</strong> 分支的名称应该以<em>feature</em>开头，随后使用&quot;/&quot;分割，最后，使用功能名称作结尾。比如，<code>feature/register_api</code>, <code>feature/data_saving_api</code>, or simply <code>feature/requirement_0011223344</code>, 等。</p>
+<p><strong>分支删除规则:</strong> 当一个功能分支足够稳定，充分测试，并且已经合并到主开发分支后，功能分支可以被删除。附着在其上的开发分支也一并删除。删除功能分支需要联系具体的功能负责人。</p>
+<p><strong>打标签规则:</strong> 功能开发人员可以自由打标签。</p>
+</li>
+<li><h3 id="开发分支">开发分支</h3>
+<p>开发分支是基于功能分支上的自由创建的分支，开发分支是主要的工作分支。当有多个开发人员合作实现同一个功能时，开发分支应该在功能分支上创建，且<strong>仅仅</strong>可以从功能分支上合并进来。永远不要把开发分支合并到主分支上去。</p>
+<p><strong>分支命名规则:</strong> 开发分支的名称应该以<em>dev</em>开头，随后使用&quot;/&quot;分割，最后，使用开发分支的名称作为结尾。比如，<code>dev/register_api_john</code>, <code>dev/data_saving_api_marry</code>等。</p>
+<p><strong>分支删除规则:</strong> 程序开发人员可以自由决定是否删除他所创建的开发分支。开发分支上没有任何权限限制。</p>
+<p><strong>打标签规则:</strong> 开发人员可以自行根据需要打标签。</p>
+</li>
+<li><h3 id="快速修补分支">快速修补分支</h3>
+<p>当出现紧急bug的时候，需要及时修补程序。快速修补分支直接在主分支上创建，但是，其扔需要通过pull requests来合并到主分支，从而保证快速修补分支通过了相关的测试和代码审查。</p>
+<p><strong>分支命名规则:</strong> 分支的名称应该以<strong>hotfix</strong>开头，随后使用&quot;/&quot;分割，最后使用修补分支的名称作为结尾。比如，<code>hotfix/data_storage_error</code>, <code>hotfix/user_login_error</code>等。</p>
+<p><strong>分支删除规则:</strong> 快速修补分支可以自由删除。</p>
+<p><strong>打标签规则:</strong> 开发人员可以自行根据需要打标签。</p>
+</li>
+</ul>
+<h3 id="分支总结">分支总结</h3>
+<table>
+<thead>
+<tr>
+<th align="center">分支类别</th>
+<th align="center">命名规则</th>
+<th align="center">位于哪个分支上</th>
+<th align="center">合并规则</th>
+<th align="center">删除规则</th>
+<th align="center">打标签规则</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">主分支</td>
+<td align="center">main</td>
+<td align="center">无</td>
+<td align="center">并入的目标分支: 无<br/>允许并入的分支: 功能分支</td>
+<td align="center">永远不能删除</td>
+<td align="center">正式的版本号</td>
+</tr>
+<tr>
+<td align="center">主开发分支</td>
+<td align="center">development</td>
+<td align="center">主分支</td>
+<td align="center">并入的目标分支: 通过pull request并入主分支<br/>允许并入的分支: 功能分支</td>
+<td align="center">仅由管理员删除</td>
+<td align="center">由管理员打标签</td>
+</tr>
+<tr>
+<td align="center">功能分支</td>
+<td align="center">feature/<feature_name></td>
+<td align="center">主开发分支</td>
+<td align="center">并入的目标分支: 通过pull request并入主开发分支<br/>允许并入的分支: 开发分支</td>
+<td align="center">有功能负责人删除</td>
+<td align="center">由功能负责人打标签</td>
+</tr>
+<tr>
+<td align="center">开发分支</td>
+<td align="center">dev/<feature_name>_<developer_name></td>
+<td align="center">功能分支</td>
+<td align="center">并入的目标分支: 功能分支<br/>允许并入的分支: 其他开发分支</td>
+<td align="center">随便删除</td>
+<td align="center">随便打标签</td>
+</tr>
+<tr>
+<td align="center">快速修复分支</td>
+<td align="center">hotfix/<bug_name></td>
+<td align="center">主分支</td>
+<td align="center">并入的目标分支: 通过pull request并入主分支<br/>允许并入的分支: 无</td>
+<td align="center">随便删除</td>
+<td align="center">随便打标签</td>
+</tr>
+</tbody></table>
+<div align="center">
+  <img src="../../images/Backend_Git_Branch_Relationship.png" />
+</div>
+
+<p><strong>小贴士</strong>: 使用<code>git rebase</code>来同步分支。</p>
+<h2 id="git提交信息（commit-message）">Git提交信息（Commit Message）</h2>
+<p>所有的提交信息需要遵循如下格式：</p>
+<pre><code class="language-bash">:gitmoji: [&lt;提交日期&gt;] &lt;你的提交信息&gt;
+</code></pre>
+<p><a href="https://gitmoji.dev/"><code>:gitmoji</code></a> 被用来清晰的标注提交的目的和作用。请使用上述链接仔细搜索最合适的GitMoji（表情）。对于无明确目的的提交（或者很难分类的提交），使用<code>:construction:</code>来代表工作仍在继续，并未达到一个给定的检查点。</p>
+<p>为了把上述的格式简化成一条命令，可以在所使用的shell中创建一个git提交命令的快捷命令。比如，在Unix/Linux环境下，使用<code>bash</code>，可以在<code>$HOME/.bashrc</code>中添加如下代码：</p>
+<pre><code class="language-bash">export git-commit() {
+  git commit -m &quot;$1 [$(date +&quot;%d-%b-%Y&quot;)] $2&quot;
+}
+</code></pre>
+<p>之后，使用命令<code>git-commit &quot;:gitmoji:&quot; &quot;你的提交信息&quot;</code>来完成提交操作。这会产生一个如下的提交信息：<code>:bug: [06-Jun-2020] Fix Bugs</code>。</p>
+<p><strong>一个有用的工具</strong>: <a href="https://github.com/carloscuesta/gitmoji-cli">Gitmoji CLI</a>能够节省你用于搜索GitMoji的时间。为了将这个工具跟上述脚本组合，只需要简单的使用命令<code>gitmoji -i</code>来在<code>git commit</code>命令中创造一个钩子，随后，删除上述脚本中的Emoji参数：<code>git commit -m &quot;[$(date +&quot;%d-%b-%Y&quot;)] $1&quot;</code>。</p>
+<hr>
+<h2 id="git-规范---part-2-多版本代码仓库">Git 规范 - Part 2 (多版本代码仓库)</h2>
+<h2 id="描述-1">描述</h2>
+<p>采用Monorepo的形式，每一个Repo内全量保存一个应用的全部版本的代码。</p>
+<p>默认分支为主分支，唯一的永远不删除的分支。其他分支（可以按照版本命名，或者其他需要命名）都存在一个生命周期，且可以删除。其他分支可以随时向主分支合并，以保存代码。</p>
+<p>通过在各自的版本分支上打tag触发CD进行发布。</p>
+<h2 id="不同git分支的角色-1">不同Git分支的角色</h2>
+<ul>
+<li><h3 id="主分支（默认分支）">主分支（默认分支）</h3>
+</li>
+</ul>
+<p>主分支仅用于汇总，保存其他各分支的代码。
+为了避免各版本的巨大改动造成向主分支合并时出现大量冲突，主分支的目录结构采用树形的结构对不同版本进行隔离。如有必要，可以加大树的深度。如下：</p>
+<div align="center">
+  <img src="../../images/MainBranchDirTree.png" />
+</div>
+
+<p>每一个目录下，都是一个完整的项目的全量代码。
+更深的目录结构：</p>
+<div align="center">
+  <img src="../../images/MainBranchDirDeeperTree.png" />
+</div>
+
+<ul>
+<li><h3 id="各版本分支">各版本分支</h3>
+</li>
+</ul>
+<p>每一个版本都应当先在根目录下创建对应的目录，之后，再创建对应的分支，分支命名和各分支的含义如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">主版本</th>
+<th align="center">分支名称</th>
+<th align="center">对应的根目录</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">v1</td>
+<td align="center">v1-dev</td>
+<td align="center">v1</td>
+<td align="center">v1版本的开发环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v1</td>
+<td align="center">v1-test</td>
+<td align="center">v1</td>
+<td align="center">v1版本的测试环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v1</td>
+<td align="center">v1-prod</td>
+<td align="center">v1</td>
+<td align="center">v1版本的生产环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v1</td>
+<td align="center">v1/*</td>
+<td align="center">v1</td>
+<td align="center">v1版本的开发人员自己的工作分支</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2-dev</td>
+<td align="center">v2</td>
+<td align="center">v2版本的开发环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2-test</td>
+<td align="center">v2</td>
+<td align="center">v2版本的测试环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2-prod</td>
+<td align="center">v2</td>
+<td align="center">v2版本的生产环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v2</td>
+<td align="center">v2/*</td>
+<td align="center">v2</td>
+<td align="center">v2版本的开发人员自己的工作分支</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3-dev</td>
+<td align="center">v3</td>
+<td align="center">v3版本的开发环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3-test</td>
+<td align="center">v3</td>
+<td align="center">v3版本的测试环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3-prod</td>
+<td align="center">v3</td>
+<td align="center">v3版本的生产环境下的服务</td>
+</tr>
+<tr>
+<td align="center">v3</td>
+<td align="center">v3/*</td>
+<td align="center">v3</td>
+<td align="center">v3版本的开发人员自己的工作分支</td>
+</tr>
+</tbody></table>
+<p>注意：在主分支上开辟新的分支后，该分支上仍然拥有主分支上的所有代码，但是，仅在自己的特定文件夹内工作，这样与主分支合并时，不会出现跟其他版本的冲突。</p>
+<p>这样，任何分支上都存在大量的不同版本的代码，为了方便本地开发，避免误操作到其他目录的代码，同时减少本地需要跟踪的分支数，采用sparse checkout的方式管理本地的仓库。</p>
+<p>各版本分支可以随时merge回主分支后，被删除，再重新从主分支新建分支。</p>
+<div align="center">
+  <img src="../../images/BranchingExample.png" />
+</div>
+
+<ul>
+<li><h3 id="其他分支">其他分支</h3>
+</li>
+</ul>
+<p>除了版本控制分支外，还可以有针对某一特定功能的功能分支，修复bug的patch分支，以及其他用于实验等的临时分支。</p>
+<p>功能分支和修复bug的分支，可以横跨任意多个版本，同时对多版本修复，并重新合并回主分支。</p>
+<table>
+<thead>
+<tr>
+<th align="center">主版本</th>
+<th align="center">分支名称</th>
+<th align="center">对应的根目录</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">any</td>
+<td align="center">feature-*</td>
+<td align="center">any</td>
+<td align="center">直接在任何分支上开辟的功能分支</td>
+</tr>
+<tr>
+<td align="center">any</td>
+<td align="center">feature/*</td>
+<td align="center">any</td>
+<td align="center">直接在任何分支上开辟的针对某功能的不同开发人员的临时分支</td>
+</tr>
+<tr>
+<td align="center">any</td>
+<td align="center">patch-*</td>
+<td align="center">any</td>
+<td align="center">直接在任何分支上开辟的bug修复分支</td>
+</tr>
+<tr>
+<td align="center">any</td>
+<td align="center">patch/*</td>
+<td align="center">any</td>
+<td align="center">直接在任何分支上开辟的针对某bug的不同开发人员的临时分支</td>
+</tr>
+<tr>
+<td align="center">experiment</td>
+<td align="center">experiment-*</td>
+<td align="center">experiment</td>
+<td align="center">试验用分支</td>
+</tr>
+<tr>
+<td align="center">temp</td>
+<td align="center">temp-*</td>
+<td align="center">temp</td>
+<td align="center">临时分支</td>
+</tr>
+</tbody></table>
+<h2 id="云端仓库文件夹组织说明">云端仓库文件夹组织说明</h2>
+<p>云端仓库的目录按照第二点中的主分支说明中的树形结构组织，包含全部版本的代码。</p>
+<h2 id="本地仓库文件夹组织说明">本地仓库文件夹组织说明</h2>
+<pre><code class="language-bash">git sparse checkout:
+</code></pre>
+<p><a href="https://www.git-scm.com/docs/git-sparse-checkout">https://www.git-scm.com/docs/git-sparse-checkout</a></p>
+<p><a href="https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/">https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/</a></p>
+<p>为了避免混乱，本地的仓库文件夹，一般应该保持为云端Repo的一部分，避免全量复制云端的仓库。即，每一个本地仓库都只有一部分的云端仓库代码，只同步一部分云端Repo的分支（注意：不仅仅是目录，分支也仅仅应当追踪一部分）。下图为一种可能的组织方式（文件夹名称可以自己决定，可以不与仓库名和版本名称一致）：</p>
+<div align="center">
+  <img src="../../images/LocalAndRemoteDir.png" />
+</div>
+
+<p>上图中的本地目录(local directory)可以根据喜好任意起名，标注有“云端目录(remote directory)”的必须跟云端目录的对应名称一致。</p>
+<table>
+<thead>
+<tr>
+<th align="center">本地目录名称</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">xxx_service</td>
+<td align="center">某一特定服务/项目的根目录，该目录下没有.git文件夹，仅仅用于组织，不对应云端的Repo</td>
+</tr>
+<tr>
+<td align="center">version_1</td>
+<td align="center">云端Repo的一部分，该目录下有.git文件夹，对应云端Repo，仅拉取云端目录v1下的文件，仅跟踪v1-dev, v1-test, v1-prod, v1/*等相关的分支。</td>
+</tr>
+<tr>
+<td align="center">version_2</td>
+<td align="center">云端Repo的一部分，该目录下有.git文件夹，对应云端Repo，仅拉取云端目录v2下的文件，仅跟踪v2-dev, v2-test, v2-prod, v2/*等相关的分支。</td>
+</tr>
+<tr>
+<td align="center">expt</td>
+<td align="center">云端Repo的一部分，该目录下有.git文件夹，对应云端Repo，仅拉取云端目录experiment下的文件，仅跟踪v2-dev, v2-test, v2-prod, v2/*, expteriment-*等相关的分支。</td>
+</tr>
+</tbody></table>
+<p>以上述方式整理本地的代码目录，可以避免发生当前工作目录中，同时存在过多无关版本的代码和分支，也不会误操作其他版本的代码。</p>
+<p>构建上述本地目录的流程</p>
+<div align="center">
+  <img src="../../images/WorkflowBuildingLocalDirs.png" />
+</div>
+
+<p>初始clone下云端的Repo以后，在各个本地的子目录下，可以正常新建/删除分支，push，pull，打tag等。</p>
+<p>除非必要，避免使用<code>git sparse-checkout set &lt;xxx&gt; &lt;yyy&gt;</code>重置本地拉取下来的目录，以免造成本地Repo的混乱。</p>
+<h2 id="tag-使用说明">Tag 使用说明</h2>
+<ul>
+<li><p>主分支上的tag
+主分支上的标签用于整个云端Repo的发布，会对云端Repo上的所有目录进行发布。</p>
+<p>标签格式：v[0-9]+.[0-9]+.[0-9]+，比如，v1.2.3，v3.7.8。</p>
+<p>一般的，v1.x.x应对应v1-*分支所拥有的目录的发布，v2.x.x对应v2-*分支所拥有的目录的发布。</p>
+</li>
+<li><p>各版本分支上的tag
+各分支上的tag用于触发continuous integration 和 continuous deployment的actions。</p>
+<p>标签格式：v[0-9]+.[0-9]+.[0-9]+-dev, v[0-9]+.[0-9]+.[0-9]+-test, v[0-9]+.[0-9]+.[0-9]+-prod等，比如，v1.2.3-dev（触发v1-dev分支对应commit上的CD动作），v2.3.4-test（触发v2-test分支对应commit上的CD动作）</p>
+<p>CD构建的镜像标签：
+具体的镜像v1.2.3-dev；
+某版本的开发环境镜像对应的最新版v1-dev，即，v1-dev时刻反映最新的开发版镜像；
+某版本的测试环境镜像对应的最新版v1-test，即，v1-test时刻反映最新的测试版镜像</p>
+<p>注：各CI/CD Pipeline也采用sparse checkout。</p>
+</li>
+<li><p>其他分支
+暂没有利用tag的计划</p>
+</li>
+</ul>
+<h2 id="cicd-相关说明">CI/CD 相关说明</h2>
+<table>
+<thead>
+<tr>
+<th align="center">分支</th>
+<th align="center">触发的Action</th>
+<th align="center">CI</th>
+<th align="center">CD</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">v1-dev, v1-test, v1-prod, v2-dev, v2-test, v2-prod</td>
+<td align="center">向上述分支提交pull request</td>
+<td align="center">对某分支与上述分支merge后的那个commit，在某个相关的指定目录内，运行基本检查（或测试）</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">v1-dev, v1-test, v1-prod, v2-dev, v2-test, v2-prod</td>
+<td align="center">在上述分支上打tag（比如，v1.2.3-dev, v2.6.8-prod）</td>
+<td align="center"></td>
+<td align="center">构建docker镜像并上传到github container repo，最后，更新线上版本</td>
+</tr>
+<tr>
+<td align="center">main</td>
+<td align="center">向main分支提交pull request</td>
+<td align="center">分析每个指定的目录，如果目录内存在文件改动，则在此目录下运行基本检查（或测试）</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">main</td>
+<td align="center">在main分支上打tag（比如，v1.2.5, v2.6.8）</td>
+<td align="center"></td>
+<td align="center">对整个GitHub Repo发布一个版本</td>
+</tr>
+<tr>
+<td align="center">其他</td>
+<td align="center">视情况而定</td>
+<td align="center">视情况而定</td>
+<td align="center">视情况而定</td>
+</tr>
+</tbody></table>
+
+	</div>
+</body>
+</script>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="database-connection-info">Database Connection Info</h2>
+<p>This document contains the connection info for currently deployed databases in dr-eks-dev kubernetes cluster.</p>
+<p><strong>Note:</strong> You need to connect to DataReachable VPN first, because all databases are internal only.</p>
+<ol>
+<li>Redis</li>
+</ol>
+<p>The in-cluster Redis is deployed in cluster mode. Use <a href="https://github.com/luin/ioredis#cluster">ioredis</a> NodeJS driver to connect to the Redis cluster.</p>
+<p>Currently, the deployed Redis has three master nodes, i.e. 3 shards, without any replicas. The hostnames and ports for the three master nodes:</p>
+<ul>
+<li>redis-cluster-0.redis-cluster-headless.redis.svc.cluster.local:6379</li>
+<li>redis-cluster-1.redis-cluster-headless.redis.svc.cluster.local:6379</li>
+<li>redis-cluster-2.redis-cluster-headless.redis.svc.cluster.local:6379</li>
+</ul>
+<p>The Redis service endpoint is: <code>redis-cluster.redis.svc.cluster.local:6379</code>. When connecting with <code>redis-cli</code>, make sure to attach the <code>-c</code> option.</p>
+<p>Using <code>ioredis</code> to connect to this cluster:</p>
+<pre><code class="language-js">const cluster = new Redis.Cluster([
+  {
+    port: 6397,
+    host: &quot;redis-cluster-0.redis-cluster-headless.redis.svc.cluster.local&quot;,
+    password: &quot;aCudZScHNN65ErvK&quot;
+  },
+  {
+    port: 6397,
+    host: &quot;redis-cluster-1.redis-cluster-headless.redis.svc.cluster.local&quot;,
+    password: &quot;aCudZScHNN65ErvK&quot;
+  },
+  {
+    port: 6397,
+    host: &quot;redis-cluster-2.redis-cluster-headless.redis.svc.cluster.local&quot;,
+    password: &quot;aCudZScHNN65ErvK&quot;
+  },
+]);
+</code></pre>
+<p>The default root password to the Redis cluster is: <code>aCudZScHNN65ErvK</code>. You may create your own Redis ACL rules with username and password, but please don&#39;t change the root password before notifying others.</p>
+<ol start="2">
+<li>MongoDB</li>
+</ol>
+<p>The in-cluster MongoDB is deployed in sharded mode. Use appropriate MongoDB <a href="https://docs.mongodb.com/manual/reference/connection-string/">connection string</a> to connect.</p>
+<p>Currently, the deployed MongoDB has 2 <code>mongos</code> router instances, 2 data shard instances, 1 config server instance. The application should connect to the <code>mongos</code> instances to access the MongoDB cluster. In kubernetes, this is equivalent to connecting to the <code>mongos</code> service.</p>
+<p>The connection string is: <code>mongodb://mongodb-sharded.mongodb.svc.cluster.local:27017/</code>. If you only want to do some experiments, please connect to the <strong>test</strong> database only so as not to ruin other in-use databases.</p>
+<p><strong>Note:</strong> The above string is the minimal connection string that only gives you access to the MongoDB cluster, but it does <strong>NOT</strong> mean you have appropriate configurations for your database/collections. For additional options and how to use a MongoDB sharded cluster, please refer to <a href="https://docs.mongodb.com/manual/sharding/">MongoDB Sharding</a>.</p>
+<p>For detailed user information, please check <a href="./MongoDB_Users.md">MongoDB User Setup</a>.</p>
+
+	</div>
+</body>
+</script>
+</html>

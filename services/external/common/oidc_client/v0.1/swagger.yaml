@@ -1,0 +1,697 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: OIDC Common Client Service
+  description: >-
+    This document contains the common service for oidc supported clients. It includes: <br/>
+    1. app entry page redirection
+    2. user info fetching from the OIDC provider
+    3. user session establishment
+    4. JWT generation
+    5. user logout
+    6. oidc client dynamic registration
+    7. oidc client dynamic deletion
+    <br/>
+    <br/>
+    **Project server domain:** https://api.dev.datareachable.net/common/oidc/v1
+    <br/>
+    <br/>
+    **Project GitHub Repos:**
+      - [OIDC Client Server](https://github.com/dataReachable/dr_Back_OIDCClient_Service)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://api.dev.datareachable.net/common/oidc/v1"
+    description: Sydney Development Cluster
+
+paths:
+  /entry:
+    get:
+      tags:
+        - Protected App Entrypoint
+      summary: Entrance URL
+      description: >-
+        For each application under the OpenID Connect SSO system, browser should always `directly` visit this URL first to check whether the user is authorized to access the protected application/page(s).
+        <br/>
+        <br/>
+        This API endpoint simply redirects the end user's browser to the OpenID Connect provider. If the user is `not` logged in, then OP `redirects` the end user's browser to the login page. If the user has logged in, then OP `redirects` the end user's browser to the application's callback endpoint (e.g. /login_redirect) with code and session_state in the query parameter. The `frontend should deal with the callback endpoint`.
+      parameters:
+        - name: app
+          in: query
+          required: true
+          description: >-
+            The query parameter to distinguish the frontend apps.
+            <br/>
+            The following values are allowed (continously updating...):
+            <br/><br/>
+            1. "qeditor": Questionnaire Editor <br/>
+            2. "profile": Profile Application <br/>
+            3. "dashboard": Dashboard Application <br/>
+            4. "project-manager": Project Manager <br/>
+            5. "plugin-system": Plugin System <br/>
+            6. "qeditor-dashboard": Questionnaire Editor Dashboard <br/>
+            7. "market": Market Application <br/>
+            8. "survey-dist": Survey Distribution Application
+          schema:
+            type: string
+            example: "qeditor"
+      responses:
+        "302":
+          description: Redirect the user browser from the application to the OpenID Connect provider.
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericBadFields"
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /jwt:
+    post:
+      tags:
+        - Fetch User Info and JWT
+      summary: After user successfully logs in, fetch user info, establish user session and return JWT at the entry page.
+      description: "After user logging in via OpenID Connect provider, fetch user info from the OP, establish user's session for the application (note: this session is also shared across all applications), generate JWT for the frontend"
+      parameters:
+        - name: app
+          in: query
+          required: true
+          description: >-
+            The query parameter to distinguish the frontend apps.
+            <br/>
+            The following values are allowed (continously updating...):
+            <br/><br/>
+            1. "qeditor": Questionnaire Editor <br/>
+            2. "profile": Profile Application <br/>
+            3. "dashboard": Dashboard Application <br/>
+            4. "project-manager": Project Manager <br/>
+            5. "plugin-system": Plugin System <br/>
+            6. "qeditor-dashboard": Questionnaire Editor Dashboard <br/>
+            7. "market": Market Application <br/>
+            8. "survey-dist": Survey Distribution Application
+          schema:
+            type: string
+            example: "qeditor"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_EntryInfo"
+      responses:
+        "200":
+          description: User information has been successfully fetched and JWT generated.
+          headers:
+            DR-AUTH:
+              description: The Json Web Token (JWT) issued by the backend. <br/> Frontend should store this value and attach it to request header for privileged API requests.
+              schema:
+                type: string
+
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Res_EntryInfo_Success"
+
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericBadFields"
+
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /logout:
+    get:
+      tags:
+        - User Logout
+      summary: User logout
+      description: >-
+        When user triggers logout, frontend should `redirect` the user browser to this URL. The rest is handled by the backend. This endpoint corresponds to the RP-initiated logout in the OpenID Connect protocol.
+        <br/>
+        <br/>
+        `NO` permission check on this API. User can trigger the logout API anytime, `regardless` of his session status.
+      parameters:
+        - name: app
+          in: query
+          required: true
+          description: >-
+            The query parameter to distinguish the frontend apps.
+            <br/>
+            The following values are allowed (continously updating...):
+            <br/><br/>
+            1. "qeditor": Questionnaire Editor <br/>
+            2. "profile": Profile Application <br/>
+            3. "dashboard": Dashboard Application <br/>
+            4. "project-manager": Project Manager <br/>
+            5. "plugin-system": Plugin System <br/>
+            6. "qeditor-dashboard": Questionnaire Editor Dashboard <br/>
+            7. "market": Market Application <br/>
+            8. "survey-dist": Survey Distribution Application
+          schema:
+            type: string
+            example: "qeditor"
+      responses:
+        "302":
+          description: Redirect the user browser from the application to the OpenID Connect provider
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericBadFields"
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /_mgmt/reg:
+    post:
+      tags:
+        - OIDC Client Management
+      summary: Register OIDC Client
+      description: >-
+        This is `NOT` a public API. Should `ONLY` be called privately.
+        <br/>
+        <br/>
+        Dynamically register an OIDC client. The registration can be conducted on the OIDC provider only, or this common OIDC client service only or both. The operation type is controlled by a query parameter.
+      parameters:
+        - name: operation
+          in: query
+          required: true
+          description: >-
+            Registration operation type, can be selected from: "provider", "client", "both"
+          schema:
+            type: string
+            example: "client"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Req_RegistrationInfo"
+      responses:
+        "200":
+          description: OIDC client registration succeeds
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericBadFields"
+
+        "409":
+          description: Client already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ClientExists"
+
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /_mgmt/del:
+    post:
+      tags:
+        - OIDC Client Management
+      summary: Delete OIDC Client
+      description: >-
+        This is `NOT` a public API. Should `ONLY` be called privately.
+        <br/>
+        <br/>
+        Dynamically delete an OIDC client. The client deletion can only be conducted on the OIDC common client service. `Only` one client is deleted by this API at a time. Bulk deletion is not supported.
+      parameters:
+        - name: client_name
+          in: query
+          required: true
+          description: OIDC client name at registration time
+          schema:
+            type: string
+            example: "app-xxx"
+      responses:
+        "200":
+          description: OIDC client deletion succeeds
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ClientDeleted"
+
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericBadFields"
+
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /_mgmt/list:
+    post:
+      tags:
+        - OIDC Client Management
+      summary: Fetch OIDC Client List
+      description: >-
+        This is `NOT` a public API. Should `ONLY` be called privately.
+        <br/>
+        <br/>
+        Fetch current oidc client list both in the in-memory client list and the local database
+      responses:
+        "200":
+          description: List current clients
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ClientList"
+
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericBadFields"
+
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /_mgmt/refresh:
+    post:
+      tags:
+        - OIDC Client Management
+      summary: Refresh OIDC Client List
+      description: >-
+        This is `NOT` a public API. Should `ONLY` be called privately.
+        <br/>
+        <br/>
+        Reload all OIDC clients from the local database into the in-memory client list
+      responses:
+        "200":
+          description: OIDC client list refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_ClientRefreshSuccess"
+
+        "202":
+          description: No oidc client is found in the local database
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_NoClientFound"
+
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericBadFields"
+
+        "500":
+          description: Internal server errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200000
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "Success!"
+
+    Res_GenericBadFields:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 400001, message: "The error of the fields will be described here." }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: { code: 500000, message: "General error message", data: { error: "Details of the error goes here" } }
+
+    Res_Mobile:
+      type: object
+      description: User provided mobile number. If not provided, the field is `null`.
+      properties:
+        country:
+          type: string
+          description: The country code of the number we're sending to.
+        number:
+          type: string
+          description: The actual mobile number of the user.
+      example: { "country": "61", "number": "1234567890" }
+
+    Res_Email:
+      type: string
+      description: User provided email address. If not provided, the field is `null`.
+      example: "xxxx@datareachable.com"
+
+    Req_EntryInfo:
+      type: object
+      required:
+        - "code"
+        - "session_state"
+      properties:
+        code:
+          type: string
+          description: The code extracted from the browser URL.
+        session_state:
+          type: string
+          description: The session_state value extracted from the browser URL.
+      example: { "code": "xxxxxxxxxx", "session_state": "xxxxxxxxxx" }
+
+    Res_EntryInfo_Success:
+      type: object
+      properties:
+        userinfo:
+          required:
+            - "sub"
+            - "name"
+          type: object
+          properties:
+            sub:
+              type: string
+              description: >-
+                User universally unique id.
+                <br/>
+                **Must** be returned and contain value.
+              example: "xxxxxxxxx-yyyyy_zzzzz"
+            name:
+              type: string
+              description: >-
+                User name.
+                <br/>
+                **Must** be returned and contain value.
+              example: "John Doe"
+            email:
+              $ref: "#/components/schemas/Res_Email"
+            mobile:
+              $ref: "#/components/schemas/Res_Mobile"
+            birthday:
+              type: string
+              format: date
+              description: User birthday
+              example: "1970-01-01"
+            gender:
+              type: string
+              description: User gender
+              example: "male"
+            avatar:
+              type: string
+              description: User avatar public-readable URL
+              example: "https://xxxxxx.aws.com"
+
+    Res_AccessDenied_SessionTimeOut:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 403001, message: "Session time out, access denied!" }
+
+    Res_AccessDenied_JWTNotFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT not found in the header, access denied!" }
+
+    Res_AccessDenied_JWTValidationFailure:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT validation failed, access denied!" }
+
+    OidcClientInfo:
+      type: object
+      properties:
+        client_id:
+          type: string
+          description: OIDC Client ID
+        client_id_issued_at:
+          type: number
+          description: OIDC Client Issue Timestamp
+        client_name:
+          type: string
+          description: OIDC Client Name
+        client_secret:
+          type: string
+          description: OIDC Client Secret
+        client_secret_expires_at:
+          type: number
+          description: OIDC Client Secret Expires At (Unix Timestamp)
+        registration_access_token:
+          type: string
+          description: OIDC Client Info Access Token
+        application_type:
+          type: string
+          description: Application Type
+        id_token_signed_response_alg:
+          type: string
+          description: OIDC's ID Token Signing Algorithm
+        token_endpoint_auth_method:
+          type: string
+          description: Token endpoint authorization method
+        require_auth_time:
+          type: boolean
+        subject_type:
+          type: string
+        introspection_endpoint_auth_method:
+          type: string
+        revocation_endpoint_auth_method:
+          type: string
+        web_message_uris:
+          type: array
+          items:
+            type: string
+        grant_types:
+          type: array
+          items:
+            type: string
+        response_types:
+          type: array
+          items:
+            type: string
+          description: Allowed response types
+        registration_client_uri:
+          type: string
+        redirect_uris:
+          type: array
+          items:
+            type: string
+          description: OIDC Client's redirect (callback) uris
+        post_logout_redirect_uris:
+          type: array
+          items:
+            type: string
+          description: Redirect uris after user logout
+        backchannel_logout_session_required:
+          type: boolean
+        backchannel_logout_uri:
+          type: string
+        require_signed_request_object:
+          type: boolean
+        request_uris:
+          type: array
+          items:
+            type: string
+      example:
+        {
+          "application_type": "web",
+          "grant_types": ["authorization_code", "refresh_token"],
+          "id_token_signed_response_alg": "HS256",
+          "post_logout_redirect_uris": ["https://www.youtube.com"],
+          "require_auth_time": false,
+          "response_types": ["code"],
+          "subject_type": "public",
+          "token_endpoint_auth_method": "client_secret_basic",
+          "introspection_endpoint_auth_method": "client_secret_basic",
+          "revocation_endpoint_auth_method": "client_secret_basic",
+          "backchannel_logout_session_required": true,
+          "require_signed_request_object": false,
+          "request_uris": [],
+          "web_message_uris": [],
+          "client_id_issued_at": 1625117206,
+          "client_id": "gGeD0ygrUhCMfTgEvNNJq",
+          "client_name": "app-profile-extauth",
+          "client_secret_expires_at": 0,
+          "client_secret": "-6yd2YsyzKJVk-wppbkjb4JE5mNir5GRqUahAuojHS-kkOND91SltwEph7F4f39ugxNKdBYm--Dkh2SoPuFPfw",
+          "redirect_uris": ["https://app.experiment.rwasm.net/login_redirect"],
+          "backchannel_logout_uri": "http://oidc-common-service.common.svc.cluster.local/back_channel_logout",
+          "registration_client_uri": "http://openid-connect-provider-service.user-system.svc.cluster.local/reg/gGeD0ygrUhCMfTgEvNNJq",
+          "registration_access_token": "cKwTg9nSRxoWbPN4vD7arYMAzAH-p97YBhi29Y_uln0",
+        }
+
+    Req_RegistrationInfo:
+      allOf:
+        - $ref: "#/components/schemas/OidcClientInfo"
+        - required:
+            - "client_id"
+            - "client_name"
+            - "client_secret"
+            - "id_token_signed_response_alg"
+            - "grant_types"
+            - "response_types"
+            - "redirect_uris"
+            - "post_logout_redirect_uris"
+            - "backchannel_logout_uri"
+      example:
+        {
+          "client_id": "app-xxx-client-id",
+          "client_name": "app-xxx",
+          "client_secret": "app-xxx-client-secret",
+          "registration_access_token": "",
+          "client_secret_expires_at": "",
+          "application_type": "web",
+          "id_token_signed_response_alg": "HS256",
+          "token_endpoint_auth_method": "client_secret_basic",
+          "require_auth_time": false,
+          "grant_types": ["authorization_code", "refresh_token"],
+          "response_types": ["code"],
+          "registration_client_url": "http://openid-connect-provider-service.user-system.svc.cluster.local/reg?client_name=app-xxx",
+          "redirect_uris": ["https://app.experiment.rwasm.net/login_redirect"],
+          "post_logout_redirect_uris": ["https://app.experiment.rwasm.net/"],
+          "backchannel_logout_session_required": true,
+          "backchannel_logout_uri": "http://oidc-client-service.common.svc.cluster.local/back_channel_logout",
+        }
+
+    Res_ClientExists:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 409001, message: "OIDC Client app-xxx is already registered" }
+
+    Res_ClientDeleted:
+      type: object
+      properties:
+        in-database:
+          type: object
+          properties:
+            acknowledged:
+              type: boolean
+              description: Indicates whether this db write result was acknowledged
+            deletedCount:
+              type: number
+              description: The number of documents that were deleted
+        in-oidc-provider:
+          type: number
+          description: The number of deleted records in oidc provider's database
+        in-memory:
+          type: boolean
+          description: Indicates whether the oidc client is deleted from the in-memory client list
+
+    Res_ClientList:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                meta:
+                  type: object
+                  properties:
+                    in-memory-count:
+                      type: number
+                      description: The number of in-memory oidc clients
+                      example: 1
+                    in-database-count:
+                      type: number
+                      description: The number of in-database oidc clients
+                      example: 1
+                    in-memory-clients:
+                      type: array
+                      description: The list of in-memory oidc client names
+                      items:
+                        type: string
+                      example: ["app-1"]
+                    in-database-clients:
+                      type: array
+                      description: The list of in-database oidc client names
+                      items:
+                        type: string
+                      example: ["app-1"]
+                in-memory:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/OidcClientInfo"
+                in-database:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/OidcClientInfo"
+
+    Res_NoClientFound:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 202001, message: "No oidc client is found in the local database" }
+
+    Res_ClientRefreshSuccess:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: array
+              description: The list of successfully refreshed oidc clients
+              items:
+                type: object
+                properties:
+                  client_name:
+                    type: string
+                    description: OIDC client name
+                  client_id:
+                    type: string
+                    description: OIDC client id
+      example:
+        {
+          code: 200001,
+          message: "OIDC client list has been refreshed",
+          data: [{ client_name: "app-xxx", client_id: "xxx-yyy-zzz" }, { client_name: "app-yyy", client_id: "123-456-789" }],
+        }

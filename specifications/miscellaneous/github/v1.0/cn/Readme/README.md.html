@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="readmemd文件的书写规范（适用于所有项目）">README.md文件的书写规范（适用于所有项目）</h2>
+<h2 id="⚠️-已经废弃">⚠️ 已经废弃</h2>
+<p>本文档中规定的完整的README书写方式由于在实操中过于冗余，已经废弃。简化版本<a href="../ReadmeSimplified/README.md">在此提供</a>。</p>
+<h2 id="描述">描述</h2>
+<p>本代码仓库定义了在数及公司书写项目中README.md文档的基本规范。本规范适用于所有应用程序开发项目和IaC项目。</p>
+<h2 id="规范列表">规范列表</h2>
+<ul>
+<li><h3 id="项目标题（必须）">项目标题（必须）</h3>
+<p>项目标题应放在第一行，使用Markdown第二级标题样式：</p>
+<p>可选项：项目标题下方可以放置一个居中的图片用以描述此项目，也可以包含相关的GitHub的徽章 <a href="https://shields.io/">Shields</a>。</p>
+</li>
+<li><h3 id="项目描述（必须）">项目描述（必须）</h3>
+<p>“项目描述”字样使用Markdown第二级标题样式。</p>
+<p>项目描述的内容使用Markdown的正常字体样式。</p>
+</li>
+<li><h3 id="项目目录结构（必须）">项目目录结构（必须）</h3>
+<p>  “项目结构”字样使用Markdown第二级标题样式。</p>
+<h4 id="项目目录结构--子标题（必须）">项目目录结构 —— 子标题（必须）</h4>
+<p>  在项目结构里的子标题（子项）使用Markdown第三级标题样式。可以有如下一些子标题：</p>
+<ol>
+<li><p>项目目录结构总览（必须）\</p>
+<pre><code>   项目源码的目录结构树状图总览。统一使用VSCode的扩展：[directory-tree generator](https://marketplace.visualstudio.com/items?itemName=yarimit.directory-configuration-generator)来自动生成（也可以手写）。
+</code></pre>
+</li>
+<li><p>根目录描述（可选）\</p>
+<pre><code>   给出项目根目录下的每个文件和文件夹的详细描述。
+</code></pre>
+</li>
+<li><p>源代码文件夹描述（可选）\</p>
+<pre><code>   给出源代码文件夹下面的每个文件和文件夹的详细描述。
+</code></pre>
+</li>
+<li><p>其他文件夹描述（可选）<br> 有必要的情况下，可选的对其他文件夹内部的每个文件和子文件夹加以详细描述，比如，配置文件夹，测试文件夹等。</p>
+</li>
+</ol>
+</li>
+<li><h2 id="使用方法（必须）">使用方法（必须）</h2>
+<p>使用方法小节包括了项目如何运行以及其他使用方法相关的内容。</p>
+<p>在描述使用方法之前，必须明确描述本地运行环境的要求，以及配置运行环境的方法，比如，必须的依赖库，最低的版本号等。这一项为必须写出的。</p>
+<p>针对不同的项目，使用方法小节所包含的具体内容会有不同，但是，必须保证用合适的层级来组织内容，同时给出相关的示例代码（此代码尽量保证可以直接拷贝后运行）。</p>
+</li>
+<li><h2 id="变更记录（可选）">变更记录（可选）</h2>
+<p>项目的变更记录<strong>不应该</strong>出现在首页的<code>README.md</code>文件中。变更记录文件应该被命名为<code>CHANGELOG.md</code>，并作为单独的文件与<code>README.md</code>文件并列存放。</p>
+<h3 id="使用自动生成变更记录的工具（必须）">使用自动生成变更记录的工具（必须）</h3>
+<p>  如果选择添加项目的变更记录文件，那么强制使用如下自动生成工具以统一格式（<a href="https://github.com/CookPete/auto-changelog">Auto ChangeLog</a>）。该工具依赖于 <strong>git logs</strong> 记录，通过提取git日志来自动生成格式化的变更记录文档。</p>
+<p>  使用 <a href="https://github.com/CookPete/auto-changelog">Auto ChangeLog</a> 工具应该首先通过<code>npm install -g auto-changelog</code>进行全局安装（注：该工具依赖于npm）。之后，使用如下命令来自动生成<code>CHANGELOG.md</code>文件。</p>
+<pre><code class="language-bash">auto-changelog --hide-credit --unreleased --output CHANGELOG.md
+</code></pre>
+<p>  此工具主要用来记录GitHub上正式发布的版本信息。每次通过GitHub发布版本时，应该详细的描述改版本的相关信息。</p>
+<p>上述命令也会生成所有没有进行发布的git提交记录。</p>
+<p>当使用上述工具时，应该注意git的提交记录至关重要。因此，每一个提交所附带的信息应该统一格式，以便于阅读。请参阅：<a href="../../../Git/v1.0/cn/README.md">Git使用规范</a>。</p>
+</li>
+</ul>
+<hr>
+<h2 id="样例">样例</h2>
+<ol>
+<li><a href="WasmSample/README.md">WebAssembly 样例项目</a></li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

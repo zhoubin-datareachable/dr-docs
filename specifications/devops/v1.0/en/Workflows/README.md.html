@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="workflow-criteria-for-application-and-infrastructure-code">Workflow Criteria for Application and Infrastructure Code</h2>
+<p>Please comply with the criteria set out in the following table:</p>
+<table>
+  <tbody>
+    <tr>
+      <th></th>
+      <th align="center">Application Code</th>
+      <th align="center">Infrastructure Code</th>
+    </tr>
+    <tr>
+      <td>Version Control System</td>
+      <td align="left">
+                <ul>
+                    <li><code>git clone</code></li>
+                    <li>One Repo per app</li>
+                    <li>Use branches freely</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li><code>git clone</code></li>
+                    <li>Two Repos per project <br> (<em>live</em> and <em>modules</em> repos)</li>
+                    <li>Don't use branches <br> (Deploy only on master branch)</li>
+                </ul>
+            </td>
+    </tr>
+    <tr>
+      <td>Local Development</td>
+      <td align="left">
+                <ul>
+                    <li>Local dependencies and environment</li>
+                    <li>Run on localhost</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>Sandbox AWS Cloud Environment</li>
+                    <li><code>terraform apply</code></li>
+                    <li>Terratest</li>
+                </ul>
+            </td>
+    </tr>
+    <tr>
+      <td>Local Code Changes</td>
+      <td align="left"><ul>
+                    <li>Change the code</li>
+                    <li>Run on localhost</li>
+                    <li>Local testing</li>
+                </ul></td>
+      <td align="left">
+                <ul>
+                    <li>Change the code</li>
+                    <li><code>terraform apply</code></li>
+                    <li>Terratest</li>
+                    <li>Use test stages</li>
+                </ul>
+            </td>
+    </tr>
+    <tr>
+      <td>Code Review Submission</td>
+      <td align="left">
+                <ul>
+                    <li>Submit a pull request</li>
+                    <li>Enforce coding guidelines</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>Submit a pull request</li>
+                    <li>Enforce coding guidelines</li>
+                </ul>
+            </td>
+    </tr>
+        <tr>
+      <td>Automated Tests</td>
+      <td align="left">
+                <ul>
+                    <li>Use the same CI server</li>
+                    <li>Static analysis</li>
+                    <li>Unit tests</li>
+                    <li>Integration tests</li>
+                    <li>End-to-end tests</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>Use the same CI server</li>
+                    <li>Static analysis</li>
+                    <li>Unit tests</li>
+                    <li>Integration tests</li>
+                    <li>End-to-end tests</li>
+                    <li><code>terraform plan</code></li>
+                </ul>
+            </td>
+    </tr>
+        <tr>
+      <td>Release</td>
+      <td align="left">
+                <ul>
+                    <li>Documentation</li>
+                    <li><code>git tag</code></li>
+                    <li>Create versioned repo releases</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>Documentation</li>
+                    <li><code>git tag</code></li>
+                    <li>Create versioned repo releases</li>
+                </ul>
+            </td>
+    </tr>
+        <tr>
+      <td>Deployment</td>
+      <td align="left">
+                <ul>
+                    <li>Create versioned, immutable artifact <br> (Docker images)</li>
+                    <li>Documentation</li>
+                    <li>Hand to DevOps team</li>
+                </ul>
+            </td>
+      <td align="left">
+                <ul>
+                    <li>Deploy with Terraform and other tools <br> (e.g. bash scripts)</li>
+                    <li>Limited deployment strategies</li>
+                    <li>Handle deployment errors</li>
+                    <li>Run deployment on the same CD server</li>
+                    <li>Promote immutable, versioned artifacts across environments <br> (e.g. Dev to Stage to Prod)</li>
+                </ul>
+            </td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+<p><strong>Note:</strong></p>
+<ol>
+<li>Some steps of the above table can be omitted according to the scale of DevOps team.</li>
+<li>In reality, the <em>Don&#39;t use branches</em> rule for the infrastructure code repo is only an ideal situation and can be ignored. Refer to <a href="../GitOps/topics/GitConventions.md">details</a> for details.</li>
+</ol>
+
+	</div>
+</body>
+</script>
+</html>

@@ -1,0 +1,1448 @@
+﻿openapi: 3.0.3
+
+info:
+  version: v2.0
+  title: 本文档展示最新版本 profile - talent group API 请求规范文档
+  description: >-
+    <br><HR>
+    **项目服务器访问域名&根目录:** https://profile.dev.datareachable.net
+    <br><HR>
+    **Github项目地址:** [User Profile API Server](https://github.com/dataReachable/dr_Back_UserSystemProfile)
+    <br><HR>
+  contact:
+    name: Backend Team
+    email: jiasehng.jing@datareachable.com
+
+servers:
+  - url: "https://profile.dev.datareachable.net/"
+    description: 公网调用地址
+  - url: "http://192.168.2.48:3001/"
+    description: 内网调用地址
+
+tags:
+  - name: Complete
+    description: Already complate api document
+  - name: Developing
+    description: Wiriting api document on process
+
+paths:
+
+  /api/v2/organization/talent_groups/add:
+    post:
+      tags:
+        - Complete
+      summary: "[新建 Talent group](UPTG00001)"
+      description: "只有有owner or admin权限才能新建 Talent group！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 owner 或 admin。
+          <br>
+          - payload.initial_members 中的 user 必须是 payload.organization_dri 的 organization 的 组织成员, 如若不是不能被添加进 talent_group 中。
+          <br>
+          - 所谓的initial members 就是最初的成员。后端再数据库中不需要有initial members 这个 field. 这里指的意思是，在 talent_group 创建时，需要被直接加为成员的 user们。创建 talent_group 的创建者在任何条件下都会是被自动加为 talent_group 的成员。
+          <br>
+          - payload.talent_group_name 不得 有前缀和后缀空格，如果有的话，后端需要将其删除。此field不可为空。
+          <br>
+          - payload.talent_group_status 必须是 `public` 或 `private` 之一。此field不可为空。"
+          <HR style="color:red">
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "talent_group_name"
+                - "talent_group_status"
+                - "initial_members"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+                talent_group_name:
+                  type: string
+                  description: 新建的 talent_group 的名称
+                  example: 后端团队001
+                talent_group_status:
+                  type: string
+                  description: 新建 talent group 的默认状态
+                  example: public
+                initial_members:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                        description: 需要初始化添加到 talent group 的成员 dri 数组
+                        example: dri:acs::user/I3Q7cNxz5WS2l6xEp6_6E
+                      role_in_the_talent_group:
+                        type: string
+                        description: 用户在加入 talent group 的时候的初始化 role 可选的有 leader 和 common
+                        example: leader
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 创建 talent group 成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200110
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Create organization talent group successfully
+                  data:
+                    type: object
+                    description: response data payload
+                    properties:
+                      succeeded:
+                        type: boolean
+                        description: 操作成功判定
+                        example: true
+                      talent_group_to_be_refreshed_dri:
+                        type: string
+                        description: 新建的 organization talent group 的全局资源定位符
+                        example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-NskU0eu9
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 创建 talent group 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "403":
+          description: 用户没有权限执行该操作
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 用户鉴权失败
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 403100
+                  message:
+                    type: string
+                    description: 错误详情
+                    example: Only support organization owner
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/members/get_list:
+    post:
+      tags:
+        - Complete
+      summary: "[获取 organization 下的所有的 member](UPTG00002)"
+      description: 返回的members 必须是payload.organization_dri 的 organization 的 成员。
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+          返回的members 必须是payload.organization_dri 的 organization 的 成员。"
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 organization member 成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200100
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Get organization members successfully
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      members:
+                        type: array
+                        items:
+                          properties:
+                            user_dri:
+                              type: string
+                              description: 成员的 dri
+                              example: dri:acs::user/I3Q7cNxz5WS2l6xEp6_6E
+                            user_name:
+                              type: string
+                              description: 成员姓名
+                              example: 张三
+                            role_in_the_organization:
+                              type: string
+                              description: 用户相对于这个 organization 的角色
+                              example: owner
+                            user_avatar_image_url:
+                              type: string
+                              description: 成员头像的链接地址
+                              example: https://xxxxx.xxx/xxxx.jpeg
+
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 403100
+                  message:
+                    type: string
+                    description: 响应信息
+                    example: Current user are not organization member
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码admin
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/talent_groups/get_list:
+    post:
+      tags:
+        - Complete
+      summary: "[获取 organization 下的所有 Talent group](UPTG00003)"
+      description: "只要是 organization member 就可以请求该API！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 talent groups 成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200110
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Get talent groups info successfully
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      talent_groups:
+                        type: array
+                        description: talent group 数组
+                        items:
+                          type: object
+                          properties:
+                            talent_group_dri:
+                              type: string
+                              description: talent group 的全局资源定位符号
+                              example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-2N1zikJU
+                            talent_group_name:
+                              type: string
+                              description: talent group 的名称
+                              example: 后端团队002
+                            talent_group_status:
+                              type: string
+                              description: talent group 的状态
+                              example: public
+                            members:
+                              type: array
+                              description: talent group 成员数组
+                              items:
+                                properties:
+                                  user_dri:
+                                    type: string
+                                    description: 成员的全局资源定位符
+                                    example: dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h
+                                  user_name:
+                                    type: string
+                                    description: 成员名称
+                                    example: Jack.Chen
+                                  role_in_the_organization:
+                                    type: string
+                                    description: 成员在当前组织中的角色
+                                    example: owner
+                                  user_avatar_image_url:
+                                    type: string
+                                    description: 成员头像的链接地址
+                                    example: https://s3.amazonaws.com/profile_photos/1199520303766278.N4CijtHSDN26i9G5Wisk_27x27.png
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 获取 talent groups info 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 403100
+                  message:
+                    type: string
+                    description: 响应信息
+                    example: Current user are not organization member
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/talent_groups/members/add:
+    post:
+      tags:
+        - Complete
+      summary: "[向 Talent group 的 members 当中添加成员](UPTG00004)"
+      description: "只有 organization 的admin 或者 owner 才可以请求该API！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+            <br>
+            * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+            <br>
+            * user 必须是 payload.organization_dri 的 organization 的 admin 或 owner。
+            <br>
+            * payload.organization_dri 的 organization 必须是 payload.talent_group 所属的 organization。
+            <br>
+            * payload.members_to_be_added 中的 user 必须是 payload.organization_dri 的 organization的成员。
+            <br>
+            * payload.members_to_be_added 中提交的 user 如果已经是 payload.talent_group 中的成员的话，不可重复添加。"
+            <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "talent_group_dri"
+                - "members_to_be_added"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+                talent_group_dri:
+                  type: string
+                  description: talent group 的全局资源定位符
+                  example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-f3IO8c_5
+                members_to_be_added:
+                  type: array
+                  description: 需要被添加的成员的全局资源定位符数组
+                  items:
+                    type: object
+                    properties:
+                      dri:
+                        type: string
+                        description: 需要初始化添加到 talent group 的成员 dri 数组
+                        example: dri:acs::user/I3Q7cNxz5WS2l6xEp6_6E
+                      role_in_the_talent_group:
+                        type: string
+                        description: 用户在加入 talent group 的时候的初始化 role 可选的有 leader 和 common
+                        example: leader
+
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 向 Talent group 的 members 当中添加成员成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200100
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Update talent group's members successfully
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        type: boolean
+                        description: 成功响应结果判定
+                        example: true
+                      talent_group_to_be_refreshed_dri:
+                        type: string
+                        description: 更新之后的 talent group 的全局资源定位符
+                        example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-2N1zikJU
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 添加 talent group member 的参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: talent group dri 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/talent_groups/members/remove:
+    post:
+      tags:
+        - Complete
+      summary: "[对于 Talent group 的 members 删进行除成员](UPTG00005)"
+      description: "只有 organization 的admin 或者 owner 才可以请求该API！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+            <br>
+            * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+            <br>
+            * user 必须是 payload.organization_dri 的 organization 的 admin 或 owner。
+            <br>
+            * payload.organization_dri 的 organization 必须是 payload.talent_group 所属的 organization。
+            <br>
+            * payload.members_to_be_removed 中的 user 必须是 payload.organization_dri 的 organization的成员。
+            <br>
+            * member 不可被从`default-group` talent_group 移除。如果请求的话，需要返回error+信息 `User can not be removed from default-group`。这就确保了，user 至少是一个 talent_group 的 member。"
+            <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "talent_group_dri"
+                - "members_to_be_removed"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+                talent_group_dri:
+                  type: string
+                  description: talent group 的全局资源定位符
+                  example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-f3IO8c_5
+                members_to_be_removed:
+                  type: array
+                  description: 需要被移除的成员的全局资源定位符数组
+                  items:
+                    type: string
+                    description: 需要被移除的成员的全局资源定位符
+                    example: dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 向 Talent group 的 members 当中删除成员成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200100
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Update talent group's members successfully
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        type: boolean
+                        description: 成功响应结果判定
+                        example: true
+                      talent_group_to_be_refreshed_dri:
+                        type: string
+                        description: 更新之后的 talent group 的全局资源定位符
+                        example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-2N1zikJU
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 移除 talent group member 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/talent_groups/status/update:
+    post:
+      tags:
+        - Complete
+      summary: "[对于 Talent group 的 status 行除更新](UPTG00006)"
+      description: "只有 organization 的 owner 才可以请求该API！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+            <br>
+            * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+            <br>
+            * user 必须是 payload.organization_dri 的 organization 的 owner。
+            <br>
+            * payload.organization_dri 的 organization 必须是 payload.talent_group_dri 所属的 organization。
+            <br>
+            * payload.talent_group_status 为 talent group 的 status 可设置为 `public` 或是 `private`。"
+            <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "talent_group_dri"
+                - "talent_group_status"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+                talent_group_dri:
+                  type: string
+                  description: talent group 的全局资源定位符
+                  example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-f3IO8c_5
+                talent_group_status:
+                  type: string
+                  description: 需要更新的最新的 status
+                  example: private
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 更新 organization talent group status 成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200100
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Update talent group's status successfully
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        type: boolean
+                        description: 成功响应结果判定
+                        example: true
+                      talent_group_to_be_refreshed_dri:
+                        type: string
+                        description: 更新之后需要被刷新的 organization talent group 的全局资源定位符
+                        example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-f3IO8c_5
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 更新 talent group status 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization_dri 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+        "403":
+          description: 用户没有权限执行该操作
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 用户鉴权失败
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 403100
+                  message:
+                    type: string
+                    description: 错误详情
+                    example: Only support organization owner
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/talent_groups/name/update:
+    post:
+      tags:
+        - Complete
+      summary: "[对于 Talent group 的 name 进行更新](UPTG00007)"
+      description: "只有 organization 的 owner 才可以请求该API！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+            <br>
+            * user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+            <br>
+            * user 必须是 payload.organization_dri 的 organization 的 owner。
+            <br>
+            * payload.organization_dri 的 organization 必须是 payload.talent_group_dri 所属的 organization。
+            <br>
+            * payload.talent_group_name_change_to 不能有前缀和后缀空格space, 也不能有2个或以上的空格space相联在一起, 返回error+信息 'Please provide a valid name for the talent group ' 。
+            <br>
+            * 如果 在 organization 下已经有一个 talent_group 的 name 和 payload.talent_group_name_change_to 重复, 操作会fail, 返回error+信息'The name has been taken.'。
+            <br>
+            * `default-group` talent_group 的名字不可以被改变，如过请求，需要返回error+信息 `You can not change the name of defult-group`。"
+            <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "talent_group_dri"
+                - "talent_group_name_change_to"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+                talent_group_dri:
+                  type: string
+                  description: talent group 的全局资源定位符
+                  example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-f3IO8c_5
+                talent_group_name_change_to:
+                  type: string
+                  description: 最新的 talent group 的 name
+                  example: 前端开发 Number.2
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 更新 talent group name 成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200100
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Update talent group's name successfully
+                  data:
+                    type: object
+                    description: Response data payload
+                    properties:
+                      succeeded:
+                        type: boolean
+                        description: 成功响应结果判定
+                        example: true
+                      talent_group_to_be_refreshed_dri:
+                        type: string
+                        description: 更新之后需要被刷新的 organization talent group 的全局资源定位符
+                        example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-f3IO8c_5
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 移除 talent group member 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/talent_groups/get_one:
+    post:
+      tags:
+        - Complete
+      summary: "[获取 organization 下的一个 Talent group](UPTG00008)"
+      description: "只要是 organization member 就可以请求该API！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - user ( 通过DR-AUTH 获得 user 信息 ) 必须是 payload.organization_dri 的 organization 的 member。
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "talent_group_dri"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+                talent_group_dri:
+                  type: string
+                  description: organization 下的一个 talent group 的全局资源定位符
+                  example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-2N1zikJU
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 获取 talent group 成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200110
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Get talent group info successfully
+                  data:
+                    type: object
+                    properties:
+                      talent_group_dri:
+                        type: string
+                        description: talent group 的全局资源定位符号
+                        example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-2N1zikJU
+                      talent_group_name:
+                        type: string
+                        description: talent group 的名称
+                        example: 后端团队002
+                      talent_group_status:
+                        type: string
+                        description: talent group 的状态
+                        example: public
+                      members:
+                        type: array
+                        description: talent group 成员数组
+                        items:
+                          properties:
+                            user_dri:
+                              type: string
+                              description: 成员的全局资源定位符
+                              example: dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h
+                            user_name:
+                              type: string
+                              description: 成员名称
+                              example: Jack.Chen
+                            user_email:
+                              type: string
+                              description: 成员邮箱
+                              example: Jack.Chen@gmail.com
+                            user_mobile:
+                              type: object
+                              description: 成员电话
+                              properties:
+                                country:
+                                  type: string
+                                  description: 电话前面的国家代码
+                                  example: "61"
+                                number:
+                                  type: string
+                                  description: 电话号码区段
+                                  example: 15071594541
+                            role_in_the_organization:
+                              type: string
+                              description: 成员在当前组织中的角色
+                              example: owner
+                            role_in_the_talent_group:
+                              type: string
+                              description: 成员在当前 talent group 中的角色
+                              example: leader
+                            user_avatar_image_url:
+                              type: string
+                              description: 成员头像的链接地址
+                              example: https://s3.amazonaws.com/profile_photos/1199520303766278.N4CijtHSDN26i9G5Wisk_27x27.png
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 获取 talent group info 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization dri 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 403100
+                  message:
+                    type: string
+                    description: 响应信息
+                    example: Current user are not organization member
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+
+  /api/v2/organization/talent_groups/member/role/update:
+    put:
+      tags:
+        - Developing
+      summary: "[更新用户对于 Talent group 的 role](UPTG00009)"
+      description: "需要是 talent group 所在的organization 的 owner 或者是 admin 成员才可以请求此 API ！"
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: The Json web token (JWT) issued by the backend in the entry page.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: >-
+          <br>
+          - 需要传入 member 所在的 organization 和 tg 的 dri， 另外需要用户将要更新的 role
+          <HR>
+        content:
+          application/json:
+            schema:
+              required:
+                - "organization_dri"
+                - "talent_group_dri"
+                - "member_dri"
+                - "talent_group_member_role"
+              type: object
+              properties:
+                organization_dri:
+                  type: string
+                  description: organization 的全局资源定位符
+                  example: dri:acs::org/Sqb61rFpyfDRC-gWtN
+                talent_group_dri:
+                  type: string
+                  description: organization 下的一个 talent group 的全局资源定位符
+                  example: dri:acs::org:tg/wgy9w1Qhj26B3ZFzzg-2N1zikJU
+                member_dri:
+                  type: string
+                  description: organization 下的一个 member 的全局资源定位符
+                  example: dri:acs::user/Gh9JbpFjRbjEt-gzWBz5h
+                talent_group_member_role:
+                  type: string
+                  description: 用户拥有的对于 talent group 的 role 可选的值有 leader 和 common
+                  example: leader
+      responses:
+        "200":
+          description: 请求处理成功的响应
+          content:
+            application/json:
+              schema:
+                description: 更新 member talent group role 成功响应体！
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 成功响应码
+                    example: 200110
+                  message:
+                    type: string
+                    description: 成功响应信息
+                    example: Update user talent group role successfully
+                  data:
+                    type: object
+                    properties:
+                      succeeded:
+                        type: boolean
+                        description: 更新 role 成功与否的标识
+                        example: false
+
+        "400":
+          description: 参数错误导致的请求处理错误响应
+          content:
+            application/json:
+              schema:
+                description: 更新 talent group 的 role 参数错误响应
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 参数错误响应码
+                    example: 400100
+                  message:
+                    type: string
+                    description: 错误说明
+                    example: organization dri 是必填字段，不可省略！
+
+        "401":
+          description: 无法验证用户导致的错误响应
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT not found in the header, access denied!
+                  - type: object
+                    properties:
+                      code:
+                        type: number
+                        description: 响应码
+                        example: 401100
+                      message:
+                        type: string
+                        description: 响应信息
+                        example: JWT validation failed, access denied!!
+
+        "403":
+          description: 用户没有权限导致错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 403100
+                  message:
+                    type: string
+                    description: 响应信息
+                    example: Current user are not organization owner 或者是 admin
+
+        "500":
+          description: 服务器发生错误时的响应
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 错误响应体
+                properties:
+                  code:
+                    type: number
+                    description: 响应码
+                    example: 500100
+                  message:
+                    type: string
+                    description: 错误信息
+                    example: too busy
+#   |=============================|
+#   | 以下API施工中非开发人员禁止入内 |
+#   |============================|
+#              | = |
+#              | = |
+#              | = |
+#              | = |
+#             / == \
+#            / ==== \
+# =============================

@@ -1,0 +1,205 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: Login APIs
+  description: >-
+    This document contains the RESTful APIs provided by the ***OIDC-Provider api*** servers.
+    <br/>
+    **Project GitHub Repos:**
+      - [**OIDC-Provider API Server**](https://github.com/dataReachable/dr_Back_UserSystemOIDCProvider)
+
+    The key words `MUST`, `MUST NOT`,`REQUIRED` ,`SHALL` ,`SHALL NOT` ,`SHOULD` ,`SHOULD NOT` ,`RECOMMENDED`,`MAY` , and
+    `OPTIONAL` in this document are to be interpreted as described in
+    [RFC 2119](https://tools.ietf.org/html/rfc2119) and [RFC 8174](https://tools.ietf.org/html/rfc8174).
+  contact:
+    name: Author
+    email: jiasheng.jing@datareachable.com
+
+servers:
+  - url: "https://op.test:3300"
+    description: Sydney Development Cluster
+
+paths:
+  /api/v1/ssoLogin:
+    post:
+      tags:
+        - user login
+      summary: "执行登陆请求"
+      description: "用户使用的用户名和密码进行登录操作"
+
+      requestBody:
+        required: true
+        description: "用户登陆包含两个参数用户名和密码"
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/UserLoginRequestBody"
+
+      responses:
+        "200":
+          description: "登陆成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLoginSueecssResponseBody"
+        "400":
+          description: "由于用户输入账户信息错误导致的登陆失败"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UserLoginFailedByParameterEmpty"
+                  - $ref: "#/components/schemas/UserLoginFailedByUserNotExist"
+                  - $ref: "#/components/schemas/UserLoginFailedByWrongPassword"
+        "403":
+          description: "由于用户频繁尝试错误登录导致的登录禁止"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StopUserLoginByTooMuchTimes"
+        "500":
+          description: "服务器发生错误时的响应"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+components:
+  schemas:
+    #参数部分----------------------------------------------------------------
+    username:
+      type: string
+      description: "用户登录的第一个参数，用户名"
+
+    password:
+      type: string
+      description: "用户登录使用的第二个参数，密码"
+
+    code:
+      type: number
+      description: "服务器端定义的状态码，用于后期对照和查找错误信息"
+
+    message:
+      type: string
+      description: "当前请求的结果，可包含详情"
+
+    redirectUri:
+      type: string
+      description: "定义在响应的data内部，用户传递服务器发送的页面重定向地址"
+
+    pwd_times:
+      type: number
+      description: "由服务器端记载的同一用户登录的次数"
+
+    error:
+      type: string
+      description: "服务器发生的未知错误的信息！"
+
+    #定制化部分----------------------------------------------------------------
+
+    # 用户登陆服务器get请求
+    UserLoginRequestBody:
+      description: "用户登录时的请求体，包含登录用户名和密码两部分"
+      type: object
+      properties:
+        username:
+          $ref: "#/components/schemas/username"
+        password:
+          $ref: "#/components/schemas/password"
+      example: { username: "zhangsan", password: "zhangsan_123" }
+
+    # 用户登陆成功服务器响应
+    UserLoginSueecssResponseBody:
+      description: "用户登陆成功响应，包含基本响应信息与一些其他信息"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            redirectUri:
+              $ref: "#/components/schemas/redirectUri"
+            username:
+              $ref: "#/components/schemas/username"
+      example: { code: "200000", message: "success", data: { redirectUri: "http://www.baidu.com", username: "zhangsan" } }
+
+    # 参数为空的服务器错误响应
+    UserLoginFailedByParameterEmpty:
+      description: "用户由于账户或密码为空导致登录失败"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+      example: { code: "400000", message: "用户名或密码不能为空！" }
+
+    # 错误的用户名的服务器响应
+    UserLoginFailedByUserNotExist:
+      description: "用户由于用户名输入错误（用户名不存在）导致登录失败"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            pwd_times:
+              $ref: "#/components/schemas/pwd_times"
+      example: { code: "400100", message: "用户名不存在，请检查后重新输入！", data: { pwd_times: 1 } }
+
+    # 密码错误的服务器响应
+    UserLoginFailedByWrongPassword:
+      description: "用户由于密码输入错误导致登录失败"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            pwd_times:
+              $ref: "#/components/schemas/pwd_times"
+      example: { code: "400200", message: "密码输入错误，请检查后重新输入！", data: { error: "USER_LOGIN_USED_WRONG_PASSWORD", pwd_times: 1 } }
+
+    # 输入次数大于5次的服务器错误响应
+    StopUserLoginByTooMuchTimes:
+      description: "用户输入错误次数>5次导致禁止用户登录"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            pwd_times:
+              $ref: "#/components/schemas/pwd_times"
+      example: { code: "403000", message: "尝试次数过于频繁，请15分钟后再试！", data: { pwd_times: 6 } }
+
+    # 服务器发生错误响应
+    ServerError:
+      description: "服务器内部发生错误导致无法登陆"
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+        message:
+          $ref: "#/components/schemas/message"
+        data:
+          type: object
+          properties:
+            error:
+              $ref: "#/components/schemas/error"
+      example: { code: "500000", message: "服务器发生错误，请稍后再试！", data: { error: "error from server -- connect timeout" } }

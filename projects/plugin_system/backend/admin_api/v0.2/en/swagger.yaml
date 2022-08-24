@@ -1,0 +1,372 @@
+openapi: 3.0.3
+info:
+  title: Plugin System AdminAPI
+  description: Plugin System AdminAPI. Used by dR administrators to manage plugins.
+  version: "0.5.0"
+  contact:
+    name: R&D / Backend Team
+    email: matthew.chong@datareachable.com
+servers:
+  - url: 'https://plugin-system.dev.datareachable.net'
+paths:
+  /api/v1/admin/plugin/{dri}/grant_privileges:
+    put:
+      description: Grant extra privileges to a 3rd party plugin.
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ Pushing ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csp:
+                  type: array
+                  description: >-
+                    A subset of [sandbox attributes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/sandbox) can be added to the plugin's details.
+                  items:
+                    type: string
+                    pattern: "^allow-(modals|popups(-to-escape-sandbox)?|same-origin)$"
+      responses:
+        200:
+          description: Plugin granted extra permissions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin permissions granted" }
+        404:
+          description: Plugin "doesn't exist" - it either really doesn't exist or it has been given the permissions already.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+  /api/v1/admin/plugin/{dri}/yank:
+    delete:
+      description: Removes a plugin revision from our systems.
+      parameters:
+        - $ref: "#/components/parameters/dri"
+      tags: [ Pushing ]
+      responses:
+        200:
+          description: Plugin removed from production
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin yanked" }
+        404:
+          description: Plugin "doesn't exist" - it either really doesn't exist or it has been yanked.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+  /api/v1/admin/plugin/{name}/approve:
+    put:
+      description: Approve a plugin's publish request
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ Publishing ]
+      responses:
+        200:
+          description: Approved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin published." }
+        404:
+          description: Plugin does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+  /api/v1/admin/plugin/{name}/delist:
+    put:
+      description: Remove a plugin from the marketplace
+      parameters:
+        - $ref: "#/components/parameters/plugName"
+      tags: [ Publishing ]
+      responses:
+        200:
+          description: Delisted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: { code: 200000, message: "Plugin delisted." }
+        404:
+          description: Plugin does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginNotFound"
+  /api/v1/admin/modqueue:
+    get:
+      description: Gets a list of items pending approval
+      tags: [ Publishing ]
+      parameters:
+        - $ref: "#/components/parameters/pluginsPerPage"
+        - $ref: "#/components/parameters/pageNumber"
+      responses:
+        200:
+          description: Listing returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModQueue"
+  /api/v1/registry:
+    get:
+      description: List the packages pending approval in the registry proxy
+      tags: [ "Package Registry" ]
+      parameters:
+        - $ref: "#/components/parameters/packagesPerPage"
+        - $ref: "#/components/parameters/pageNumber"
+      responses:
+        200:
+          description: List packages pending approval
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponseWithPayload"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        description: "List of approval-pending packages"
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              description: "Name of the plugin"
+                            integrity:
+                              type: string
+                              description: "The npm-generated checksum of the requested package in particular"
+                            eslintOutputs:
+                              type: object
+                              description: "The offending ESLint output."
+                              properties:
+                                stdout:
+                                  type: string
+                                  description: "stdout of eslint"
+                                stderr:
+                                  type: string
+                                  description: "stderr of eslint"
+                            scripts:
+                              type: object
+                              description: "The offending scripts that failed the check."
+                              properties:
+                                preinstall:
+                                  $ref: "#/components/schemas/ScriptContent"
+                                install:
+                                  $ref: "#/components/schemas/ScriptContent"
+                                postinstall:
+                                  $ref: "#/components/schemas/ScriptContent"
+                                prepublish:
+                                  $ref: "#/components/schemas/ScriptContent"
+                                preprepare:
+                                  $ref: "#/components/schemas/ScriptContent"
+                                prepare:
+                                  $ref: "#/components/schemas/ScriptContent"
+                                postprepare:
+                                  $ref: "#/components/schemas/ScriptContent"
+                            bindings:
+                              type: string
+                              description: "Contents of the binding.gyp file in the root of the package, if it exists."
+  /api/v1/registry/<action>:
+    put:
+      description: Act upon a package within the registry
+      parameters:
+        - name: "action"
+          in: path
+          example:
+            - "whitelist"
+            - "blacklist"
+          description: The action to perform against the plugins in the request body.
+      tags: [ "Package Registry" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: List of plugins to perform the action on
+              properties:
+                integrity:
+                  description: "The npm-generated checksum of the packages. Use the integrity option if the *particular version* is trustworthy, but the package itself as a whole is not"
+                  items:
+                    type: string
+                name:
+                  description: "The name of the packages to whitelist"
+                  items:
+                    type: string
+              example: {
+                integrity: [ "sha512-ABCDEFGHIJKLMNOP..." ],
+                name: [ "react", "@types/node" ]
+              }
+      responses:
+        200:
+          description: Packages approved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: {
+                  code: 200000,
+                  message: "All packages approved."
+                }
+        400:
+          description: Some packages failed to get approval
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/GenericResponse"
+                example: {
+                  code: 400000,
+                  message: "Some packages were not approved."
+                }
+components:
+  parameters:
+    dri:
+      in: path
+      name: dri
+      schema:
+        type: string
+      required: true
+      description: >-
+        The plugin's DRI, it can be found in the response's `data.dri` from `/api/v1/plugins/save_and_build`.
+        The DRI is of the root object, and as such has the prefix `dri:plg::plugin/`.
+
+        Note that all our endpoints return a standard DRI and it's the responsibility of the frontend to
+        URI-encode the entire DRI before using it as a path parameter with any requests to the backend.
+        In this case, the appropriate function to use is [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
+    plugName:
+      in: path
+      name: name
+      schema:
+        type: string
+      required: true
+      description: The plugin's published name. It can be applied by PUT `/api/v1/plugin/<dri>/tag`, and it is initialized by PUT `/api/v1/plugin/<name>/claim`
+    pluginsPerPage:
+      in: query
+      name: plugins_per_age
+      schema:
+        type: number
+        minimum: 4
+        maximum: 25
+      required: false
+      description: The maximum number of plugins to include in the response, and by proxy, the number of plugins per page for the purposes of pagination.
+    pageNumber:
+      in: query
+      name: page
+      schema:
+        type: number
+      required: false
+      description: The page number desired of the overall list of plugins. If omitted, the first page is returned. The page number is zero-indexed. The size of the page is determined by the query parameter `pluginsPerPage`.
+  schemas:
+    GenericResponse:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "dataReachable in-house standard 6-digit response codes. Extension of HTTP response codes"
+        message:
+          type: string
+          description: "Message describing the response in a human-friendly way"
+    GenericResponseWithPayload:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+        - type: object
+          properties:
+            data:
+              description: "Wrapper around the response data"
+    ModQueueEntry:
+      type: object
+      properties:
+        dri:
+          type: string
+          description: "The DRI of the object pending approval / extra permissions."
+        requestedAt:
+          type: string
+          format: date-time
+          description: "The time at which this was requested"
+        post:
+          type: object
+          description: "The plugin post, embedded directly into this response object."
+          properties:
+            name:
+              type: string
+              description: "Human-friendly name of the plugin"
+            author:
+              type: string
+              description: "The name of the plugin's author"
+            description:
+              type: string
+              description: "The entirety of the plugin's description"
+            tags:
+              type: array
+              description: "The tags the plugin was published with"
+              items:
+                type: string
+            pricing:
+              type: number
+              description: "(Nullable) Price of the plugin - PLACEHOLDER"
+            gallery:
+              type: array
+              description: "The identifier of all gallery images of the plugin. The first is the cover/preview image."
+              items:
+                type: string
+            privilegesRequest:
+              type: array
+              description: >-
+                A subset of the list of permission elements [as defined by the iframe sandbox attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#attr-sandbox)
+                  * `allow-scripts` (implicit)
+                  * `allow-same-origin`
+              items:
+                type: string
+    ModQueue:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponseWithPayload"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                oneOf:
+                  - $ref: "#/components/schemas/ModQueuePrivilege"
+                  - $ref: "#/components/schemas/ModQueuePost"
+      example: {
+        code: 200000,
+        message: "Listing of plugins pending action.",
+        data: [
+          {
+            dri: "dri:plgMkt::post/hello-world",
+            requestedAt: "1970-01-01T00:00:00.000Z",
+            name: "hello-world",
+            author: "dataReachable Team",
+            description: "# Markdown Description",
+            tags: [ "test", "example" ],
+            pricing: 420.69,
+            gallery: [ "dri:plgMkt::img/<uuid>.<ext>" ],
+            privilegesRequest: [ "allow-same-origin" ]
+          }
+        ]
+      }
+    PluginNotFound:
+      allOf:
+        - $ref: "#/components/schemas/GenericResponse"
+      example: {
+        code: 404000,
+        message: "Plugin not found"
+      }
+    ScriptContent:
+      type: string
+      description: "Contents of the script."

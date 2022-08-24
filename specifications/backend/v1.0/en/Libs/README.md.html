@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="required-libraries-npm-packages-when-relevant">Required Libraries (NPM Packages) When Relevant</h2>
+<p>This document lists the required library specifications that must be followed to complete a certain task. Not all of them are required in each project, but when relevant, usage of these libs should be enforced.</p>
+<p><strong>Note:</strong> Advices on this list are always welcome. If you notice any issues/bugs in the current libs or you have better ones to introduce, don&#39;t hesitate to speak out.</p>
+<h2 id="⚠️-important-notice">⚠️ Important Notice</h2>
+<p>The versions in the following lists might be changed to the latest versions in actual projects. The versions in this document is not updated to the latest ones.</p>
+<h2 id="the-list">The List</h2>
+<h3 id="1-runtime">1. Runtime</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Lib Name</th>
+<th align="center">Version</th>
+<th align="center">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://nodejs.org/en/">NodeJS</a></td>
+<td align="center">v14</td>
+<td align="center">Check for <a href="https://node.green/">Javascript feature supports</a></td>
+</tr>
+</tbody></table>
+<h3 id="2-dependencies">2. Dependencies</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Lib Name</th>
+<th align="center">Version</th>
+<th align="center">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://expressjs.com">express</a></td>
+<td align="center">v4</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/luin/ioredis">ioredis</a></td>
+<td align="center">v4</td>
+<td align="center">Redis sharded cluster can ONLY be connected to by ioredis</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/mongodb/node-mongodb-native">mongodb</a></td>
+<td align="center">v4</td>
+<td align="center">MongoDB NodeJS native driver is the most efficient</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/helmetjs/helmet">helmet</a></td>
+<td align="center">v4</td>
+<td align="center">Secure ExpressJS apps by setting various HTTP headers</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/expressjs/cors">cors</a></td>
+<td align="center">v2</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/expressjs/body-parser">body-parser</a></td>
+<td align="center">v1</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/expressjs/morgan">morgan</a></td>
+<td align="center">v1</td>
+<td align="center">HTTP request logger middleware</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/motdotla/dotenv">dotenv</a></td>
+<td align="center">v8</td>
+<td align="center">Environment variable loading</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/motdotla/dotenv-expand">dotenv-expand</a></td>
+<td align="center">v5</td>
+<td align="center">Wrapper over <code>dotenv</code> to provide enhanced features</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/kelektiv/node.bcrypt.js">bcrypt</a></td>
+<td align="center">v5</td>
+<td align="center">Password hashing</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/ai/nanoid">nanoid</a></td>
+<td align="center">v3</td>
+<td align="center">Unique string ID generator for JS - Faster and smaller than uuid</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/jshttp/http-errors">http-errors</a></td>
+<td align="center">v1</td>
+<td align="center">Create HTTP errors for ExpressJS</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/sideway/joi">joi</a></td>
+<td align="center">v17</td>
+<td align="center">Schema description and data validator for JavaScript</td>
+</tr>
+</tbody></table>
+<h3 id="3-development-dependencies">3. Development Dependencies</h3>
+<p>General: Process Manager,Unit Testing,and Linting etc.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Lib Name</th>
+<th align="center">Version</th>
+<th align="center">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://github.com/Unitech/pm2">pm2</a></td>
+<td align="center">v4</td>
+<td align="center">Process manager for Node.js applications with a built-in load balancer</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/facebook/jest">jest</a></td>
+<td align="center">v26</td>
+<td align="center">NodeJS Unit Testing Framework</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/eslint/eslint">eslint</a></td>
+<td align="center">v7</td>
+<td align="center">Linter</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/ratherblue/eslint-html-reporter">eslint-html-reporter</a></td>
+<td align="center">v0</td>
+<td align="center">HTML Report Formatter for ESLint</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/entropitor/dotenv-cli">dotenv-cli</a></td>
+<td align="center">v4</td>
+<td align="center">Dotenv command line interface (to load global envars)</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/elijahmanor/cross-var">cross-var</a></td>
+<td align="center">v1</td>
+<td align="center">Enable cross-platform envars expressions</td>
+</tr>
+</tbody></table>
+<hr>
+<p>TypeScript Related:</p>
+<p>Install <code>@types/&lt;package name&gt;</code> for type information on existing JavaScript-written NPM packages.</p>
+<ul>
+<li>@types/node</li>
+<li>@types/express</li>
+<li>@types/mongodb</li>
+<li>@types/morgan</li>
+<li>@types/cors</li>
+<li>@types/jest</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">Lib Name</th>
+<th align="center">Version</th>
+<th align="center">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><a href="https://github.com/Microsoft/TypeScript">typescript</a></td>
+<td align="center">v4</td>
+<td align="center">TypeScript Compiler</td>
+</tr>
+<tr>
+<td align="center"><a href="https://github.com/TypeStrong/typedoc">typedoc</a></td>
+<td align="center">v0</td>
+<td align="center">Documentation generation tool from TS-Doc formatted comments</td>
+</tr>
+</tbody></table>
+<hr>
+<p>Babel Related:</p>
+<p>Babel is mainly used in ESLint checking with JavaScript experimental features and code compression in production</p>
+<table>
+<thead>
+<tr>
+<th align="left">Lib Name</th>
+<th align="center">Version</th>
+<th align="center">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/core</a></td>
+<td align="center">&gt;=v7.2.0</td>
+<td align="center">Required by <code>@babel/eslint-parser</code></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/cli</a></td>
+<td align="center">v7</td>
+<td align="center">Babel command line interface</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel/tree/main/eslint/babel-eslint-parser">@babel/eslint-parser</a></td>
+<td align="center">v7</td>
+<td align="center">Babel parser for eslint to support JS experimental features</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/eslint-plugin</a></td>
+<td align="center">v7</td>
+<td align="center">Companion eslint rules for <code>@babel/eslint-parser</code></td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/preset-env</a></td>
+<td align="center">v7</td>
+<td align="center">Babel plugin general presets</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/babel">@babel/preset-typescript</a></td>
+<td align="center">v7</td>
+<td align="center">Babel plugin typescript presets</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/babel/minify/tree/master/packages/babel-preset-minify">babel-preset-minify</a></td>
+<td align="center">v0</td>
+<td align="center">Minfiy production code</td>
+</tr>
+</tbody></table>
+<p>ESLint Related:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Lib Name</th>
+<th align="center">Version</th>
+<th align="center">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://github.com/typescript-eslint/typescript-eslint">@typescript-eslint/parser</a></td>
+<td align="center">v4</td>
+<td align="center">TypeScript ESLint parser</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin">@typescript-eslint/eslint-plugin</a></td>
+<td align="center"></td>
+<td align="center">ESLint general rules for TypeScript</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/ratherblue/eslint-html-reporter">eslint-html-reporter</a></td>
+<td align="center"></td>
+<td align="center">Generate ESLint reports in HTML</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/mysticatea/eslint-plugin-eslint-comments">eslint-plugin-eslint-comments</a></td>
+<td align="center"></td>
+<td align="center">ESLint rules for ESLint comments</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/benmosher/eslint-plugin-import">eslint-plugin-import</a></td>
+<td align="center">v2</td>
+<td align="center">ESLint rules for ES6+ import/export syntax</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/xjamundx/eslint-plugin-promise">eslint-plugin-promise</a></td>
+<td align="center"></td>
+<td align="center">ESLint rules for Promises</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/sindresorhus/eslint-plugin-unicorn">eslint-plugin-unicorn</a></td>
+<td align="center"></td>
+<td align="center">ESLint additional awesome rules</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/jest-community/eslint-plugin-jest">eslint-plugin-jest</a></td>
+<td align="center">v24</td>
+<td align="center">ESLint rules for Jest</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/dangreenisrael/eslint-plugin-jest-formatting">eslint-plugin-jest-formatting</a></td>
+<td align="center"></td>
+<td align="center">ESLint rules for jest code styles</td>
+</tr>
+<tr>
+<td align="left"><a href="https://github.com/microsoft/tsdoc/tree/master/eslint-plugin">eslint-plugin-tsdoc</a></td>
+<td align="center"></td>
+<td align="center">ESLint rules for TS-Doc</td>
+</tr>
+</tbody></table>
+
+	</div>
+</body>
+</script>
+</html>

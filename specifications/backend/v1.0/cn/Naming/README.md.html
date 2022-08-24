@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h2 id="命名习惯">命名习惯</h2>
+<p>命名习惯对于让代码仓库保持一致和易于维护是十分重要的。我们规定了一组命名习惯，这些命名习惯由ESLint检查。包括：</p>
+<ul>
+<li>文件名风格</li>
+<li>TypeScript源码中的命名风格</li>
+</ul>
+<h2 id="文件夹和文件的命名风格">文件夹和文件的命名风格</h2>
+<p>文件夹和文件必须使用**<font color=red>snake_case</font>**风格命名，比如<code>ctr_sample_controller.ts</code>, <code>rte_sample_router.ts</code>, <code>sample_view.ejs</code>, <code>sample_style.css</code>。不能使用其他风格。</p>
+<p>ESLint检查文件夹和文件的命名风格。错误的命名风格会被ESLint报告为<strong>错误</strong>。</p>
+<h2 id="源代码中的命名风格">源代码中的命名风格</h2>
+<p>TypeScript语言中需要命名的元素可以被分类如下：</p>
+<ol>
+<li><code>variable</code> - 匹配任何<code>var</code> / <code>let</code> / <code>const</code>修饰的变量名。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>const</code>, <code>destructured</code>, <code>global</code>, <code>exported</code>, <code>unused</code>.</li>
+<li>允许的<code>类型</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="2">
+<li><code>function</code> - 匹配任何命名函数生命和命名函数表达式。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>global</code>, <code>exported</code>, <code>unused</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="3">
+<li><code>parameter</code> - 匹配任何函数参数。并不匹配参数的属性。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>destructured</code>, <code>unused</code>.</li>
+<li>允许的<code>类型</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="4">
+<li><code>classProperty</code> - 匹配任何类中的属性。并不匹配赋值了函数表达式的类属性。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>abstract</code>, <code>private</code>, <code>protected</code>, <code>public</code>, <code>readonly</code>, <code>requiresQuotes</code>, <code>static</code>.</li>
+<li>允许的<code>类型</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="5">
+<li><code>objectLiteralProperty</code> - 匹配任何对象字面量中的属性。并不匹配赋值了函数表达式的对象属性。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>public</code>, <code>requiresQuotes</code>.</li>
+<li>允许的<code>类型</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="6">
+<li><code>typeProperty</code> - 匹配任何使用对象定义的类型中的属性。并不匹配赋值了函数表达式的对象属性。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>public</code>, <code>readonly</code>, <code>requiresQuotes</code>.</li>
+<li>允许的<code>类型</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="7">
+<li><code>parameterProperty</code> - 匹配任何参数属性</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>private</code>, <code>protected</code>, <code>public</code>, <code>readonly</code>.</li>
+<li>允许的<code>类型</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="8">
+<li><code>classMethod</code> - 匹配类中的方法。同时，也匹配类中赋值了函数表达式的类属性。并不匹配访问器函数。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>abstract</code>, <code>private</code>, <code>protected</code>, <code>public</code>, <code>requiresQuotes</code>, <code>static</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="9">
+<li><code>objectLiteralMethod</code> - 匹配任何对象字面量中的方法。同时匹配赋值了函数表达式的属性。并不匹配访问器函数。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>public</code>, <code>requiresQuotes</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="10">
+<li><code>typeMethod</code> - 匹配任何对象定义类型中的属性。同时匹配赋值了函数表达式的属性。并不匹配访问器函数。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>public</code>, <code>requiresQuotes</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="11">
+<li><code>accessor</code> - 匹配任何访问器函数。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>abstract</code>, <code>private</code>, <code>protected</code>, <code>public</code>, <code>requiresQuotes</code>, <code>static</code>.</li>
+<li>允许的<code>类型</code>: <code>boolean</code>, <code>string</code>, <code>number</code>, <code>function</code>, <code>array</code>.</li>
+</ul>
+<ol start="12">
+<li><code>enumMember</code> - 匹配任何枚举类型中的成员。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>requiresQuotes</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="13">
+<li><code>class</code> - 匹配任何类声明名称。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>abstract</code>, <code>exported</code>, <code>unused</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="14">
+<li><code>interface</code> - 匹配任何接口声明名称。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>exported</code>, <code>unused</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="15">
+<li><code>typeAlias</code> - 匹配任何类型别名声明。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>exported</code>, <code>unused</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="16">
+<li><code>enum</code> - 匹配任何枚举类型声明。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>exported</code>, <code>unused</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<ol start="17">
+<li><code>typeParameter</code> - 匹配任何泛型类型声明中的类型参数。</li>
+</ol>
+<ul>
+<li>允许的<code>修饰符</code>: <code>unused</code>.</li>
+<li>允许的<code>类型</code>: none.</li>
+</ul>
+<hr>
+<p>源代码中所有允许的命名格式的总结：</p>
+<ul>
+<li><code>strictCamelCase</code> - 标准的 <code>camelCase</code> 格式 - 字母之间不允许有下划线，同时连续的大写字母也是不允许的，比如：<code>myId</code>是可以的，但是<code>myID</code>不可以。</li>
+<li><code>StrictPascalCase</code> - 与<code>strictCamelCase</code>相同，除了第一个字母必须是大写的之外。</li>
+<li><code>snake_case</code> - 标准的snake_case格式 - 所有的字母必须是小写，而且可以有下划线。</li>
+<li><code>UPPER_CASE</code> - 与<code>snake_case</code>格式相同，除了所有的字母必须都是大写的之外。</li>
+</ul>
+<hr>
+<p>在源码中，我们针对不同类别的代码元素，使用如下的具体命名风格：</p>
+<table>
+<thead>
+<tr>
+<th align="center">格式</th>
+<th align="center">是否允许以下划线开头</th>
+<th align="center">是否允许以下划线结尾</th>
+<th align="center">对应的元素</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>strictCamelCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>function</code>, <code>classMethod</code>, <code>typeMethod</code>, <code>accessor</code></td>
+</tr>
+<tr>
+<td align="center"><code>strictCamelCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>variable</code> with &quot;function&quot; type, e.g. arrow functions assigned to a variable</td>
+</tr>
+<tr>
+<td align="center"><code>UPPER_CASE</code>, <code>snake_case</code></td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center"><code>variable</code> with &quot;const&quot; modifier</td>
+</tr>
+<tr>
+<td align="center"><code>snake_case</code></td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center"><code>variable</code>, <code>parameter</code>, <code>classProperty</code>, <code>parameterProperty</code>, <code>typeProperty</code></td>
+</tr>
+<tr>
+<td align="center"><code>StrictPascalCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>class</code>, <code>interface</code>, <code>typeAlias</code>, <code>enum</code>, <code>typeParameter</code></td>
+</tr>
+<tr>
+<td align="center"><code>UPPER_CASE</code>, <code>StrictPascalCase</code></td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center"><code>enumMember</code></td>
+</tr>
+</tbody></table>
+<p><code>objectLiteralProperty</code> 和 <code>objectLiteralMethod</code> 被以上规则排除在外，为了与已有的JavaScript库兼容。</p>
+
+	</div>
+</body>
+</script>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="saga-使用规范">SAGA 使用规范</h1>
+<h1 id="描述">描述</h1>
+<p>该文件主要介绍来如何使用 saga，关于 saga 文件的注释规范同样也在该文件中进行了描述。每一个 saga 文件都需要被分开定义在对于的 module 中。rootSaga 文件将被创建在<code>Store</code>文件夹中。</p>
+<h1 id="注释">注释</h1>
+<p>所有的代码都要书写注释，来确保不同开发者之间都能快速的理解对方的代码用途。</p>
+<h2 id="顶层文件注释">顶层/文件注释</h2>
+<p>顶级注释用于告诉不熟悉此代码的读者此文件中包含的内容。 应提供文件的一般内容，其作者，依赖关系和其他相关信息。</p>
+<pre><code class="language-javascript">/**
+ * @file 文件的描述
+ * @date 2020/06/25 13:11
+ * @author 作者的名字
+ * @lastModify 作者的名字 2020/06/25 14:11
+ */
+</code></pre>
+<h2 id="saga-中-generation-函数的注释方法">saga 中 generation 函数的注释方法</h2>
+<p>下面的注释是 saga 中 generation 函数的注释方法。</p>
+<pre><code class="language-js">/**
+ * This is an introduction of the saga generation function1.
+ * @param {type} parameter the meaning of this parameter
+ * */
+function* handleDataFetch1(parameter) {
+  yield put(demo);
+}
+/**
+ * This is an introduction of the saga generation function2.
+ * @param {type} parameter the meaning of this parameter
+ * */
+function* handleDataFetch2(parameter) {
+  yield put(demo);
+}
+</code></pre>
+<h2 id="saga-中-generation-函数的监听函数">saga 中 generation 函数的监听函数</h2>
+<p>每一个 saga 的 generation 函数都需要一个监听它的 generation 函数。在编写 generation 的监听函数时同样也要书写注释。所有 saga 中的 types 同样从 types.ts 文件中引入。</p>
+<p>下面为 generation 监听函数的几种书写方法：</p>
+<pre><code class="language-js">import * as types from &quot;./types&quot;;
+
+/**
+ * This is an introduction of the saga watching generation function 1.
+ * */
+function* watchAsyncTasks() {
+  yield [
+    takeLatest(types.dataFetch1, handleDataFetch1),
+    takeLatest(types.dataFetch2, handleDataFetch2),
+  ];
+}
+
+or;
+
+/**
+ * This is an introduction of the saga watching generation function 1.
+ * */
+function* watchAsyncTasks1() {
+  yield takeLatest(types.dataFetch1, handleDataFetch1);
+}
+function* watchAsyncTasks2() {
+  yield takeLatest(types.dataFetch2, handleDataFetch2);
+}
+
+or;
+
+/**
+ * This is an introduction of the saga watching generation function 1.
+ * */
+function* watchAsyncTasks() {
+  yield takeLatest(types.dataFetch1, handleDataFetch1);
+  yield takeLatest(types.dataFetch2, handleDataFetch2);
+}
+</code></pre>
+<h2 id="导出你的-saga-文件">导出你的 saga 文件</h2>
+<p>当你完成你的 saga 文件开发后，需要以下面的方式导出 saga 文件中监听的所有函数。</p>
+<pre><code class="language-js">const sagas = [fork(watchAsyncTasks), fork(watchAsyncTasks2)];
+export default sagas;
+</code></pre>
+<h2 id="在-rootsaga-中引入-saga-文件">在 rootSaga 中引入 saga 文件</h2>
+<p>当你成功的编写完成所有的 saga 文件后，不要忘了在 rootSaga.js 文件中引入并且 combine 他们。</p>
+<pre><code class="language-js">import { all } from &quot;redux-saga/effects&quot;;
+import exampleSagas1 from &quot;/path&quot;;
+import exampleSagas2 from &quot;/path&quot;;
+
+export default function* rootSaga(): Generator {
+  try {
+    // this is where the saga combine into the rootSaga
+    yield all([...exampleSagas, ...exampleSagas2]);
+  } catch (err) {
+    // This is where error monitoring should go
+    console.log(&quot;error caught in rootsaga::&quot;, err);
+  }
+}
+</code></pre>
+<h2 id="更多的官方文档资料">更多的官方文档资料</h2>
+<p>如果你在使用 saga 的过程中有任何疑惑，请从 saga 的<a href="https://redux-saga.js.org/">官方文档</a>中来获取更多资料。</p>
+
+	</div>
+</body>
+</script>
+</html>

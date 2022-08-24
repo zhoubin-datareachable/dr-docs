@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+    <style>
+        @media print {
+        *,
+        *:before,
+        *:after {
+            background: transparent !important;
+            color: #000 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        a,
+        a:visited {
+            text-decoration: underline;
+        }
+
+        a[href]:after {
+            content: " (" attr(href) ")";
+        }
+
+        abbr[title]:after {
+            content: " (" attr(title) ")";
+        }
+
+        a[href^="#"]:after,
+        a[href^="javascript:"]:after {
+            content: "";
+        }
+
+        pre,
+        blockquote {
+            border: 1px solid #999;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr,
+        img {
+            page-break-inside: avoid;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        p,
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        h2,
+        h3 {
+            page-break-after: avoid;
+        }
+        }
+
+        pre,
+        code {
+        font-family: Menlo, Monaco, "Courier New", monospace;
+        }
+
+        pre {
+        padding: 0.5rem;
+        line-height: 1.25;
+        overflow-x: scroll;
+        }
+
+        a,
+        a:visited {
+        color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+        color: #2980b9;
+        }
+
+        .modest-no-decoration {
+        text-decoration: none;
+        }
+
+        html {
+        font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+        html {
+            font-size: 15px; 
+        }
+        }
+
+        @media screen and (min-width: 48rem) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        body {
+        line-height: 1.85;
+        }
+
+        p,
+        .modest-p {
+        font-size: 1rem;
+        margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .modest-h1,
+        h2,
+        .modest-h2,
+        h3,
+        .modest-h3,
+        h4,
+        .modest-h4 {
+        margin: 1.414rem 0 0.5rem;
+        font-weight: inherit;
+        line-height: 1.42;
+        }
+
+        h1,
+        .modest-h1 {
+        margin-top: 0;
+        font-size: 3.998rem;
+        }
+
+        h2,
+        .modest-h2 {
+        font-size: 2.827rem;
+        }
+
+        h3,
+        .modest-h3 {
+        font-size: 1.999rem;
+        }
+
+        h4,
+        .modest-h4 {
+        font-size: 1.414rem;
+        }
+
+        h5,
+        .modest-h5 {
+        font-size: 1.121rem;
+        }
+
+        h6,
+        .modest-h6 {
+        font-size: 0.88rem;
+        }
+
+        small,
+        .modest-small {
+        font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+        max-width: 100%;
+        }
+
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+        @import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+        html {
+        font-size: 18px;
+        max-width: 100%;
+        }
+
+        body {
+        color: #444;
+        font-family: "Open Sans Condensed", sans-serif;
+        font-weight: 300;
+        margin: 0 auto;
+        max-width: 48rem;
+        line-height: 1.45;
+        padding: 0.25rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+        font-family: Arimo, Helvetica, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+        border-bottom: 2px solid #fafafa;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        }
+
+        blockquote {
+        border-left: 8px solid #fafafa;
+        padding: 1rem;
+        }
+
+        pre,
+        code {
+        background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+	<div>
+        <h1 id="前端工作流程">前端工作流程</h1>
+<div align="center">
+    <img src="../images/icon.jpeg" />
+    <br/>
+    <div style="margin:auto">
+        <span style="font-size:200%">前端工作流程</span>
+    </div>
+</div>
+
+<h1 id="1-目的">1. 目的</h1>
+<p>为了确保产品在向外部演示、产品可用性测试等需要展示成果的场景中，产品所有模块均能正常稳定的运行，因此划分为开发环境（DEV 版）和测试环境（TEST 版）。本文档主要用于规范版本迭代时的标准流程，以实现下列目的：
+（1）指导版本迭代活动，有效控制产品迭代过程
+（2）有效控制和追踪产品版本
+（3）保证在对外演示时不会存在影响功能实现的 bug</p>
+<h1 id="2-范围">2. 范围</h1>
+<p>包括产品现有所有模块。后续开发出新模块也需一并纳入此版本迭代模式中。</p>
+<h1 id="3-涉及部门及职责">3. 涉及部门及职责</h1>
+<h3 id="31-产品经理">3.1 产品经理</h3>
+<ul>
+<li>制定计划
+产品经理确定下阶段产品主要实现目标或主要功能点。根据需求池中已存需求进行筛选，确认本阶段需要开发的需求，以及本阶段需要修复的 bug。同时向 UI、前端、后端确认相关需求及 debug 的开发工作量和任务时间评估。依据评估结果制定《版本发布计划表》，计划内容包括了迭代周期、bug 报告提交时间、发布时间等关键节点的计划（详见《版本发布计划表》模版）。</li>
+<li>节点跟踪
+产品经理在迭代过程中，主要根据《版本发布计划表》，跟踪在计划的时间节点上的完成情况，如未按计划提交，产品经理需要推进开发、测试负责人员按计划提交任务产出。</li>
+<li>版本最终发布</li>
+</ul>
+<h3 id="32-开发部门">3.2 开发部门</h3>
+<ul>
+<li><p>产品开发及提交测试
+开发部门包括 UI 设计部门、前端开发部门、后端开发部门。开发部门需根据产品经理提供的《版本发布计划表》来开发本阶段需要完成的需求，并将完成的版本提交至开发环境（DEV 版）以供测试人员进行测试。</p>
+</li>
+<li><p>bug 修复
+开发部门需对本阶段《版本发布计划表》中提及的 bug 以及本阶段测试完成后发现的 bug 进行修复。</p>
+</li>
+<li><p>发布版本
+在主需求方及产品经理确认后，将本阶段开发的需求及 debug 发布至测试环境（TEST 版），并更新版本号.</p>
+<p>图: 版本发布计划书</p>
+<img src="../images/pat9.jpg" /></li>
+</ul>
+<h3 id="32-测试部门">3.2 测试部门</h3>
+<ul>
+<li>产品测试
+对本阶段开发的新需求进行测试（使用不同角色进行遍历测试，并在遍历测试 bug 修复完成后进行版本完整测试）</li>
+<li>提交测试报告
+根据测试情况填写《遍历测试报告》，并将报告反馈给产品经理。</li>
+</ul>
+<h1 id="4版本开发流程">4.版本开发流程</h1>
+<h3 id="41-版本开发流程图">4.1 版本开发流程图</h3>
+   <img src="../images/pat7.jpg" />
+
+<h3 id="42-版本开发流程描述">4.2 版本开发流程描述</h3>
+<ul>
+<li>前期计划阶段
+首先产品部门应向主需求方获取当前版本主要目标，及该版本必须完成的重要功能。其次向客服部门获取客户反馈意见，结合需求池中已存在的需求，进行优先级评级。根据主需求方提出的大方向确定当前版本需要开发的新需求或需要修复的 bug。
+产品部门将需求拆分为小任务，并反馈给各模块开发负责人，以评估任务完成时间。
+产品部门根据反馈的任务完成时间制定当前版本你《版本发布计划表》。完成后再评审会上向主需求方及各部门主管汇报，通过后将依据该计划表内容进行当前版本开发工作。</li>
+<li>开发阶段
+产品部门依据《版本发布计划表》中的需求清单，分模块召开需求评审会。会后各模块产品负责人编写需求文档、UI 部门开始设计 UI 图稿、前端负责人编写 API 需求文档、后端负责人设计 ERD。并在此后依次完成前端 UI 页面开发、后端 API 接口开发、前端 API 接口链接等工作。
+相关工作均完成后将发布至 DEV 版本，并交付给测试人员进行测试。</li>
+<li>测试阶段
+测试人员依据《版本发布计划表》中的需求清单，在 DEV 版本进行遍历测试（分角色、场景进行测试），并出具遍历测试报告。
+遍历测试报告交付给产品部门，并由产品部门向各模块前后端负责人分配修复 bug 任务。
+影响功能运行的 bug 修复完成后，产品与测试人员将一同进行完整测试。待《版本发布计划表》中的阶段任务均以完成后依据测试结果填写《版本迭代申请书》（详见《版本迭代申请书》模版）。</li>
+<li>汇报总结阶段
+产品部门依据测试结果和《版本迭代申请书》向主需求方和各部门主管进行汇报，通过后将进行 API Transition 记录流程。
+API Transition 记录流程完成后，前后端将进行版本迭代，将 DEV 版本发布至 TEST 版本。</li>
+</ul>
+<h3 id="42-版本开发流程描述-1">4.2 版本开发流程描述</h3>
+<ul>
+<li>前期计划阶段
+首先产品部门应向主需求方获取当前版本主要目标，及该版本必须完成的重要功能。其次向客服部门获取客户反馈意见，结合需求池中已存在的需求，进行优先级评级。根据主需求方提出的大方向确定当前版本需要开发的新需求或需要修复的 bug。
+产品部门将需求拆分为小任务，并反馈给各模块开发负责人，以评估任务完成时间。
+产品部门根据反馈的任务完成时间制定当前版本你《版本发布计划表》。完成后再评审会上向主需求方及各部门主管汇报，通过后将依据该计划表内容进行当前版本开发工作。</li>
+<li>开发阶段
+产品部门依据《版本发布计划表》中的需求清单，分模块召开需求评审会。会后各模块产品负责人编写需求文档、UI 部门开始设计 UI 图稿、前端负责人编写 API 需求文档、后端负责人设计 ERD。并在此后依次完成前端 UI 页面开发、后端 API 接口开发、前端 API 接口链接等工作。
+相关工作均完成后将发布至 DEV 版本，并交付给测试人员进行测试。</li>
+<li>测试阶段
+测试人员依据《版本发布计划表》中的需求清单，在 DEV 版本进行遍历测试（分角色、场景进行测试），并出具遍历测试报告。
+遍历测试报告交付给产品部门，并由产品部门向各模块前后端负责人分配修复 bug 任务。
+影响功能运行的 bug 修复完成后，产品与测试人员将一同进行完整测试。待《版本发布计划表》中的阶段任务均以完成后依据测试结果填写《版本迭代申请书》（详见《版本迭代申请书》模版）。</li>
+<li>汇报总结阶段
+产品部门依据测试结果和《版本迭代申请书》向主需求方和各部门主管进行汇报，通过后将进行 API Transition 记录流程。
+API Transition 记录流程完成后，前后端将进行版本迭代，将 DEV 版本发布至 TEST 版本。</li>
+</ul>
+<h3 id="43-版本异常发布流程描述">4.3 版本异常发布流程描述</h3>
+<ul>
+<li>版本回退流程：DEV 版本发布到 TEST 版本后，如发现测试人员提供的测试结果不符合发布标准时，可选择重新提交测试，或者申请启动版本回退发布流程。该模块产品负责人填写《版本回退发布说明》，报产品部门主管并启动版本回退发布流程。
+此时前后端舍弃该模块当前存在不符合标准的版本，将该模块上一版本合并至当前大版本中，并发布到 TEST 环境中。该模块已舍弃版本涉及到的阶段性任务将融入下一版本阶段性任务中。</li>
+<li>临时发布流程：当发生有需求需要紧急上线时，产品部门应及时通知主需求方及相关模块开发负责人。在确认需要紧急上线时将启动临时发布流程，并由产品部门制定临时发布计划。此时产品研发和测试以该计划中涉及到的工作为主，按照发布流程节点时间完成开发任务，快速迭代，并根据实际需要决定发布版本。</li>
+</ul>
+<h3 id="44-后续工作">4.4 后续工作</h3>
+<ul>
+<li>新版本发布后，在使用过程中可能还会发现一些 bug。在不影响功能正常使用的情况下，这些 bug 将在下一版本发布时解决；如果 bug 严重影响使用，必须执行临时发布流程或者该模块舍弃最新版本，回退至上一版本。</li>
+</ul>
+
+	</div>
+</body>
+</script>
+</html>

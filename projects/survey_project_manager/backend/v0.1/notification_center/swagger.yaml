@@ -1,0 +1,276 @@
+openapi: 3.0.3
+
+info:
+  version: 0.1.1
+  title: dr_Back_NotificationRead_service
+  description: >-
+    This document contains the RESTful APIs provided by the notification read API server.
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://spm.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [NotificationRead API Server](https://github.com/dataReachable/dr_Back_NotificationRead_service)
+  contact:
+    name: Backend Team
+    email: travis.yuan@datareachable.com
+
+servers:
+  - url: "https://api.dev.datareachable.net/msg/notif/stable"
+
+paths:
+  /notification/unread_count:
+    get:
+      summary: CR-00014 获取未读消息数量
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取信息成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          unread_count:
+                            type: number
+                            description: 未读消息数
+                            example: 4
+        '400':
+          description: 入参校验失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                org_dri is required:
+                  value:
+                    code: 400001
+                    message: org_dri is required
+        "403":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+  /notification/list:
+    get:
+      summary: CR-00013 获取通知消息列表
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+        - name: org_dri
+          in: query
+          required: true
+          description: 组织的dri(统一定位符)
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          description: 可选，页码，默认值：1。page_num和page_size需同时存在或同时不存在
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          description: 可选，每页条数，默认值：20。page_num和page_size需同时存在或同时不存在
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 获取消息列表成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          count:
+                            type: number
+                            description: 消息总数
+                            example: 81
+                          list:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                dri:
+                                  type: string
+                                  description: 消息dri
+                                has_read:
+                                  type: boolean
+                                  description: 是否已读
+                                content:
+                                  type: string
+                                  description: 拼接好的消息体
+                                avatar:
+                                  type: string
+                                  description: 组织头像链接
+                                contract_dri:
+                                  type: string
+                                  description: 合同dir
+                                project_dri:
+                                  type: string
+                                  description: 项目dir
+                                created_at:
+                                  type: number
+                                  description: 消息产生时间的毫秒值
+                              example: {"dri":"dri:spm::msg/BsfadR2adkid9P","has_read":false,"content":"chaman团队 has sent a contract:\ test_contract to zcz199862","avatar":"","contract_dri":"dri:spm::contract/1fMNEpqk2MF4qfxV/gHsDW0vl","created_at":1630053208150}
+        '400':
+          description: 入参校验失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                org_dri is required:
+                  value:
+                    code: 400001
+                    message: org_dri is required
+        "403":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+  /notification/readed:
+    put:
+      summary: CR-00022 将指定消息或所有消息标记为已读
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+           schema:
+            type: object
+            required:
+              - ""
+            properties:
+              org_dri:
+                type: string
+                description: 组织dri
+                example: "dri:acs::org/exppPoSsTEoGiJySASkEq"
+              msg_dri:
+                type: string
+                description: 消息dri。合法值： 消息dri、all。 (若传入的是指定消息dri，则将该条未读消息标记为已读，若传入的是all，则将所有未读消息标记为已读)
+                example: "all"
+      responses:
+        "200":
+          description: 获取信息成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Res_Generic"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          update_count:
+                            type: number
+                            description: 从未读更新为已读消息数
+                            example: 4
+        '400':
+          description: 入参校验失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_Generic"
+              examples:
+                org_dri is required:
+                  value:
+                    code: 400001
+                    message: org_dri is required
+        "403":
+          description: 鉴权失败
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "500":
+          description: Internal server errors.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "A 6-digit status code."
+          example: 200001
+        message:
+          type: string
+          description: "A user-friendly message describing the status of the response."
+          example: "successfully"
+
+    Res_AuthenticationFailed:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example: { code: 401001, message: "JWT验证失败，未授权的访问！" }
+
+    Res_GenericInternalError:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: The data payload of the response
+              properties:
+                error:
+                  description: Details of the specific error, helpful to locate the error source.
+                  type: string
+      example: {
+        code: 500001,
+        message: "[Get User Information Controller]: Unexpected error",
+        data: { error: "Details of the error goes here"}
+      }

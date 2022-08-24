@@ -1,0 +1,259 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: QEditor Backend Project - Create a brand new Survey
+  description: >-
+    QESP0000X, 包含具体的请求格式与响应格式
+    <br/>
+    <br/>
+    **项目服务器访问域名&根目录:** https://qeditor.dev.datareachable.net/
+    <br/>
+    <br/>
+    **Github项目地址:**
+      - [QEditor API Server](https://github.com/dataReachable/dr_Back_QuestionnaireEditor)
+  contact:
+    name: Backend Team
+    email: mengming.li@datareachable.com
+
+servers:
+  - url: "https://qeditor.dev.datareachable.net/"
+    description: Sydney Development Cluster
+
+paths:
+  /api/v1/survey/create:
+    post:
+      summary: (QESP00001) 创建全新的 Survey
+      description: 不基于任何已有的 Survey, 创建一个全新的 Survey
+      parameters:
+        - name: DR-AUTH
+          in: header
+          required: true
+          description: 用于鉴权的 Json Web Token (JWT), 其值在首屏加载时在请求头中返回
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - survey_name
+                - organization_dri
+                - project_dri
+              example:
+                {
+                    "survey_name": "Survey007",
+                    "organization_dri": "dri:acs::org/org2JoHPmEXzkDCmZ1",
+                    "project_dri": "dri:spm::proj/6ZaNbPqnBm3nmd9f"
+                }
+              properties:
+                survey_name:
+                  type: string
+                  description: 新 survey 的 name
+                organization_dri:
+                  type: string
+                  description: survey 所属的 organization 的 dri
+                project_dri:
+                  type: string
+                  description: survey 所属的 project 的 dri
+      responses:
+        "200":
+          description: 请求成功, 会返回符合预期的结果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESP00001_200001"
+        "400":
+          description: 请求的参数错误
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Res_QESP00001_400001"
+                  - $ref: "#/components/schemas/Res_QESP00001_400002"
+                  - $ref: "#/components/schemas/Res_QESP00001_400003"
+        "401":
+          description: 用户没有登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_AuthenticationFailed"
+        "403":
+          description: 用户没有创建 survey 的权限
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_UnauthorizedOperation"
+
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Res_GenericInternalError"
+
+components:
+  schemas:
+    Res_Generic:
+      type: object
+      description: 成功响应的通用部分
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "对响应的一段简短的描述"
+
+    Res_AuthenticationFailed:
+      type: object
+      description: 用户未登录或者登录过期的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示 jwt 不存在或者已经过期"
+      example:
+        {
+            "code": 401001,
+            "message": "Cannot get JWT in request, unauthorized access."
+        }
+
+    Res_GenericInternalError:
+      type: object
+      description: 服务器内部错误的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "发生错误时的简短提示"
+        data:
+          type: object
+          description: 错误响应携带的数据
+          properties:
+            error:
+              description: 错误的详细信息
+              type: string
+      example:
+        {
+          "code": 500001,
+          "message": "[xxxx Controller]: An unknown error occurred, please check",
+          "data":
+            {
+              "error": "Details of the error goes here"
+            }
+        }
+
+    Res_MissingOrWrongParameters:
+      type: object
+      description: 参数错误或缺失时的响应
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: "提示参数错误或参数缺失"
+
+    Res_WrongRequestMethod:
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+      example:
+        {
+          "code": 405000,
+          "message": "You're using the completely wrong HTTP method!"
+        }
+
+    Res_UnauthorizedOperation:
+      type: object
+      description: 未授权的操作
+      properties:
+        code:
+          type: number
+          description: "6位的详细响应码, 前三位应该和 http 状态码相同"
+        message:
+          type: string
+          description: 提示操作没有被授权
+      example:
+        {
+            "code": 403001,
+            "message": "Unauthorized operation"
+        }
+
+    Res_QESP00001_200001:
+      type: object
+      example:
+        {
+            "code": 200001,
+            "message": "Created brand new survey successfully",
+            "data": {
+                "succeeded": true,
+                "survey_name": "survey025",
+                "survey_dri": "dri:qed::output/RAB7gmNfYCqUbKzrnoFMPv",
+                "deliverable_dri": "dri:spm::deliv:qed/6ZaNbPqnBm3nmd9f/RAB7gmNfYCqUbKzrnoFMPv",
+                "time": 1626482813992
+            }
+        }
+      allOf:
+        - $ref: "#/components/schemas/Res_Generic"
+        - properties:
+            data:
+              type: object
+              description: 响应的详细数据部分
+              properties:
+                succeeded:
+                  type: boolean
+                  description: 标示创建是否成功
+                survey_name:
+                  type: string
+                  description: survey 的 name, 与 request 中的相同
+                survey_dri:
+                  type: string
+                  description: 后端生成的 survey 的 dri, 由固定的前缀和唯一的 id 组成
+                survey_id:
+                  type: string
+                  description: 由后端生成的 survey 的 id
+                deliverable_dri:
+                  type: string
+                  description: 在 Project Manager 中标识 Project 和 app output 的绑定关系的数据的 dri
+                time:
+                  type: number
+                  description: 后端生成的 survey 创建时的参考时间
+
+    Res_QESP00001_400001:
+      type: object
+      example:
+        {
+            "code": 400001,
+            "message": "\"survey_name\" is required"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESP00001_400002:
+      type: object
+      example:
+        {
+            "code": 400002,
+            "message": "No such project: xxxxxxx in organization: xxxxxxxxx"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
+    Res_QESP00001_400003:
+      type: object
+      example:
+        {
+            "code": 400003,
+            "message": "Survey: xxxxx is already exists in organization: xxxxxxx"
+        }
+      allOf:
+       - $ref: "#/components/schemas/Res_MissingOrWrongParameters"
+
