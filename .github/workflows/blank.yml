@@ -13,14 +13,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           repository: dataReachable/dr_Doc_Main
           ref: main
-          path: dr_Doc_Main
+          path: dr-docs/dr_Doc_Main
           token: ${{ secrets.ACCESS_TOKEN }}
-      - uses: actions/checkout@v3
-        with:
-          path: /
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
