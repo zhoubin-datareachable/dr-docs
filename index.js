@@ -5,10 +5,11 @@ const path = require("path");
 const temp = fs.readFileSync("index.html", { encoding: "utf8" });
 const output = path.join(__dirname, "dist");
 const input = path.join(__dirname, "dr_Doc_Main");
+const faviconPath = path.join(__dirname, "favicon.ico");
 fs.mkdirSync(output);
 
 fileDisplay(input);
-//文件遍历方法
+// 文件遍历方法;
 function fileDisplay(filePath) {
   //根据文件路径读取文件，返回文件列表
   fs.readdir(filePath, function (err, files) {
@@ -29,10 +30,12 @@ function fileDisplay(filePath) {
             if (isFile) {
               if (filedir.includes(".md")) {
                 const content = fs.readFileSync(filedir, "utf-8");
-                const newHtml = temp.replace(
-                  "<%- doc %>",
-                  marked(content.toString())
-                );
+                const newHtml = temp
+                  .replace("<%- doc %>", marked(content.toString()))
+                  .replace(
+                    "<head>",
+                    `<head><link rel='icon' href='favicon.ico' type='image/x-icon'/>`
+                  );
                 if (filedir === `${input}${path.sep}README.md`) {
                   fs.writeFileSync(`${output}/index.html`, newHtml);
                 } else {
@@ -41,12 +44,21 @@ function fileDisplay(filePath) {
                     newHtml
                   );
                 }
+              } else if (filedir.includes(".html")) {
+                const content = fs.readFileSync(filedir, "utf-8");
+                const newContent = content.replace(
+                  "<head>",
+                  `<head><link rel='icon' href='favicon.ico' type='image/x-icon'/>`
+                );
+                fs.writeFileSync(filedir.replace(input, output), newContent);
               } else {
                 fs.copyFileSync(filedir, filedir.replace(input, output));
               }
             }
             if (isDir) {
-              fs.mkdirSync(filedir.replace(input, output));
+              const out = filedir.replace(input, output);
+              fs.mkdirSync(out);
+              fs.copyFileSync(faviconPath, path.join(out, "favicon.ico"));
               fileDisplay(filedir); //递归，如果是文件夹，就继续遍历该文件夹下面的文件
             }
           }
